@@ -104,13 +104,16 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .item-name{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:.5px;color:var(--text-primary);border-left:3px solid var(--fire-orange);padding-left:14px;line-height:1.2;flex:1}
 
 
-.fields{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:12px;margin-bottom:18px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
 .field label{display:block;font-size:10px;color:var(--fire-orange);letter-spacing:2px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:6px}
-.field input{width:100%;padding:10px 12px;font-size:15px;font-family:'Barlow',sans-serif;background:var(--input-bg);border:0.5px solid var(--input-border);border-radius:6px;color:var(--text-primary);outline:none;transition:border .15s,background .15s}
+.field input,.field select{width:100%;padding:10px 12px;font-size:15px;font-family:'Barlow',sans-serif;background:var(--input-bg);border:0.5px solid var(--input-border);border-radius:6px;color:var(--text-primary);outline:none;transition:border .15s,background .15s}
+.field select{cursor:pointer}
+.field select option{background:#1a1a1a;color:var(--text-primary)}
 .field input::placeholder{color:var(--text-muted)}
-.field input:focus{border-color:rgba(230,126,34,0.5);background:rgba(255,255,255,0.08)}
-.field input.correct{border-color:var(--correct);background:rgba(39,174,96,0.1)}
-.field input.wrong{border-color:var(--wrong);background:rgba(192,57,43,0.1)}
+.field input:focus,.field select:focus{border-color:rgba(230,126,34,0.5);background:rgba(255,255,255,0.08)}
+.field input.correct,.field select.correct{border-color:var(--correct);background:rgba(39,174,96,0.1)}
+.field input.wrong,.field select.wrong{border-color:var(--wrong);background:rgba(192,57,43,0.1)}
+.field input:disabled{opacity:.35;cursor:not-allowed}
 
 .btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
 .btn{padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:0.5px solid rgba(230,126,34,0.4);border-radius:6px;cursor:pointer;background:rgba(230,126,34,0.1);color:var(--fire-orange);transition:all .15s}
@@ -215,7 +218,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
     <div class="item-header">
       <div class="item-name" id="item-name">Cargando...</div>
       </div>
-    <div class="fields">
+    <div class="fields" id="fields-grid">
       <div class="field">
         <label>1ª Salida</label>
         <input type="text" id="f-p1" placeholder="parque" autocomplete="off" autocorrect="off" spellcheck="false"/>
@@ -224,9 +227,17 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
         <label>2ª Salida</label>
         <input type="text" id="f-p2" placeholder="parque" autocomplete="off" autocorrect="off" spellcheck="false"/>
       </div>
-      <div class="field">
+      <div class="field" id="field-dir">
         <label>Calle / Dirección</label>
         <input type="text" id="f-dir" placeholder="nombre de la calle" autocomplete="off" autocorrect="off" spellcheck="false"/>
+      </div>
+      <div class="field" id="field-grupo" style="display:none">
+        <label>Tipo</label>
+        <select id="f-grupo"></select>
+      </div>
+      <div class="field" id="field-peligrosidad" style="display:none">
+        <label>Nivel Peligrosidad</label>
+        <input type="text" id="f-peligrosidad" placeholder="nivel" autocomplete="off" autocorrect="off" spellcheck="false"/>
       </div>
     </div>
     <div class="btn-row">
@@ -296,7 +307,27 @@ const PARQUES_VALID = {
   'oeste':['oeste','west','oste'],
   'norte':['norte','north','nort'],
   'central':['central','sur','south','centra'],
-  'cpbv':['cpbv','cp']
+  'cpbv':['cpbv','cp'],
+  'saler':['saler','el saler'],
+  'w/c':['w/c','wc']
+};
+
+const GROUPS = {
+  pte: {
+    hlc:'Puntos aterrizaje HLC',
+    albergue:'Albergue evacuados',
+    ubseg:'UB Seguridad',
+    ubsan:'UB Sanitaria',
+    ubaccsocial:'UB Acción Social'
+  },
+  pamri: {
+    bombeo:'Estaciones de Bombeo',
+    tormentas:'Depósito tormentas',
+    edar:'Estaciones depuradoras',
+    gasolineras:'Gasolineras',
+    educativos:'Centros Educativos',
+    policialocal:'Centrales Policía Local'
+  }
 };
 
 const DATA = {
@@ -386,11 +417,81 @@ const DATA = {
     {n:'Hortbio Market',p1:'central',p2:'norte',dir:'C/ Fuente en Corts',dir_alt:['fuente en corts','c/ fuente en corts','calle fuente en corts','carrera fuente en corts']},
     {n:'Mercadillo Jerusalem',p1:'central',p2:'oeste',dir:'C/ del Convent de Jerusalem',dir_alt:['convent de jerusalem','c/ convent de jerusalem','convento de jerusalem','matematico marzal','matemático marzal']},
     {n:'Mercado Municipal Jerusalén',p1:'central',p2:'oeste',dir:'C/ del Matemàtic Marzal',dir_alt:['matematic marzal','c/ matematic marzal','matemàtic marzal','matematico marzal']},
+  ],
+  pte:[
+    {n:"Estadio del Túria",dir:"Río Túria",p1:"w/c",p2:"w/c",grupo:"hlc"},
+    {n:"Hospital La Fe",dir:"Av. de Fernando Abril Martorell",dir_alt:["av de fernando abril martorell", "avenida de fernando abril martorell"],p1:"central",p2:"norte",grupo:"hlc"},
+    {n:"UPV",p1:"norte",p2:"central",grupo:"hlc"},
+    {n:"UV",p1:"norte",p2:"central",grupo:"hlc"},
+    {n:"Central PL de VLC",dir:"Av. Del Cid, 37",dir_alt:["av del cid 37", "avenida del cid, 37"],p1:"oeste",p2:"campanar",grupo:"hlc"},
+    {n:"Campo de fútbol Beniferri",dir:"C/ Favanella",dir_alt:["calle favanella"],p1:"campanar",p2:"oeste",grupo:"hlc"},
+    {n:"Piscina de Carpesa",p1:"campanar",p2:"norte",grupo:"hlc"},
+    {n:"Parking Ave Nox",dir:"Casas de Bárcena",p1:"norte",p2:"central",grupo:"hlc"},
+    {n:"Pistas fútbol",dir:"C/ Arquitecto Gilabert",dir_alt:["calle arquitecto gilabert"],p1:"campanar",p2:"oeste",grupo:"hlc"},
+    {n:"Campo C.D. Oller",p1:"central",p2:"oeste",grupo:"hlc"},
+    {n:"Campo U.D. Castellar",p1:"central",p2:"oeste",grupo:"hlc"},
+    {n:"Campo de fútbol Pinedo",p1:"saler",p2:"central",grupo:"hlc"},
+    {n:"Centro de exámenes DGT",p1:"saler",p2:"central",grupo:"hlc"},
+    {n:"Línea 25 BUS",p1:"oeste",p2:"central",grupo:"hlc"},
+    {n:"Pabellon deportes UV",dir:"Av. Menéndez y Pelayo",dir_alt:["av menéndez y pelayo", "avenida menéndez y pelayo"],p1:"norte",p2:"central",grupo:"albergue"},
+    {n:"Pabellón deportes UPV",dir:"C/ Calciners",dir_alt:["calle calciners"],p1:"norte",p2:"central",grupo:"albergue"},
+    {n:"Pabellón Fuente de San Luis",dir:"Av. Hermanos Maristas",dir_alt:["av hermanos maristas", "avenida hermanos maristas"],p1:"central",p2:"norte",grupo:"albergue"},
+    {n:"Pabellón Benicalap",dir:"C/ Castellonet de la Conquesta",dir_alt:["calle castellonet de la conquesta"],p1:"campanar",p2:"norte",grupo:"albergue"},
+    {n:"Pabellón San Isidro",dir:"C/ San Isidro",dir_alt:["calle san isidro"],p1:"oeste",p2:"central",grupo:"albergue"},
+    {n:"Policía Local",dir:"Av. Del Cid, 37",dir_alt:["av del cid 37", "avenida del cid, 37"],p1:"oeste",p2:"campanar",grupo:"ubseg"},
+    {n:"Cuartel/Comisaría de Referencia",dir:"Av. Del Cid, 37",dir_alt:["av del cid 37", "avenida del cid, 37"],p1:"oeste",p2:"campanar",grupo:"ubseg"},
+    {n:"CNP",dir:"GV. Ramón y Cajal",dir_alt:["gran via ramón y cajal", "gv ramón y cajal"],p1:"oeste",p2:"central",grupo:"ubseg"},
+    {n:"Guardia Civil",dir:"C/ de Calamocha, 4",dir_alt:["c/ de calamocha 4", "calle de calamocha, 4"],p1:"oeste",p2:"central",grupo:"ubseg"},
+    {n:"Servicios Urg. Sociales",dir:"Plz. Polo de Bernabé",dir_alt:["plaza polo de bernabé", "plz polo de bernabé"],p1:"norte",p2:"central",grupo:"ubsan"},
+    {n:"Servici Benestar Social i Integració",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici Persones Majors",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici de Sanitat i Consum",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici d'Educació",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici Disciplina Urbanística",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici Mobilitat Sostenible",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici de Coordinació la Vía Pública",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici Gestió de Residus Urbans",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici de Jardinería",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici Cicle Integral de l'Aigua",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici de Joventut",dir:"C/ Campoamor, 91",dir_alt:["c/ campoamor 91", "calle campoamor, 91"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
+    {n:"Servici d'Acció Cultural",dir:"Plz. Ayuntamiento, 1",dir_alt:["plaza ayuntamiento, 1", "plz ayuntamiento 1"],p1:"central",p2:"norte",grupo:"ubaccsocial"},
+    {n:"Servici de Cultura Festiva",dir:"Plz. Ayuntamiento, 1",dir_alt:["plaza ayuntamiento, 1", "plz ayuntamiento 1"],p1:"central",p2:"norte",grupo:"ubaccsocial"},
+    {n:"Serveis Centrals Tècnics",dir:"C/ Convent Sant Francesc, 2",dir_alt:["c/ convent sant francesc 2", "calle convent sant francesc, 2"],p1:"central",p2:"oeste",grupo:"ubaccsocial"},
+    {n:"Empresa Municipal de Transporte",dir:"Plz. Correu Vell, 5",dir_alt:["plaza correu vell, 5", "plz correu vell 5"],p1:"oeste",p2:"norte",grupo:"ubaccsocial"},
+    {n:"Fundació Esportiva Municipal",dir:"Passeig de la Petxina, 42",dir_alt:["paseo de la petxina, 42", "passeig de la petxina 42"],p1:"oeste",p2:"campanar",grupo:"ubaccsocial"}
+  ],
+  pamri:[
+    {n:"Doctor Lluch",dir:"Passeig Marítim de la Patacona, 1",dir_alt:["paseo marítim de la patacona, 1", "passeig marítim de la patacona 1"],p1:"norte",p2:"central",grupo:"bombeo"},
+    {n:"Cantarranas",p1:"central",p2:"norte",grupo:"bombeo"},
+    {n:"Ibiza",p1:"central",p2:"norte",grupo:"bombeo"},
+    {n:"Nazaret",p1:"central",p2:"norte",grupo:"bombeo"},
+    {n:"Marcos Sopena",dir:"C/ Dctr. Marcos Sopena",dir_alt:["c/ dctr marcos sopena", "calle dctr. marcos sopena"],p1:"norte",p2:"central",grupo:"bombeo"},
+    {n:"Malvarrosa",p1:"central",p2:"norte",grupo:"bombeo"},
+    {n:"Gascó Oliag",p1:"norte",p2:"central",grupo:"bombeo"},
+    {n:"Cano de la Molinera",p1:"central",p2:"saler",grupo:"bombeo"},
+    {n:"Vera",p1:"norte",p2:"central",grupo:"bombeo"},
+    {n:"Cabanyal",p1:"norte",p2:"central",grupo:"tormentas"},
+    {n:"La Torre",p1:"central",p2:"oeste",grupo:"tormentas"},
+    {n:"EDAR 1: Massarrojos",p1:"campanar",p2:"norte",grupo:"edar",peligrosidad:3},
+    {n:"EDAR 2: Norte de la Laguna Albufera",p1:"saler",p2:"central",grupo:"edar",peligrosidad:6},
+    {n:"EDAR 3: Sur de la Laguna Albufera",p1:"saler",p2:"central",grupo:"edar",peligrosidad:3},
+    {n:"EDAR 4: Huerta Perellonet",p1:"saler",p2:"central",grupo:"edar",peligrosidad:4},
+    {n:"Rafalell-Vistabella (CC El Manar)",p1:"norte",p2:"central",grupo:"gasolineras",peligrosidad:3},
+    {n:"Faitanar (V-30)",p1:"oeste",p2:"central",grupo:"gasolineras",peligrosidad:3},
+    {n:"Colegio del Palmar",dir:"C/ Villajoyosa",dir_alt:["calle villajoyosa"],p1:"saler",p2:"central",grupo:"educativos"},
+    {n:"CEIP José Senent",dir:"C/ Senent Ibañez",dir_alt:["calle senent ibañez"],p1:"campanar",p2:"norte",grupo:"educativos"},
+    {n:"Distrito 1",dir:"C/ Alta, 5",dir_alt:["c/ alta 5", "calle alta, 5"],p1:"oeste",p2:"campanar",grupo:"policialocal"},
+    {n:"Distrito 2",dir:"C/ Cremista Jaume d'Escals, 4",dir_alt:["c/ cremista jaume d'escals 4", "calle cremista jaume d'escals, 4"],p1:"central",p2:"oeste",grupo:"policialocal"},
+    {n:"Distrito 3",dir:"C/ Mariano de Cavia",dir_alt:["calle mariano de cavia"],p1:"oeste",p2:"central",grupo:"policialocal"},
+    {n:"Distrito 4",dir:"Av. Cid, 37",dir_alt:["av cid 37", "avenida cid, 37"],p1:"oeste",p2:"campanar",grupo:"policialocal"},
+    {n:"Distrito 5",dir:"C/ Castellonet de la Conquesta, 6",dir_alt:["c/ castellonet de la conquesta 6", "calle castellonet de la conquesta, 6"],p1:"campanar",p2:"norte",grupo:"policialocal"},
+    {n:"Distrito 6",dir:"C/ Emilio Baró",dir_alt:["calle emilio baró"],p1:"norte",p2:"central",grupo:"policialocal"},
+    {n:"Distrito 7",dir:"Plz. Armada Española",dir_alt:["plaza armada española", "plz armada española"],p1:"norte",p2:"central",grupo:"policialocal"}
   ]
 };
 
-const CATEGORIES = ['hospitales','museos','mercados'];
-const CAT_LABELS = {hospitales:'Hospitales',museos:'Museos',mercados:'Mercados'};
+const CATEGORIES = ['hospitales','museos','mercados','pte','pamri'];
+const CAT_LABELS = {hospitales:'Hospitales',museos:'Museos',mercados:'Mercados',pte:'PTE',pamri:'PAM RI'};
 const PROFILES = ['Josep','Tudon'];
 
 let currentProfile = null;
@@ -492,7 +593,25 @@ function getNext(){
   document.getElementById('item-name').textContent=current.n;
   var mapsUrl='https://www.google.com/maps/search/'+encodeURIComponent(current.dir+', Valencia, España');
 
-  ['p1','p2','dir'].forEach(f=>{ const el=document.getElementById('f-'+f); el.value=''; el.className=''; });
+  ['p1','p2'].forEach(f=>{ const el=document.getElementById('f-'+f); el.value=''; el.className=''; });
+
+  const dirField=document.getElementById('field-dir'), dirInput=document.getElementById('f-dir');
+  dirInput.value=''; dirInput.className='';
+  if(current.dir){ dirField.style.display=''; dirInput.disabled=false; }
+  else { dirField.style.display='none'; dirInput.disabled=true; }
+
+  const grupoField=document.getElementById('field-grupo'), grupoSelect=document.getElementById('f-grupo');
+  if(current.grupo && GROUPS[currentCat]){
+    grupoField.style.display='';
+    grupoSelect.innerHTML='<option value="">-- selecciona --</option>'+Object.entries(GROUPS[currentCat]).map(([k,label])=>`<option value="${k}">${label}</option>`).join('');
+    grupoSelect.value=''; grupoSelect.className='';
+  } else { grupoField.style.display='none'; }
+
+  const peliField=document.getElementById('field-peligrosidad'), peliInput=document.getElementById('f-peligrosidad');
+  peliInput.value=''; peliInput.className='';
+  if(current.peligrosidad!==undefined){ peliField.style.display=''; }
+  else { peliField.style.display='none'; }
+
   document.getElementById('feedback').textContent='';
   document.getElementById('feedback').className='feedback';
   document.getElementById('answer-reveal').style.display='none';
@@ -525,14 +644,33 @@ function checkAnswer(){
   if(checked) return; checked=true;
   const v1=document.getElementById('f-p1').value;
   const v2=document.getElementById('f-p2').value;
-  const vd=document.getElementById('f-dir').value;
   const ok1=checkParque(v1,current.p1);
   const ok2=checkParque(v2,current.p2);
-  const okd=checkDir(vd,current);
-  const allOk=ok1&&ok2&&okd;
   document.getElementById('f-p1').className=ok1?'correct':'wrong';
   document.getElementById('f-p2').className=ok2?'correct':'wrong';
-  document.getElementById('f-dir').className=okd?'correct':'wrong';
+
+  let okd=true;
+  if(current.dir){
+    const vd=document.getElementById('f-dir').value;
+    okd=checkDir(vd,current);
+    document.getElementById('f-dir').className=okd?'correct':'wrong';
+  }
+
+  let okg=true;
+  if(current.grupo){
+    const vg=document.getElementById('f-grupo').value;
+    okg=(vg===current.grupo);
+    document.getElementById('f-grupo').className=okg?'correct':'wrong';
+  }
+
+  let okp=true;
+  if(current.peligrosidad!==undefined){
+    const vp=document.getElementById('f-peligrosidad').value.trim();
+    okp=(vp===String(current.peligrosidad));
+    document.getElementById('f-peligrosidad').className=okp?'correct':'wrong';
+  }
+
+  const allOk=ok1&&ok2&&okd&&okg&&okp;
   const fb=document.getElementById('feedback');
   if(allOk){
     fb.textContent='✓ Correcto'; fb.className='feedback ok';
@@ -542,8 +680,12 @@ function checkAnswer(){
     history[currentCat][current.n].fail++; sessionStats[currentCat].fail++;
     const p1c=current.p1.charAt(0).toUpperCase()+current.p1.slice(1);
     const p2c=current.p2.charAt(0).toUpperCase()+current.p2.slice(1);
+    let revHtml=`<strong>Respuesta correcta:</strong><br>1ª salida: <strong>${p1c}</strong> &nbsp;·&nbsp; 2ª salida: <strong>${p2c}</strong>`;
+    if(current.dir) revHtml+=` &nbsp;·&nbsp; Dirección: <strong>${current.dir}</strong>`;
+    if(current.grupo) revHtml+=` &nbsp;·&nbsp; Tipo: <strong>${GROUPS[currentCat][current.grupo]}</strong>`;
+    if(current.peligrosidad!==undefined) revHtml+=` &nbsp;·&nbsp; Nivel Peligrosidad: <strong>${current.peligrosidad}</strong>`;
     const rev=document.getElementById('answer-reveal');
-    rev.innerHTML=`<strong>Respuesta correcta:</strong><br>1ª salida: <strong>${p1c}</strong> &nbsp;·&nbsp; 2ª salida: <strong>${p2c}</strong> &nbsp;·&nbsp; Dirección: <strong>${current.dir}</strong>`;
+    rev.innerHTML=revHtml;
     rev.style.display='block';
   }
   document.getElementById('btn-check').style.display='none';
