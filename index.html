@@ -95,8 +95,12 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .tab-pct{font-size:10px;font-weight:700;opacity:.6;margin-left:5px;letter-spacing:0}
 .tab.active .tab-pct{opacity:.9}
 
-.tabs{display:flex;gap:0;border-bottom:1px solid rgba(192,57,43,0.2);margin-bottom:20px}
-.tab{padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all .2s}
+.tabs{display:flex;gap:0;border-bottom:1px solid rgba(192,57,43,0.2);margin-bottom:20px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(230,126,34,0.4) transparent}
+.tabs::-webkit-scrollbar{height:6px}
+.tabs::-webkit-scrollbar-track{background:transparent}
+.tabs::-webkit-scrollbar-thumb{background:rgba(230,126,34,0.4);border-radius:3px}
+.tabs::-webkit-scrollbar-thumb:hover{background:rgba(230,126,34,0.7)}
+.tab{padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all .2s;white-space:nowrap;flex-shrink:0}
 .tab:hover:not(.active){color:var(--text-secondary)}
 .tab.active{color:var(--fire-orange);border-bottom:3px solid var(--fire-orange)}
 
@@ -114,6 +118,11 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .item-name{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:.5px;color:var(--text-primary);border-left:3px solid var(--fire-orange);padding-left:14px;line-height:1.2;flex:1}
 
 
+.dir-toggle-row{margin-bottom:14px}
+.dir-toggle-btn{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;cursor:pointer;transition:all .15s;border:0.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:var(--text-muted)}
+.dir-toggle-btn:hover{border-color:rgba(230,126,34,0.4)}
+.dir-toggle-btn.on{border-color:rgba(39,174,96,0.5);background:rgba(39,174,96,0.12);color:var(--correct)}
+.dir-toggle-btn .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
 .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
 .field label{display:block;font-size:10px;color:var(--fire-orange);letter-spacing:2px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:6px}
 .field input,.field select{width:100%;padding:10px 12px;font-size:15px;font-family:'Barlow',sans-serif;background:var(--input-bg);border:0.5px solid var(--input-border);border-radius:6px;color:var(--text-primary);outline:none;transition:border .15s,background .15s}
@@ -131,6 +140,8 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .btn.primary{background:var(--fire-red);color:#fff;border-color:var(--fire-red)}
 .btn.primary:hover{background:#a93226;border-color:#a93226}
 .btn:active{transform:scale(0.97)}
+.nav-btn{padding:10px 16px;font-size:18px;line-height:1;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.12);color:var(--text-secondary)}
+.nav-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.25);color:var(--text-primary)}
 .feedback{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px}
 .feedback.ok{color:var(--correct)}.feedback.fail{color:var(--wrong)}
 .enter-hint{font-size:11px;color:var(--text-muted);margin-left:auto;letter-spacing:.5px}
@@ -265,6 +276,9 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <button class="zona-btn" data-zona="3" onclick="answerZona(3)">Zona 3</button>
       <button class="zona-btn" data-zona="4" onclick="answerZona(4)">Zona 4</button>
     </div>
+    <div class="dir-toggle-row" id="dir-toggle-row" style="display:none">
+      <button class="dir-toggle-btn" id="dir-toggle-btn" onclick="toggleDirField()"></button>
+    </div>
     <div class="fields" id="fields-grid">
       <div class="field">
         <label>1ª Salida</label>
@@ -288,7 +302,9 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       </div>
     </div>
     <div class="btn-row">
+      <button class="btn nav-btn" id="btn-prev" onclick="goPrev()" title="Pregunta anterior">←</button>
       <button class="btn primary" id="btn-check" onclick="checkAnswer()">Comprobar</button>
+      <button class="btn nav-btn" id="btn-forward" onclick="goNext()" title="Siguiente pregunta">→</button>
       <button class="btn" id="btn-next" onclick="nextItem()" style="display:none">Siguiente →</button>
       <span class="feedback" id="feedback"></span>
       <span class="enter-hint">↵ Enter</span>
@@ -365,7 +381,8 @@ const GROUPS = {
     albergue:'Albergue evacuados',
     ubseg:'UB Seguridad',
     ubsan:'UB Sanitaria',
-    ubaccsocial:'UB Acción Social'
+    ubaccsocial:'UB Acción Social',
+    gasolineras:'Gasolineras'
   },
   pamri: {
     bombeo:'Estaciones de Bombeo',
@@ -592,7 +609,22 @@ const DATA = {
     {n:"Servici de Cultura Festiva",dir:"Plz. Ayuntamiento, 1",dir_alt:["plaza ayuntamiento, 1", "plz ayuntamiento 1"],p1:"central",p2:"norte",grupo:"ubaccsocial"},
     {n:"Serveis Centrals Tècnics",dir:"C/ Convent Sant Francesc, 2",dir_alt:["c/ convent sant francesc 2", "calle convent sant francesc, 2"],p1:"central",p2:"oeste",grupo:"ubaccsocial"},
     {n:"Empresa Municipal de Transporte",dir:"Plz. Correu Vell, 5",dir_alt:["plaza correu vell, 5", "plz correu vell 5"],p1:"oeste",p2:"norte",grupo:"ubaccsocial"},
-    {n:"Fundació Esportiva Municipal",dir:"Passeig de la Petxina, 42",dir_alt:["paseo de la petxina, 42", "passeig de la petxina 42"],p1:"oeste",p2:"campanar",grupo:"ubaccsocial"}
+    {n:"Fundació Esportiva Municipal",dir:"Passeig de la Petxina, 42",dir_alt:["paseo de la petxina, 42", "passeig de la petxina 42"],p1:"oeste",p2:"campanar",grupo:"ubaccsocial"},
+    {n:"Estación de servicio E.S. Campo SL Moreras",dir:"Camino de las Moreras, 58",p1:"central",p2:"norte",grupo:"gasolineras"},
+    {n:"Estación de servicio F.R. Avenida Baleares SL",dir:"Baleares, 20",p1:"central",p2:"norte",grupo:"gasolineras"},
+    {n:"Estación de servicio Ecuador",dir:"Avenida el Ecuador (Esquina. General Llorens)",p1:"campanar",p2:"norte",grupo:"gasolineras"},
+    {n:"Estación de servicio Francisco Ripoll S.L.",dir:"Avenida Jaime Roig, esquina Primado Reig",p1:"norte",p2:"central",grupo:"gasolineras"},
+    {n:"Estación de servicio Francisco Ripoll",dir:"Avenida de la Constitución, 137",p1:"norte",p2:"campanar",grupo:"gasolineras"},
+    {n:"Estación de servicio Archiduque Carlos",dir:"Archiduque Carlos, 70",p1:"oeste",p2:"campanar",grupo:"gasolineras"},
+    {n:"Estación de servicio Carburantes la Rotonda, S.L.",dir:"Camino Cabañal, 25",p1:"norte",p2:"central",grupo:"gasolineras"},
+    {n:"Estación de servicio GPV-Maestro Rodrigo, 129",dir:"Maestro Rodrigo, S.N.",p1:"campanar",p2:"oeste",grupo:"gasolineras"},
+    {n:"Estación de servicio Bañon y Valero S.L",dir:"Dolores Marques, 50",p1:"norte",p2:"campanar",grupo:"gasolineras"},
+    {n:"Estación de servicio E.S. Asama Campanar",dir:"Valle de la Ballestera, 44",p1:"campanar",p2:"oeste",grupo:"gasolineras"},
+    {n:"Estación de servicio Castilla",dir:"Avenida del Cid, 5",p1:"oeste",p2:"central",grupo:"gasolineras"},
+    {n:"Estación de servicio El Saler",dir:"V-15 km 1.9",p1:"central",p2:"norte",grupo:"gasolineras"},
+    {n:"Estación de servicio ronda Norte",dir:"Avenida hermanos Machado, 139 (camino viejo Godella)",p1:"campanar",p2:"norte",grupo:"gasolineras"},
+    {n:"Eurotrigo SA",dir:"Gran Vía Fernando el Católico, 54 (C. de Jesús i Maria, 15)",p1:"oeste",p2:"campanar",grupo:"gasolineras"},
+    {n:"Intecas de gas",dir:"Calle Lepanto, 43 (bajo)",p1:"oeste",p2:"campanar",grupo:"gasolineras"}
   ],
   pamri:[
     {n:"Doctor Lluch",dir:"Passeig Marítim de la Patacona, 1",dir_alt:["paseo marítim de la patacona, 1", "passeig marítim de la patacona 1"],p1:"norte",p2:"central",grupo:"bombeo"},
@@ -622,17 +654,303 @@ const DATA = {
     {n:"Distrito 6",dir:"C/ Emilio Baró",dir_alt:["calle emilio baró"],p1:"norte",p2:"central",grupo:"policialocal"},
     {n:"Distrito 7",dir:"Plz. Armada Española",dir_alt:["plaza armada española", "plz armada española"],p1:"norte",p2:"central",grupo:"policialocal"}
   ],
-  zonas_saler: ZONAS_SALER
+  zonas_saler: ZONAS_SALER,
+  paradas:[
+    {n:'FGV - Talleres centrales de Valencia Sur',p1:'oeste',p2:'central',tipo:'parada'},
+    {n:'Jesús',p1:'oeste',p2:'central',tipo:'parada'},
+    {n:'Metro Safranar',p1:'oeste',p2:'central',tipo:'parada'},
+    {n:'Metro San Isidro',p1:'oeste',p2:'central',tipo:'parada'},
+    {n:'Metro Ángel Guimera',p1:'oeste',p2:'central',tipo:'parada'},
+    {n:'Patraix',p1:'oeste',p2:'central',tipo:'parada'},
+    {n:'Pl. Espanya',p1:'oeste',p2:'central',tipo:'parada'},
+    {n:'València Sud',p1:'oeste',p2:'central',tipo:'parada'},
+    {n:'Av. del Cid',p1:'oeste',p2:'campanar',tipo:'parada'},
+    {n:'Metro Turia',p1:'oeste',p2:'campanar',tipo:'parada'},
+    {n:'Nou d\'Octubre',p1:'oeste',p2:'campanar',tipo:'parada'},
+    {n:'C/ Nicolás Estévanez esquina con C/ Linares',p1:'oeste',p2:'campanar',tipo:'emergencia'},
+    {n:'Cruce Avd Guillem de Castro con C/ Nuestra señora de Gracia',p1:'oeste',p2:'central',tipo:'emergencia'},
+    {n:'Depósito Sur',p1:'oeste',p2:'central',tipo:'emt'},
+    {n:'Amistat-Casa de Salud',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Aragón',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Ayora',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Beteró',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Canyamelar',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Doctor Lluch - Metro Cabanyal',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Estación de Metro - Facultades',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Francesc Cubells',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Grau - La Marina',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'La Cadena',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'La Carrasca',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'La Marina - Metro Neptú',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Marítim',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Metro Albereda',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Platja Malva-rosa',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Platja les Arenes',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Tarongers - Ernest Lluch',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Universitat Politècnica',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'València Cabanyal',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Vicente Zaragozá',p1:'norte',p2:'central',tipo:'parada'},
+    {n:'Alfauir',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'Estación de Benimaclet',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'Estación de Pont de Fusta',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'Estadi Ciutat de València',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'Machado',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'Sagunt',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'Sant Miquel dels Reis',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'Talleres Machado de Metrovalencia (FGV)',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'Orriols',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'Tossal del Rei',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'Trinitat',p1:'norte',p2:'campanar',tipo:'parada'},
+    {n:'C/ Dr Gómez Ferrer, 17',p1:'norte',p2:'central',tipo:'emergencia'},
+    {n:'C/ Santos Justo y Pastor, (entre el 67 y el 69))',p1:'norte',p2:'central',tipo:'emergencia'},
+    {n:'Cruce Avd Valladolid con C/ Emilio Baró',p1:'norte',p2:'campanar',tipo:'emergencia'},
+    {n:'Depósito Norte',p1:'norte',p2:'central',tipo:'emt'},
+    {n:'Amado Granell - Montolivet',p1:'central',p2:'norte',tipo:'parada'},
+    {n:'Ciutat Arts i Ciències - Justícia',p1:'central',p2:'norte',tipo:'parada'},
+    {n:'Colón',p1:'central',p2:'norte',tipo:'parada'},
+    {n:'Moreres',p1:'central',p2:'norte',tipo:'parada'},
+    {n:'Natzaret',p1:'central',p2:'norte',tipo:'parada'},
+    {n:'Oceanogràfic (front)',p1:'central',p2:'norte',tipo:'parada'},
+    {n:'Quatre Carreres',p1:'central',p2:'norte',tipo:'parada'},
+    {n:'Russafa',p1:'central',p2:'norte',tipo:'parada'},
+    {n:'Xàtiva',p1:'central',p2:'norte',tipo:'parada'},
+    {n:'València la Font de Sant Lluís',p1:'central',p2:'oeste',tipo:'parada'},
+    {n:'Línea 10 MetroValencia - Estación Alicante',p1:'central',p2:'oeste',tipo:'parada'},
+    {n:'Bailén',p1:'central',p2:'oeste',tipo:'parada'},
+    {n:'Beniferri',p1:'campanar',p2:'oeste',tipo:'parada'},
+    {n:'Benimàmet',p1:'campanar',p2:'oeste',tipo:'parada'},
+    {n:'Campanar',p1:'campanar',p2:'oeste',tipo:'parada'},
+    {n:'Florista',p1:'campanar',p2:'oeste',tipo:'parada'},
+    {n:'Garbí',p1:'campanar',p2:'oeste',tipo:'parada'},
+    {n:'Les Carolines/Fira',p1:'campanar',p2:'oeste',tipo:'parada'},
+    {n:'Palau de Congressos',p1:'campanar',p2:'oeste',tipo:'parada'},
+    {n:'Túria',p1:'campanar',p2:'oeste',tipo:'parada'},
+    {n:'Benicalap',p1:'campanar',p2:'norte',tipo:'parada'},
+    {n:'Marxalenes',p1:'campanar',p2:'norte',tipo:'parada'},
+    {n:'Massarrojos',p1:'campanar',p2:'norte',tipo:'parada'},
+    {n:'Reus',p1:'campanar',p2:'norte',tipo:'parada'},
+    {n:'Trànsits',p1:'campanar',p2:'norte',tipo:'parada'}
+  ],
+  centros_comerciales:[
+    {n:'CC El Saler',dir:'Av. del Professor López Piñero',p1:'central',p2:'norte',tipo:'cc'},
+    {n:'CC Aqua',dir:'Carrer de Menorca',p1:'central',p2:'norte',tipo:'cc'},
+    {n:'CC Campanar',dir:'Av. de Tirso de Molina',p1:'campanar',p2:'oeste',tipo:'cc'},
+    {n:'CC Carrefour Campanar',dir:'Av. de Manuel de Falla',p1:'campanar',p2:'oeste',tipo:'cc'},
+    {n:'Nuevo Centro',dir:'Av. de Pius XII',p1:'campanar',p2:'oeste',tipo:'cc'},
+    {n:'El Corte Inglés Avenida de Francia',dir:'Carrer del Pintor Maella',p1:'central',p2:'norte',tipo:'cc'},
+    {n:'Centro Comercial Arena',dir:'C/ de Santa Genoveva Torres',p1:'norte',p2:'campanar',tipo:'cc'},
+    {n:'El Corte Inglés Pintor Sorolla-Colón Edificio Moda',dir:'C. del Pintor Sorolla',p1:'norte',p2:'central',tipo:'cc'},
+    {n:'Centro Comercial Ademuz',dir:'Av. de Pius XII',p1:'campanar',p2:'oeste',tipo:'cc'},
+    {n:'Mercavalencia',dir:'Carretera Fuente d\'En Corts',p1:'central',p2:'norte',tipo:'industria'},
+    {n:'ZAL',p1:'central',p2:'norte',tipo:'industria'},
+    {n:'Vara de Quart',p1:'oeste',p2:'campanar',tipo:'industria'}
+  ],
+  parques:[
+    {n:'Benicalap',dir:'Av. Burjasot, 254',p1:'campanar',p2:'oeste'},
+    {n:'Bioparc',dir:'Av. Pio Baroja, 3',p1:'campanar',p2:'oeste'},
+    {n:'Cabecera',dir:'Av. Pio Baroja s/n',p1:'campanar',p2:'oeste'},
+    {n:'Profesor Antonio Llmobart',dir:'Entre C/ Joaquín Ballester y C/ Ricardo Micó',p1:'campanar',p2:'oeste'},
+    {n:'Lineal De Benimámet',dir:'C/ Miniaturista Messeguer',p1:'campanar',p2:'oeste'},
+    {n:'Marxalenes',dir:'Entre C/ de San Pancracio, C/ Lluis crumiere, C/ Reus y C/ La Estrella',p1:'campanar',p2:'norte'},
+    {n:'Amelia Chiner',dir:'Av. Tarongers - Lluís Peixó',p1:'norte',p2:'central'},
+    {n:'Orriols',dir:'C/ Sanitago Rusiñol, 17',p1:'norte',p2:'campanar'},
+    {n:'Oeste',dir:'Av. Cid, 35 - C/ Enguera, s/n',p1:'oeste',p2:'campanar'},
+    {n:'Central',dir:'C/ Filipines, s/n',p1:'central',p2:'oeste'},
+    {n:'La Rambleta',dir:'C/ Pio IX s/n',p1:'central',p2:'oeste'},
+    {n:'Urbano De Malilla',dir:'C/ Joaquín Benlloch, s/n',p1:'central',p2:'oeste'}
+  ],
+  jardines:[
+    {n:'Beniferri, Pau Ademuz Y Congresos',dir:'Av. De Cortes Valencianas',p1:'campanar',p2:'oeste'},
+    {n:'Camino De Moncada',dir:'C/ Rafael Company s/n',p1:'campanar',p2:'norte'},
+    {n:'Chalet De Panach',dir:'C/ Campament, 64 (Benimamet)',p1:'campanar',p2:'oeste'},
+    {n:'Polifilo',dir:'C/ Canal de navarrés, s/n',p1:'campanar',p2:'oeste'},
+    {n:'Profesor Antonio Lllmobart (La Fe)',dir:'C/ Joaquín Ballester y C/ Ricardo Micó',p1:'campanar',p2:'oeste'},
+    {n:'Tendetes',dir:'C/ Ricardo Micó y C/ Padre Ferris',p1:'campanar',p2:'oeste'},
+    {n:'Albalat Dels Tarongers',dir:'C/ Albalat dels Tarongers y C/ Clariano',p1:'norte',p2:'central'},
+    {n:'Av. Blasco Ibañez',dir:'Desde Jardines del real hasta los poblados marítimos',p1:'norte',p2:'central'},
+    {n:'De Ayora',dir:'C/ Santos Justo y Pastor, 98',p1:'norte',p2:'central'},
+    {n:'De Cactus',dir:'Av. Primado Reig y C/ Cofrents',p1:'norte',p2:'campanar'},
+    {n:'Del Real - De Viveros',dir:'San Pío V, s/n',p1:'norte',p2:'central'},
+    {n:'La Glorieta',dir:'C/ General Palancia, General Tovar, Porta de la mar y Palacio de la justicia',p1:'norte',p2:'central'},
+    {n:'Monforte',dir:'C/ Monfort, s/n',p1:'norte',p2:'central'},
+    {n:'Morvedre',dir:'C/ Largenter Suárez, 20',p1:'norte',p2:'campanar'},
+    {n:'Parterre',dir:'Plz. Alfonso el Magnánimo',p1:'norte',p2:'central'},
+    {n:'Paseo Marítimo Y Neptuno',dir:'Playas Cabanyal, Malvarrosa y Paseo Neptuno',p1:'norte',p2:'central'},
+    {n:'Almeditas De Serranos',dir:'Entre los puentes de San José y de la Trinidad (margen drch)',p1:'oeste',p2:'norte'},
+    {n:'Botánico',dir:'C/ QUART, 80',p1:'oeste',p2:'campanar'},
+    {n:'De Parcent',dir:'Entre Av. Oeste y C/ Eixarchs (Escuelas Pías)',p1:'oeste',p2:'campanar'},
+    {n:'Hespérides',dir:'C/ Beato Gaspar Bono',p1:'oeste',p2:'campanar'},
+    {n:'Centro De Racó De L\'Olla',dir:'Crta. Del Palmar s/n',p1:'saler',p2:'central'},
+    {n:'Devesa De L\'Albufera',dir:'Muntanyar de la Mona',p1:'saler',p2:'central'},
+    {n:'Doctor Waksman Y Puig',dir:'Entee Av. Doctor Waksman y C/ Puig Campana',p1:'central',p2:'oeste'},
+    {n:'Hermanos Maristas',dir:'Av. Hermanos Maristas',p1:'central',p2:'norte'}
+  ],
+  centros_salud:[
+    {n:'Consultorio Guillem de Castro',dir:'C/ de Guillem de Castro, 149',p1:'oeste',p2:'campanar',tipo:'consultorio'},
+    {n:'Centro de Salud Nou Moles',dir:'Carrer de l\'Art Major de la Seda, 40',p1:'oeste',p2:'campanar',tipo:'centro_salud'},
+    {n:'Centro de Salud C.S.I Juan Llorens',dir:'C/ JUAN LLORENS, Nº 8',p1:'oeste',p2:'campanar',tipo:'centro_salud'},
+    {n:'Centro de Salud Fontsanta',dir:'C. de la Mare de Déu de la Fontsanta, 18',p1:'oeste',p2:'campanar',tipo:'centro_salud'},
+    {n:'CENTRO SALUD PARE JOFRE',dir:'C/ del Beat Nicolau Factor, 1',p1:'oeste',p2:'central',tipo:'centro_salud'},
+    {n:'Consultorio Auxiliar Safranar',dir:'C. Virgen de la Cabeza, 31-33',p1:'oeste',p2:'central',tipo:'consultorio'},
+    {n:'Centro de Salud Plaza Segovia',dir:'Plaça de Segòvia, s/n',p1:'oeste',p2:'central',tipo:'centro_salud'},
+    {n:'Centro de Salud San Isidro',dir:'C. de Campos Crespo, 94',p1:'oeste',p2:'central',tipo:'centro_salud'},
+    {n:'Consultorio Local Valencia - La Torre',dir:'Carrer Benidoleig, 9',p1:'central',p2:'oeste',tipo:'consultorio'},
+    {n:'Centro de Salud Valencia - Castellar - Oliveral',dir:'Calle Vicente Puchol, 11',p1:'central',p2:'oeste',tipo:'centro_salud'},
+    {n:'Centro de Salud Gil y Morte',dir:'Carrer del Dr. Gil i Morte, 33',p1:'central',p2:'oeste',tipo:'centro_salud'},
+    {n:'Consultorio Auxiliar Convento',dir:'C/ del Convent de Jerusalem, 29',p1:'central',p2:'oeste',tipo:'consultorio'},
+    {n:'Centro de Salud Valencia - Ingeniero J. Benlloch',dir:'Carrer de Joaquin Benlloch, 27',p1:'central',p2:'oeste',tipo:'centro_salud'},
+    {n:'Centro de Salud San Marcelino',dir:'Carrer de Sant Pius X, 32',p1:'central',p2:'oeste',tipo:'centro_salud'},
+    {n:'Consultorio Local Valencia - Carretera de Artes',dir:'Ctra. d\'Artés, 6',p1:'central',p2:'oeste',tipo:'consultorio'},
+    {n:'Consultorio Local Valencia - Horno de Alcedo',dir:'Camí d\'Alabau, 2',p1:'central',p2:'oeste',tipo:'consultorio'},
+    {n:'Centro de Salud Ruzafa',dir:'Carrer de Sant Valero, 8',p1:'central',p2:'norte',tipo:'centro_salud'},
+    {n:'Centro de Salud Trafalgar',dir:'Carrer de Trafalgar, 32',p1:'central',p2:'norte',tipo:'centro_salud'},
+    {n:'Centro de Salud Valencia - Fuente San Luis',dir:'C. de la Mare de Déu de la Fontsanta, 18',p1:'central',p2:'norte',tipo:'centro_salud'},
+    {n:'Centro de Salud Luis Oliag',dir:'Carrer de Lluís Oliag, 62',p1:'central',p2:'norte',tipo:'centro_salud'},
+    {n:'Consultorio Auxiliar de La Punta',dir:'Av. de Jesús Morante Borrás, 176',p1:'central',p2:'norte',tipo:'consultorio'},
+    {n:'Centro de Salud de Nazaret',dir:'Carrer de Fernando Morais de la Horra, 2',p1:'central',p2:'norte',tipo:'centro_salud'},
+    {n:'Consultorio Auxiliar Vicente Brull',dir:'Carrer de Vicent Brull, 71',p1:'norte',p2:'central',tipo:'consultorio'},
+    {n:'Centro de Salud Malva-Rosa',dir:'C/ ISABEL DE VILLENA, Nº2 PABELLÓN C',p1:'norte',p2:'central',tipo:'centro_salud'},
+    {n:'Centro de Salud Republica Argentina',dir:'Carrer de la República Argentina, 8',p1:'norte',p2:'central',tipo:'centro_salud'},
+    {n:'Centro de Salud Benimaclet',dir:'C/ GUARDIA CIVIL, Nº 13',p1:'norte',p2:'central',tipo:'centro_salud'},
+    {n:'Centro de Salud Trinitat',dir:'Carrer de la Flora, 7',p1:'norte',p2:'central',tipo:'centro_salud'},
+    {n:'Centro de Salud Valencia - Napoles y Sicilia',dir:'Plaza Nápoles y Sicilia, 4',p1:'norte',p2:'central',tipo:'centro_salud'},
+    {n:'Centro de Salud Salvador Pau',dir:'Carrer de Salvador Pau, 42',p1:'norte',p2:'central',tipo:'centro_salud'},
+    {n:'Centro de Salud Serreria I',dir:'Calle Serrería, 73',p1:'norte',p2:'central',tipo:'centro_salud'},
+    {n:'Centro de Salud Serreria II',dir:'Carrer de Pere de València, 28',p1:'norte',p2:'central',tipo:'centro_salud'},
+    {n:'Centro de Salud Salvador Allende',dir:'Carrer del Comte de Lumiares, 3',p1:'norte',p2:'campanar',tipo:'centro_salud'},
+    {n:'Consultorio Local Valencia - Bilbao',dir:'C/ BILBAO, Nº 23',p1:'norte',p2:'campanar',tipo:'consultorio'},
+    {n:'Consultorio Local Valencia - Arquitecto Tolsa',dir:'C/ ARQUITECTO TOLSA, Nº 20',p1:'norte',p2:'campanar',tipo:'consultorio'},
+    {n:'Consultorio Auxilirar de Benigaraig',dir:'C/ FERRER Y BIGNE, Nº 47',p1:'campanar',p2:'norte',tipo:'consultorio'},
+    {n:'Centro de Salud Lliri',dir:'C/ AZUCENA, Nº 9',p1:'campanar',p2:'norte',tipo:'centro_salud'},
+    {n:'Centro de Salud Valencia - Juan XXIII',dir:'Av. de Juan XXIII, 39',p1:'campanar',p2:'norte',tipo:'centro_salud'},
+    {n:'Centro de Salud Just Ramírez',dir:'Carrer de Just Ramírez, s/n',p1:'campanar',p2:'norte',tipo:'centro_salud'},
+    {n:'Consultorio Local Valencia - Borboto',dir:'PLAZA DEL MORERAL, Nº 8',p1:'campanar',p2:'norte',tipo:'consultorio'},
+    {n:'Consultorio Local Valencia L\'Alger',dir:'Carrer de l\'Alguer, 28',p1:'campanar',p2:'norte',tipo:'consultorio'},
+    {n:'Consultorio Local Valencia - Carpesa',dir:'Calle Apóstol San Pedro, 23',p1:'campanar',p2:'norte',tipo:'consultorio'},
+    {n:'Consultorio Local Valenca - Massarrojos',dir:'Carrer del Retor Bau, 10',p1:'campanar',p2:'norte',tipo:'consultorio'},
+    {n:'Centro de Salud Valencia - Campanar',dir:'C/ VICENTE RIOS ENRIQUE, S/N',p1:'campanar',p2:'oeste',tipo:'centro_salud'},
+    {n:'Centro de Salud Valencia - Benimamet',dir:'Calle Ing. Aubán, 20',p1:'campanar',p2:'oeste',tipo:'centro_salud'},
+    {n:'Centro de Salud Miguel Servet',dir:'Carrer Amics del Corpus',p1:'campanar',p2:'oeste',tipo:'centro_salud'},
+    {n:'Centro de Salud Campanar II',dir:'Avinguda de Campanar, Campanar, 46009 València, Valencia',p1:'campanar',p2:'oeste',tipo:'centro_salud'},
+    {n:'Consultorio Local Valencia - Tendetes',dir:'Carrer de Ricardo Micó, 3',p1:'campanar',p2:'oeste',tipo:'consultorio'},
+    {n:'Consultorio Local Valencia - El Palmar',dir:'Carrer dels Redolins, 7',p1:'saler',p2:'central',tipo:'consultorio'},
+    {n:'Consultorio Local Valencia- El Perellonet',dir:'Carrer de Sotavent, 1',p1:'saler',p2:'central',tipo:'consultorio'},
+    {n:'Consultorio Pinedo',dir:'Carrer Marino Villamil, 8',p1:'saler',p2:'central',tipo:'consultorio'}
+  ],
+  egas:[
+    {n:'Edificio Arcade',dir:'C/ Serpis',p1:'norte',p2:'central'},
+    {n:'Torre Panoramica',dir:'Avenida Blasco Ibañez 153',p1:'norte',p2:'central'},
+    {n:'Edificio El Bachiller 31',dir:'El Bachiller 31',p1:'norte',p2:'central'},
+    {n:'Serpis 59',dir:'Serpis, 59',p1:'norte',p2:'central'},
+    {n:'Cronista Almela 6',dir:'Avenida Catalunya 3',p1:'norte',p2:'central'},
+    {n:'Cronista Almela 2',dir:'Avenida Catalunya 1',p1:'norte',p2:'central'},
+    {n:'Edificio Torre',dir:'José María Haro 59',p1:'norte',p2:'central'},
+    {n:'Poeta Durán Y Tortajada 7',dir:'Poeta Durán Y Tortajada 7',p1:'norte',p2:'central'},
+    {n:'El Bachiller, 15',dir:'El Bachiller, 15',p1:'norte',p2:'central'},
+    {n:'Doctor Bartual Moret 3',dir:'Doctor Bartual Moret 3',p1:'norte',p2:'central'},
+    {n:'Doctor Bartual Moret 5',dir:'Doctor Bartual Moret 5',p1:'norte',p2:'central'},
+    {n:'Doctor Bartual Moret 7',dir:'Doctor Bartual Moret 7',p1:'norte',p2:'central'},
+    {n:'Doctor Bartual Moret 9',dir:'Doctor Bartual Moret 9',p1:'norte',p2:'central'},
+    {n:'Gascó Oliag 4',dir:'Gascó Oliag, 4',p1:'norte',p2:'central'},
+    {n:'Ramon Gordillo 1',dir:'Ramon Gordillo 1',p1:'norte',p2:'central'},
+    {n:'Ramon Gordillo 3',dir:'Ramon Gordillo 3',p1:'norte',p2:'central'},
+    {n:'Ramon Gordillo 5',dir:'Ramon Gordillo 5',p1:'norte',p2:'central'},
+    {n:'Ramon Gordillo 7',dir:'Ramon Gordillo 7',p1:'norte',p2:'central'},
+    {n:'Menendez Y Pelayo 29',dir:'Menendez Y Pelayo 29',p1:'norte',p2:'central'},
+    {n:'Maestro Esteban Catala 2',dir:'Maestro Esteban Catala 2',p1:'norte',p2:'central'},
+    {n:'Maestro Esteban Catala 4',dir:'Maestro Esteban Catala 4',p1:'norte',p2:'central'},
+    {n:'Primado Reig 94',dir:'Primado Reig 94',p1:'norte',p2:'central'},
+    {n:'Primado Reig 96',dir:'Primado Reig 96',p1:'norte',p2:'central'},
+    {n:'Primado Reig 102',dir:'Primado Reig 102',p1:'norte',p2:'central'},
+    {n:'Doctor Gomez Ferrer 19',dir:'Doctor Gomez Ferrer 19',p1:'norte',p2:'central'},
+    {n:'Av Blasco Ibañez,29',dir:'Av Blasco Ibañez,29',p1:'norte',p2:'central'},
+    {n:'Av Blasco Ibañez 31',dir:'Av Blasco Ibañez 31',p1:'norte',p2:'central'},
+    {n:'Av Blasco Ibañez,25',dir:'Av Blasco Ibañez,25',p1:'norte',p2:'central'},
+    {n:'Av Blasco Ibañez 27',dir:'Av Blasco Ibañez 27',p1:'norte',p2:'central'},
+    {n:'Alemania 10',dir:'Alemania 10',p1:'norte',p2:'central'},
+    {n:'Alemania 16',dir:'Alemania 16',p1:'norte',p2:'central'},
+    {n:'Cronista Carreres 13',dir:'Cronista Carreres 13',p1:'norte',p2:'central'},
+    {n:'Cronista Carreres 11',dir:'Cronista Carreres 11',p1:'norte',p2:'central'},
+    {n:'Cronista Carreres 10',dir:'Cronista Carreres 10',p1:'norte',p2:'central'},
+    {n:'Cronista Carreres 6',dir:'Cronista Carreres 6',p1:'norte',p2:'central'},
+    {n:'Edificio Ripalda',dir:'Pl Legión Española 2',p1:'norte',p2:'central'},
+    {n:'Primado Reig 86',dir:'Primado Reig 86',p1:'norte',p2:'central'},
+    {n:'Botanico Cavanilles 18',dir:'Botanico Cavanilles 18',p1:'norte',p2:'central'},
+    {n:'Cronista Almela Y Vives 1',dir:'Cronista Almela Y Vives 1',p1:'norte',p2:'central'},
+    {n:'Cronista Almela Y Vives 3',dir:'Cronista Almela Y Vives 3',p1:'norte',p2:'central'},
+    {n:'Cronista Almela Y Vives 5',dir:'Cronista Almela Y Vives 5',p1:'norte',p2:'central'},
+    {n:'Cronista Almela Y Vives 7',dir:'Cronista Almela Y Vives 7',p1:'norte',p2:'central'},
+    {n:'Balcón De Levante',dir:'C/ D. Manuel Candela 2',p1:'norte',p2:'central'},
+    {n:'Paseo Alameda 1',dir:'Paseo Alameda 1',p1:'norte',p2:'central'},
+    {n:'Torre De Francia',dir:'Avenida De Francia, 2',p1:'central',p2:'norte'},
+    {n:'Aqua Multiespacio 1',dir:'Calle Menorca',p1:'central',p2:'norte'},
+    {n:'Edificio Oceanis',dir:'Nazaret',p1:'central',p2:'norte'},
+    {n:'Torres Alameda I',dir:'C/ De Penyarrotja 2A',p1:'central',p2:'norte'},
+    {n:'Torres Alameda I I',dir:'Paseo Alameda 38',p1:'central',p2:'norte'},
+    {n:'Torres Oceanográficas',dir:'Calle Antonio Sacramento 17',p1:'central',p2:'norte'},
+    {n:'Gral Urrutia 65',dir:'C/ Gral Urrutia, 65',p1:'central',p2:'norte'},
+    {n:'Torres Levante',dir:'C/ Gral Urrutia',p1:'central',p2:'norte'},
+    {n:'Edificio Politaria B',dir:'Av Profesor López Piñero,4',p1:'central',p2:'norte'},
+    {n:'Edificio Politaria A',dir:'Av Profesor López Piñero, 4B',p1:'central',p2:'norte'},
+    {n:'Torre Ciudad De Las Ciencias D',dir:'Av Profesor López Piñero,6',p1:'central',p2:'norte'},
+    {n:'Torre Ciudad De Las Ciencias C',dir:'Av Profesor López Piñero,8',p1:'central',p2:'norte'},
+    {n:'Torre Ciudad De Las Ciencias B',dir:'Av Profesor López Piñero, 10',p1:'central',p2:'norte'},
+    {n:'Torre Ciudad De Las Ciencias A',dir:'Av Profesor López Piñero, 12',p1:'central',p2:'norte'},
+    {n:'Edificio Gulliver',dir:'Paseo Alameda 39',p1:'central',p2:'norte'},
+    {n:'Torre De Valencia',dir:'Pl America',p1:'central',p2:'norte'},
+    {n:'Torres Puerta Las Artes-B',dir:'C/ Gral Urrutia 67B',p1:'central',p2:'norte'},
+    {n:'Torres Puerta Las Artes-A',dir:'C/ Gral Urrutia 67A',p1:'central',p2:'norte'},
+    {n:'Gv Marques Del Turia, 79',dir:'Gv Marques Del Turia, 79',p1:'central',p2:'norte'},
+    {n:'Av Hermanos Maristas 12',dir:'Av Hermanos Maristas 12',p1:'central',p2:'norte'},
+    {n:'Av Hermanos Maristas 14',dir:'Av Hermanos Maristas 14',p1:'central',p2:'norte'},
+    {n:'Av Alc Gisbert Rico, 33',dir:'Av Alc Gisbert Rico, 33',p1:'central',p2:'norte'},
+    {n:'Av Alc Gisbert Rico, 35',dir:'Av Alc Gisbert Rico, 35',p1:'central',p2:'norte'},
+    {n:'Torres De La Alameda',dir:'Avenida Francia 1',p1:'central',p2:'norte'},
+    {n:'Melia Valencia (Hilton)',dir:'Av. Cortes Valencianas, 52',p1:'campanar',p2:'oeste'},
+    {n:'Torres Llaves De Oro 2',dir:'Calle La Safor, 12',p1:'campanar',p2:'oeste'},
+    {n:'Torres Llaves De Oro 1',dir:'Av. Cortes Valencianas,35',p1:'campanar',p2:'oeste'},
+    {n:'Ademuz 1',dir:'Calle Valle De Ayora',p1:'campanar',p2:'oeste'},
+    {n:'Ademuz 2',dir:'Av. Cortes Valencianas,22',p1:'campanar',p2:'oeste'},
+    {n:'Hotel Feria',dir:'Av De Las Ferias, 2',p1:'campanar',p2:'oeste'},
+    {n:'Luz Del Turia',dir:'Manuel De Falla 12',p1:'campanar',p2:'oeste'},
+    {n:'Géminis Center',dir:'Av. De Las Cortes Valencianas, 39',p1:'campanar',p2:'oeste'},
+    {n:'Av. Corts Valencianes 46',dir:'Av Cots Valencianes 46',p1:'campanar',p2:'oeste'},
+    {n:'Sorolla Palace',dir:'Corts Valencianes 58',p1:'campanar',p2:'oeste'},
+    {n:'Siglo Xxi',dir:'Av. De Les Corts Valencianes 43-45',p1:'campanar',p2:'oeste'},
+    {n:'Ciudad Norte V',dir:'Avenida Maestro Rodrigo',p1:'campanar',p2:'oeste'},
+    {n:'Ciudad Norte IV',dir:'Avenida Maestro Rodrigo',p1:'campanar',p2:'oeste'},
+    {n:'Ciudad Norte III',dir:'Avenida Maestro Rodrigo',p1:'campanar',p2:'oeste'},
+    {n:'Ciudad Norte II',dir:'Avenida Maestro Rodrigo',p1:'campanar',p2:'oeste'},
+    {n:'Ciudad Norte I',dir:'Avenida Maestro Rodrigo',p1:'campanar',p2:'oeste'},
+    {n:'Bulevar De Las Cortes',dir:'Av. De Les Corts Valencianes 28',p1:'campanar',p2:'oeste'},
+    {n:'Edificio Garcerán',dir:'C/ Guillem De Castro',p1:'oeste',p2:'campanar'},
+    {n:'C Piera, 3',dir:'C Piera, 3',p1:'oeste',p2:'campanar'},
+    {n:'C Piera, 23.',dir:'C Piera, 23.',p1:'oeste',p2:'campanar'},
+    {n:'C Piera, 25.',dir:'C Piera, 25.',p1:'oeste',p2:'campanar'},
+    {n:'Complejo 9 De Octubre',dir:'C/ Democracia 77',p1:'oeste',p2:'campanar'},
+    {n:'Poeta Marquina 17-18',dir:'Poeta Marquina 17-18',p1:'oeste',p2:'campanar'},
+    {n:'Edificio G.V Ramon Y Cajal 25',dir:'Gv Ramón Y Cajal,25',p1:'oeste',p2:'central'},
+    {n:'Sociópolis Parcela R17',dir:'J. Pastor Moreno,3',p1:'central',p2:'oeste'},
+    {n:'Edificio Marola II',dir:'Calle Ingeniero Jose Sirera 4',p1:'central',p2:'oeste'},
+    {n:'Edificio Bulevar',dir:'Calle Ingeniero Jose Sirera 2',p1:'central',p2:'oeste'},
+    {n:'Av Hermanos Maristas 2',dir:'Av Hermanos Maristas 2',p1:'central',p2:'oeste'},
+    {n:'Av Hermanos Maristas 4',dir:'Av Hermanos Maristas 4',p1:'central',p2:'oeste'},
+    {n:'Av Hermanos Maristas 8',dir:'Av Hermanos Maristas 8',p1:'central',p2:'oeste'},
+    {n:'Av Hermanos Maristas 10',dir:'Av Hermanos Maristas 10',p1:'central',p2:'oeste'}
+  ]
 };
 
-const CATEGORIES = ['hospitales','museos','mercados','pte','pamri','zonas_saler'];
-const CAT_LABELS = {hospitales:'Hospitales',museos:'Museos',mercados:'Mercados',pte:'PTE',pamri:'PAM RI',zonas_saler:'Zonas del Saler'};
+const CATEGORIES = ['hospitales','museos','mercados','pte','pamri','zonas_saler','paradas','centros_comerciales','parques','jardines','centros_salud','egas'];
+const CAT_LABELS = {hospitales:'Hospitales',museos:'Museos',mercados:'Mercados',pte:'PTE',pamri:'PAM RI',zonas_saler:'Zonas del Saler',paradas:'Metro / Tranvía / Bus',centros_comerciales:'Centros Comerciales',parques:'Parques',jardines:'Jardines',centros_salud:'Centros de Salud',egas:'EGAs'};
+const TIPO_LABELS = {parada:'Parada',emergencia:'Salida de emergencia',emt:'EMT',cc:'Centro Comercial',industria:'Industria',centro_salud:'Centro de Salud',consultorio:'Consultorio'};
+const DIR_OPTIONAL_CATS = ['centros_salud','egas'];
 const PROFILES = ['Josep','Tudon'];
 
 let currentProfile = null;
 let currentCat = 'hospitales';
-let queue = [], current = null, checked = false;
+let order = [], pos = 0, current = null, checked = false;
 let history = {}, notes = {}, sessionStats = {};
+let dirToggle = {};
 
 function storageKey(suffix){ return 'speis_' + currentProfile + '_' + suffix; }
 
@@ -643,16 +961,21 @@ function initProfileData(){
     DATA[c].forEach(item => { history[c][item.n] = {ok:0, fail:0}; });
   });
   notes = {};
+  dirToggle = {};
+  DIR_OPTIONAL_CATS.forEach(c => { dirToggle[c] = false; });
   try {
     const rh = localStorage.getItem(storageKey('history_v2'));
     if(rh){ const s=JSON.parse(rh); CATEGORIES.forEach(c=>{ if(s[c]) DATA[c].forEach(item=>{ if(s[c][item.n]) history[c][item.n]=s[c][item.n]; }); }); }
     const rn = localStorage.getItem(storageKey('notes'));
     if(rn) notes = JSON.parse(rn);
+    const rd = localStorage.getItem(storageKey('dirtoggle'));
+    if(rd){ const s=JSON.parse(rd); DIR_OPTIONAL_CATS.forEach(c=>{ if(typeof s[c]==='boolean') dirToggle[c]=s[c]; }); }
   } catch(e){}
 }
 
 function saveHistory(){ try{ localStorage.setItem(storageKey('history_v2'), JSON.stringify(history)); }catch(e){} }
 function saveNotes(){ try{ localStorage.setItem(storageKey('notes'), JSON.stringify(notes)); }catch(e){} }
+function saveDirToggle(){ try{ localStorage.setItem(storageKey('dirtoggle'), JSON.stringify(dirToggle)); }catch(e){} }
 
 function getProfilePreview(profile){
   try{
@@ -693,6 +1016,18 @@ function getDailyQuote(){
   return QUOTES[day % QUOTES.length];
 }
 
+function dirActive(cat){
+  if(DIR_OPTIONAL_CATS.includes(cat)) return !!dirToggle[cat];
+  return true;
+}
+
+function toggleDirField(){
+  if(!DIR_OPTIONAL_CATS.includes(currentCat)) return;
+  dirToggle[currentCat] = !dirToggle[currentCat];
+  saveDirToggle();
+  getNext();
+}
+
 function normalize(s){
   return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[''`]/g,"'").replace(/\s+/g,' ');
 }
@@ -716,18 +1051,43 @@ function checkDir(input, item){
 function buildQueue(){
   const items=[...DATA[currentCat]];
   for(let i=items.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [items[i],items[j]]=[items[j],items[i]]; }
-  queue=items;
+  order=items; pos=0;
 }
 
 let notesTimer = null;
 function getNext(){
-  if(queue.length===0) buildQueue();
-  current=queue.shift(); checked=false;
+  if(order.length===0) buildQueue();
+  current=order[pos]; checked=false;
+  renderItem();
+}
+
+function goNext(){
+  if(order.length===0){ buildQueue(); }
+  else {
+    pos++;
+    if(pos>=order.length){ buildQueue(); }
+  }
+  current=order[pos]; checked=false;
+  renderItem();
+}
+
+function goPrev(){
+  if(order.length===0){ buildQueue(); }
+  else {
+    pos--;
+    if(pos<0) pos=order.length-1;
+  }
+  current=order[pos]; checked=false;
+  renderItem();
+}
+
+function renderItem(){
   document.getElementById('item-name').textContent=current.n;
 
   const isZona = currentCat==='zonas_saler';
   const itemCat=document.getElementById('item-cat');
   if(isZona){ itemCat.textContent=current.cat; itemCat.style.display=''; }
+  else if(current.tipo && TIPO_LABELS[current.tipo]){ itemCat.textContent=TIPO_LABELS[current.tipo]; itemCat.style.display=''; }
   else { itemCat.style.display='none'; }
 
   document.getElementById('fields-grid').style.display = isZona ? 'none' : '';
@@ -751,9 +1111,19 @@ function getNext(){
 
   ['p1','p2'].forEach(f=>{ const el=document.getElementById('f-'+f); el.value=''; el.className=''; });
 
+  const dirToggleRow=document.getElementById('dir-toggle-row'), dirToggleBtn=document.getElementById('dir-toggle-btn');
+  if(DIR_OPTIONAL_CATS.includes(currentCat)){
+    dirToggleRow.style.display='';
+    const on=dirToggle[currentCat];
+    dirToggleBtn.className='dir-toggle-btn'+(on?' on':'');
+    dirToggleBtn.innerHTML='<span class="dot"></span> Ubicación: '+(on?'ON':'OFF');
+  } else {
+    dirToggleRow.style.display='none';
+  }
+
   const dirField=document.getElementById('field-dir'), dirInput=document.getElementById('f-dir');
   dirInput.value=''; dirInput.className='';
-  if(current.dir){ dirField.style.display=''; dirInput.disabled=false; }
+  if(current.dir && dirActive(currentCat)){ dirField.style.display=''; dirInput.disabled=false; }
   else { dirField.style.display='none'; dirInput.disabled=true; }
 
   const grupoField=document.getElementById('field-grupo'), grupoSelect=document.getElementById('f-grupo');
@@ -832,7 +1202,7 @@ function checkAnswer(){
   document.getElementById('f-p2').className=ok2?'correct':'wrong';
 
   let okd=true;
-  if(current.dir){
+  if(current.dir && dirActive(currentCat)){
     const vd=document.getElementById('f-dir').value;
     okd=checkDir(vd,current);
     document.getElementById('f-dir').className=okd?'correct':'wrong';
@@ -863,7 +1233,7 @@ function checkAnswer(){
     const p1c=current.p1.charAt(0).toUpperCase()+current.p1.slice(1);
     const p2c=current.p2.charAt(0).toUpperCase()+current.p2.slice(1);
     let revHtml=`<strong>Respuesta correcta:</strong><br>1ª salida: <strong>${p1c}</strong> &nbsp;·&nbsp; 2ª salida: <strong>${p2c}</strong>`;
-    if(current.dir) revHtml+=` &nbsp;·&nbsp; Dirección: <strong>${current.dir}</strong>`;
+    if(current.dir && dirActive(currentCat)) revHtml+=` &nbsp;·&nbsp; Dirección: <strong>${current.dir}</strong>`;
     if(current.grupo) revHtml+=` &nbsp;·&nbsp; Tipo: <strong>${GROUPS[currentCat][current.grupo]}</strong>`;
     if(current.peligrosidad!==undefined) revHtml+=` &nbsp;·&nbsp; Nivel Peligrosidad: <strong>${current.peligrosidad}</strong>`;
     const rev=document.getElementById('answer-reveal');
@@ -875,7 +1245,7 @@ function checkAnswer(){
   saveHistory(); updateStats(); renderHistory(); updateProgressBars();
 }
 
-function nextItem(){ getNext(); }
+function nextItem(){ goNext(); }
 
 function calcProgress(cat){
   const items=DATA[cat];
@@ -926,7 +1296,7 @@ function updateStats(){
 }
 
 function updateProgress(){
-  document.getElementById('progress-info').textContent=`${DATA[currentCat].length-queue.length} / ${DATA[currentCat].length} — ${CAT_LABELS[currentCat]}`;
+  document.getElementById('progress-info').textContent=`${pos+1} / ${DATA[currentCat].length} — ${CAT_LABELS[currentCat]}`;
 }
 
 function renderHistory(){
