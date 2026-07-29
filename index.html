@@ -85,6 +85,16 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .quote-label{font-size:10px;color:var(--fire-orange);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;font-family:'Barlow Condensed',sans-serif;font-weight:600}
 .quote-text{font-size:11px;color:var(--text-secondary);line-height:1.5;font-style:italic}
 
+.overall-progress{margin-bottom:16px}
+.overall-progress-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.overall-progress-lbl{font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.overall-progress-pct{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--fire-orange)}
+.overall-progress-track{width:100%;height:8px;border-radius:5px;background:rgba(255,255,255,0.07);overflow:hidden}
+.overall-progress-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--fire-red),var(--fire-orange),var(--fire-amber));transition:width .4s ease}
+
+.tab-pct{font-size:10px;font-weight:700;opacity:.6;margin-left:5px;letter-spacing:0}
+.tab.active .tab-pct{opacity:.9}
+
 .tabs{display:flex;gap:0;border-bottom:1px solid rgba(192,57,43,0.2);margin-bottom:20px}
 .tab{padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all .2s}
 .tab:hover:not(.active){color:var(--text-secondary)}
@@ -127,6 +137,27 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 
 .answer-reveal{margin-top:4px;margin-bottom:14px;padding:12px 16px;background:rgba(192,57,43,0.08);border:0.5px solid rgba(192,57,43,0.2);border-radius:8px;font-size:14px;line-height:2;color:var(--text-secondary)}
 .answer-reveal strong{color:var(--fire-amber)}
+
+.item-cat{font-size:11px;color:var(--fire-orange);letter-spacing:2px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:4px}
+
+.zona-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.zona-btn{padding:22px 10px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-radius:10px;cursor:pointer;color:#fff;border:0.5px solid transparent;transition:all .15s;text-align:center}
+.zona-btn:active{transform:scale(0.96)}
+.zona-btn[data-zona="1"]{background:rgba(198,224,180,0.16);border-color:rgba(198,224,180,0.5);color:#C6E0B4}
+.zona-btn[data-zona="1"]:hover:not(:disabled){background:rgba(198,224,180,0.28)}
+.zona-btn[data-zona="2"]{background:rgba(248,203,173,0.16);border-color:rgba(248,203,173,0.5);color:#F8CBAD}
+.zona-btn[data-zona="2"]:hover:not(:disabled){background:rgba(248,203,173,0.28)}
+.zona-btn[data-zona="3"]{background:rgba(255,230,153,0.16);border-color:rgba(255,230,153,0.5);color:#FFE699}
+.zona-btn[data-zona="3"]:hover:not(:disabled){background:rgba(255,230,153,0.28)}
+.zona-btn[data-zona="4"]{background:rgba(189,215,238,0.16);border-color:rgba(189,215,238,0.5);color:#BDD7EE}
+.zona-btn[data-zona="4"]:hover:not(:disabled){background:rgba(189,215,238,0.28)}
+.zona-btn:disabled{cursor:not-allowed;opacity:.55}
+.zona-btn.correct{background:rgba(39,174,96,0.35)!important;border-color:var(--correct)!important;color:#fff!important;opacity:1}
+.zona-btn.wrong{background:rgba(192,57,43,0.35)!important;border-color:var(--wrong)!important;color:#fff!important;opacity:1}
+
+@media(max-width:600px){
+  .zona-buttons{grid-template-columns:1fr 1fr}
+}
 
 /* ── NOTAS ── */
 .notes-area{border-top:0.5px solid rgba(255,255,255,0.06);padding-top:14px}
@@ -210,14 +241,30 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
     </div>
   </header>
 
+  <div class="overall-progress" id="overall-progress">
+    <div class="overall-progress-top">
+      <span class="overall-progress-lbl">Progreso general</span>
+      <span class="overall-progress-pct" id="overall-progress-pct">0%</span>
+    </div>
+    <div class="overall-progress-track"><div class="overall-progress-fill" id="overall-progress-fill" style="width:0%"></div></div>
+  </div>
   <div class="tabs" id="tabs"></div>
   <div class="stats-bar" id="stats-bar"></div>
   <div class="progress-info" id="progress-info"></div>
 
   <div class="quiz-card" id="quiz-card">
     <div class="item-header">
-      <div class="item-name" id="item-name">Cargando...</div>
+      <div style="flex:1">
+        <div class="item-cat" id="item-cat" style="display:none"></div>
+        <div class="item-name" id="item-name">Cargando...</div>
       </div>
+    </div>
+    <div class="zona-buttons" id="zona-buttons" style="display:none">
+      <button class="zona-btn" data-zona="1" onclick="answerZona(1)">Zona 1</button>
+      <button class="zona-btn" data-zona="2" onclick="answerZona(2)">Zona 2</button>
+      <button class="zona-btn" data-zona="3" onclick="answerZona(3)">Zona 3</button>
+      <button class="zona-btn" data-zona="4" onclick="answerZona(4)">Zona 4</button>
+    </div>
     <div class="fields" id="fields-grid">
       <div class="field">
         <label>1ª Salida</label>
@@ -329,6 +376,93 @@ const GROUPS = {
     policialocal:'Centrales Policía Local'
   }
 };
+
+const ZONAS_SALER = [
+    {n:'Camping "Coll-Vert"',cat:'ALOJ.',zonas:[1]},
+    {n:'Camping "Jardines de Ocio"',cat:'ALOJ.',zonas:[1]},
+    {n:'Camping "Valencia"',cat:'ALOJ.',zonas:[1]},
+    {n:'Camping "Park"',cat:'ALOJ.',zonas:[1]},
+    {n:'Cabañas "Albufera"',cat:'ALOJ.',zonas:[1]},
+    {n:'Hostal "Andrés"',cat:'ALOJ.',zonas:[1]},
+    {n:'Hotel "Patilla"',cat:'ALOJ.',zonas:[1]},
+    {n:'CEIP "Luis Santangel"',cat:'EDU.',zonas:[1]},
+    {n:'IES Saler (Depósitos prop)',cat:'EDU.',zonas:[1]},
+    {n:'Restaurante "La Devesa"',cat:'EAT',zonas:[1]},
+    {n:'Restaurante "La Viña"',cat:'EAT',zonas:[1]},
+    {n:'Restaurante "La Devesa y Albufera"',cat:'EAT',zonas:[1]},
+    {n:'Arroceria "Duna"',cat:'EAT',zonas:[1]},
+    {n:'Parking "La Marina"',cat:'P',zonas:[1]},
+    {n:'Polideportivo el Saler',cat:'RESTO',zonas:[1]},
+    {n:'Casa forestal del saler',cat:'RESTO',zonas:[1]},
+    {n:'Centro Municipal',cat:'RESTO',zonas:[1]},
+    {n:'Asociación vecinos Devesa',cat:'RESTO',zonas:[1]},
+    {n:'Centro transf. Eléctrico',cat:'RESTO',zonas:[1]},
+    {n:'Gasolinera "Buenavista"',cat:'RESTO',zonas:[1]},
+    {n:'DGT',cat:'RESTO',zonas:[1]},
+    {n:'Retén BB y PC "Saler"',cat:'RESTO',zonas:[1]},
+    {n:'2x Postas Sanitarias',cat:'RESTO',zonas:[1]},
+    {n:'Tallafoc del Saler',cat:'TF',zonas:[1]},
+    {n:'Tallafoc de la Rambla',cat:'TF',zonas:[1]},
+    {n:'Tallafoc de la Devesa',cat:'TF',zonas:[1]},
+    {n:'EL SALER',cat:'POBLE',zonas:[1]},
+    {n:'Playa de la creu',cat:'BEACH',zonas:[1]},
+    {n:'Playa del Saler',cat:'BEACH',zonas:[1]},
+    {n:'Gavines I y III',cat:'EDIF.',zonas:[2]},
+    {n:'Nucelos 5 y 6',cat:'EDIF.',zonas:[2]},
+    {n:'Torres Blancas',cat:'EDIF.',zonas:[2]},
+    {n:'Torres Sea House',cat:'EDIF.',zonas:[2]},
+    {n:'Torres del Saler',cat:'EDIF.',zonas:[2]},
+    {n:'Edificios PROVAL',cat:'EDIF.',zonas:[2]},
+    {n:'Edificio Siena',cat:'EDIF.',zonas:[2]},
+    {n:'Urbanización Casbah',cat:'EDIF.',zonas:[2]},
+    {n:'Hotel Sidi Saler',cat:'UBI.',zonas:[2]},
+    {n:'Restaurante "Lahiver"',cat:'UBI.',zonas:[2]},
+    {n:'Mirador de la Albufera',cat:'UBI.',zonas:[2]},
+    {n:'Patrulla PL',cat:'SERV.',zonas:[2]},
+    {n:'Parque BBs',cat:'SERV.',zonas:[2]},
+    {n:'Viveros municipales',cat:'SERV.',zonas:[2]},
+    {n:'Junta de desagüe de la Albufera',cat:'SERV.',zonas:[2]},
+    {n:'Edif. Grupos electrógenos',cat:'RESTO',zonas:[2,3]},
+    {n:'Helipuerto',cat:'RESTO',zonas:[1,2,3,4]},
+    {n:'Depuradora',cat:'RESTO',zonas:[2]},
+    {n:'Instalación telefónica',cat:'RESTO',zonas:[2]},
+    {n:'Subestación eléctrica',cat:'RESTO',zonas:[2]},
+    {n:'Estación bombeo aguas residuales',cat:'RESTO',zonas:[2]},
+    {n:'5x Centro transformación eléctrico',cat:'RESTO',zonas:[2]},
+    {n:'Tallafoc de la Calle',cat:'TF',zonas:[2]},
+    {n:'Tallafoc de los Ferros',cat:'TF',zonas:[2]},
+    {n:'Tallafoc de la Garrofera',cat:'TF',zonas:[2]},
+    {n:'Playa de la Garrofera',cat:'BEACH',zonas:[2]},
+    {n:'Playa dels ferros',cat:'BEACH',zonas:[2]},
+    {n:'Edif. "Caballerizas"',cat:'EDIF.',zonas:[3]},
+    {n:"Casal d'Esplai",cat:'SERV.',zonas:[3]},
+    {n:'Centro Info "Racó de l\'Olla"',cat:'SERV.',zonas:[3]},
+    {n:'Reserva Eco. de "Raco de l\'Olla"',cat:'SERV.',zonas:[3]},
+    {n:'Barraca Cofradia Pescadores',cat:'SERV.',zonas:[3]},
+    {n:'Centro "La Granja"',cat:'SERV.',zonas:[3]},
+    {n:'Centro de Interpretación',cat:'SERV.',zonas:[3]},
+    {n:'Embarcadero Municip. "Mata del Fang"',cat:'SERV.',zonas:[3]},
+    {n:'Vial "Mata del Fang"',cat:'UBI.',zonas:[3]},
+    {n:'Estanque del PUJOL',cat:'UBI.',zonas:[3]},
+    {n:'Pouet de la Brava',cat:'UBI.',zonas:[3]},
+    {n:'3x Centro Transformación Eléctrico',cat:'RESTO',zonas:[3]},
+    {n:'Caseta de Bombeo',cat:'RESTO',zonas:[3]},
+    {n:'Tallafoc del Virrei',cat:'TF',zonas:[3]},
+    {n:'Playa de la Malladeta',cat:'BEACH',zonas:[3]},
+    {n:'Playa de la Brava',cat:'BEACH',zonas:[3]},
+    {n:'Càmping "Devesa Gardens"',cat:'ALOJ.',zonas:[4]},
+    {n:'Parador de Turismo "El Saler"',cat:'ALOJ.',zonas:[4]},
+    {n:'Reserva Eco. De la Punta',cat:'RESTO',zonas:[4]},
+    {n:'Campo de Golf',cat:'RESTO',zonas:[4]},
+    {n:'Depósito Propano',cat:'RESTO',zonas:[4]},
+    {n:'Centro Transf. Eléctrico',cat:'RESTO',zonas:[4]},
+    {n:'Depósito de agua',cat:'RESTO',zonas:[4]},
+    {n:'Instal. Bombeo',cat:'RESTO',zonas:[4]},
+    {n:'Sèquia NOVA',cat:'RESTO',zonas:[4]},
+    {n:'EL PERELLONET',cat:'POBLE',zonas:[4]},
+    {n:"Playa de l'Alcati",cat:'BEACH',zonas:[4]},
+    {n:'Playa de la Punta',cat:'BEACH',zonas:[4]}
+];
 
 const DATA = {
   hospitales:[
@@ -487,11 +621,12 @@ const DATA = {
     {n:"Distrito 5",dir:"C/ Castellonet de la Conquesta, 6",dir_alt:["c/ castellonet de la conquesta 6", "calle castellonet de la conquesta, 6"],p1:"campanar",p2:"norte",grupo:"policialocal"},
     {n:"Distrito 6",dir:"C/ Emilio Baró",dir_alt:["calle emilio baró"],p1:"norte",p2:"central",grupo:"policialocal"},
     {n:"Distrito 7",dir:"Plz. Armada Española",dir_alt:["plaza armada española", "plz armada española"],p1:"norte",p2:"central",grupo:"policialocal"}
-  ]
+  ],
+  zonas_saler: ZONAS_SALER
 };
 
-const CATEGORIES = ['hospitales','museos','mercados','pte','pamri'];
-const CAT_LABELS = {hospitales:'Hospitales',museos:'Museos',mercados:'Mercados',pte:'PTE',pamri:'PAM RI'};
+const CATEGORIES = ['hospitales','museos','mercados','pte','pamri','zonas_saler'];
+const CAT_LABELS = {hospitales:'Hospitales',museos:'Museos',mercados:'Mercados',pte:'PTE',pamri:'PAM RI',zonas_saler:'Zonas del Saler'};
 const PROFILES = ['Josep','Tudon'];
 
 let currentProfile = null;
@@ -543,9 +678,7 @@ function selectProfile(profile){
   hdr.className = 'mini-avatar ' + (isJ ? 'avatar-j' : 'avatar-t');
   document.getElementById('header-pname').textContent = profile === 'Tudon' ? 'Tudón' : profile;
   document.getElementById('daily-quote-text').textContent = getDailyQuote();
-  const tabs = document.getElementById('tabs');
-  tabs.innerHTML = CATEGORIES.map(c=>`<button class="tab${c===currentCat?' active':''}" data-cat="${c}" onclick="switchTab('${c}')">${CAT_LABELS[c]}</button>`).join('');
-  buildQueue(); getNext(); updateStats(); renderHistory();
+  buildQueue(); getNext(); updateStats(); renderHistory(); updateProgressBars();
 }
 
 function goToProfiles(){
@@ -591,6 +724,29 @@ function getNext(){
   if(queue.length===0) buildQueue();
   current=queue.shift(); checked=false;
   document.getElementById('item-name').textContent=current.n;
+
+  const isZona = currentCat==='zonas_saler';
+  const itemCat=document.getElementById('item-cat');
+  if(isZona){ itemCat.textContent=current.cat; itemCat.style.display=''; }
+  else { itemCat.style.display='none'; }
+
+  document.getElementById('fields-grid').style.display = isZona ? 'none' : '';
+  document.getElementById('zona-buttons').style.display = isZona ? '' : 'none';
+  document.getElementById('btn-check').style.display = isZona ? 'none' : '';
+
+  if(isZona){
+    document.querySelectorAll('.zona-btn').forEach(b=>{ b.className='zona-btn'; b.disabled=false; });
+    document.getElementById('feedback').textContent='';
+    document.getElementById('feedback').className='feedback';
+    document.getElementById('answer-reveal').style.display='none';
+    document.getElementById('btn-next').style.display='none';
+    const noteKey = currentCat + '::' + current.n;
+    document.getElementById('notes-input').value = notes[noteKey] || '';
+    document.getElementById('notes-saved').className='notes-saved';
+    updateProgress();
+    return;
+  }
+
   var mapsUrl='https://www.google.com/maps/search/'+encodeURIComponent(current.dir+', Valencia, España');
 
   ['p1','p2'].forEach(f=>{ const el=document.getElementById('f-'+f); el.value=''; el.className=''; });
@@ -624,6 +780,32 @@ function getNext(){
   updateProgress();
 }
 
+function answerZona(z){
+  if(checked) return; checked=true;
+  const ok = current.zonas.includes(z);
+  document.querySelectorAll('.zona-btn').forEach(b=>{
+    b.disabled=true;
+    const bz=parseInt(b.dataset.zona,10);
+    if(bz===z) b.classList.add(ok?'correct':'wrong');
+    else if(!ok && current.zonas.includes(bz)) b.classList.add('correct');
+  });
+
+  const fb=document.getElementById('feedback');
+  if(ok){
+    fb.textContent='✓ Correcto'; fb.className='feedback ok';
+    history[currentCat][current.n].ok++; sessionStats[currentCat].ok++;
+  } else {
+    fb.textContent='✗ Incorrecto'; fb.className='feedback fail';
+    history[currentCat][current.n].fail++; sessionStats[currentCat].fail++;
+    const zonaLbl = current.zonas.length>1 ? ('Zonas '+current.zonas.join(', ')) : ('Zona '+current.zonas[0]);
+    const rev=document.getElementById('answer-reveal');
+    rev.innerHTML=`<strong>Respuesta correcta:</strong> ${zonaLbl}`;
+    rev.style.display='block';
+  }
+  document.getElementById('btn-next').style.display='';
+  saveHistory(); updateStats(); renderHistory(); updateProgressBars();
+}
+
 document.addEventListener('DOMContentLoaded', ()=>{
   const ni = document.getElementById('notes-input');
   ni.addEventListener('input', ()=>{
@@ -641,7 +823,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 
 function checkAnswer(){
-  if(checked) return; checked=true;
+  if(checked||currentCat==='zonas_saler') return; checked=true;
   const v1=document.getElementById('f-p1').value;
   const v2=document.getElementById('f-p2').value;
   const ok1=checkParque(v1,current.p1);
@@ -690,10 +872,44 @@ function checkAnswer(){
   }
   document.getElementById('btn-check').style.display='none';
   document.getElementById('btn-next').style.display='';
-  saveHistory(); updateStats(); renderHistory();
+  saveHistory(); updateStats(); renderHistory(); updateProgressBars();
 }
 
 function nextItem(){ getNext(); }
+
+function calcProgress(cat){
+  const items=DATA[cat];
+  const total=items.length;
+  let mastered=0;
+  items.forEach(item=>{ if((history[cat][item.n]?.ok||0)>=5) mastered++; });
+  const pct=total?Math.round(mastered/total*100):0;
+  return {mastered, total, pct};
+}
+
+function calcOverallProgress(){
+  let mastered=0, total=0;
+  CATEGORIES.forEach(cat=>{
+    const p=calcProgress(cat);
+    mastered+=p.mastered; total+=p.total;
+  });
+  const pct=total?Math.round(mastered/total*100):0;
+  return {mastered, total, pct};
+}
+
+function renderTabs(){
+  const tabs=document.getElementById('tabs');
+  tabs.innerHTML=CATEGORIES.map(c=>{
+    const p=calcProgress(c);
+    return `<button class="tab${c===currentCat?' active':''}" data-cat="${c}" onclick="switchTab('${c}')">${CAT_LABELS[c]} <span class="tab-pct">${p.pct}%</span></button>`;
+  }).join('');
+}
+
+function updateProgressBars(){
+  renderTabs();
+  const o=calcOverallProgress();
+  document.getElementById('overall-progress-pct').textContent=o.pct+'%';
+  document.getElementById('overall-progress-fill').style.width=o.pct+'%';
+}
 
 function updateStats(){
   const bar=document.getElementById('stats-bar');
@@ -736,14 +952,14 @@ function toggleHistory(){
 
 function switchTab(cat){
   currentCat=cat; sessionStats[cat]={ok:0,fail:0};
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.cat===cat));
-  buildQueue(); getNext(); updateStats(); renderHistory();
+  buildQueue(); getNext(); updateStats(); renderHistory(); updateProgressBars();
 }
 
 document.addEventListener('keydown', e=>{
   if(e.target.tagName==='TEXTAREA') return;
   if(e.key==='Enter'){
     if(!currentProfile) return;
+    if(currentCat==='zonas_saler'){ if(checked) nextItem(); return; }
     if(!checked) checkAnswer(); else nextItem();
   }
 });
