@@ -116,6 +116,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 
 .item-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;gap:12px}
 .item-name{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:.5px;color:var(--text-primary);border-left:3px solid var(--fire-orange);padding-left:14px;line-height:1.2;flex:1}
+.item-group{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;color:var(--text-secondary);padding-left:17px;margin-top:5px}
 
 
 .dir-toggle-row{margin-bottom:14px}
@@ -268,6 +269,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <div style="flex:1">
         <div class="item-cat" id="item-cat" style="display:none"></div>
         <div class="item-name" id="item-name">Cargando...</div>
+        <div class="item-group" id="item-group" style="display:none"></div>
       </div>
     </div>
     <div class="zona-buttons" id="zona-buttons" style="display:none">
@@ -280,12 +282,12 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <button class="dir-toggle-btn" id="dir-toggle-btn" onclick="toggleDirField()"></button>
     </div>
     <div class="fields" id="fields-grid">
-      <div class="field">
-        <label>1ª Salida</label>
+      <div class="field" id="field-p1">
+        <label id="label-p1">1ª Salida</label>
         <input type="text" id="f-p1" placeholder="parque" autocomplete="off" autocorrect="off" spellcheck="false"/>
       </div>
-      <div class="field">
-        <label>2ª Salida</label>
+      <div class="field" id="field-p2">
+        <label id="label-p2">2ª Salida</label>
         <input type="text" id="f-p2" placeholder="parque" autocomplete="off" autocorrect="off" spellcheck="false"/>
       </div>
       <div class="field" id="field-dir">
@@ -370,6 +372,7 @@ const PARQUES_VALID = {
   'oeste':['oeste','west','oste'],
   'norte':['norte','north','nort'],
   'central':['central','sur','south','centra'],
+  'sur':['sur','central','south','centra'],
   'cpbv':['cpbv','cp'],
   'saler':['saler','el saler'],
   'w/c':['w/c','wc']
@@ -382,7 +385,8 @@ const GROUPS = {
     ubseg:'UB Seguridad',
     ubsan:'UB Sanitaria',
     ubaccsocial:'UB Acción Social',
-    gasolineras:'Gasolineras'
+    gasolineras:'Gasolineras',
+    otros:'OTROS'
   },
   pamri: {
     bombeo:'Estaciones de Bombeo',
@@ -571,88 +575,109 @@ const DATA = {
   ],
   pte:[
     {n:"Estadio del Túria",dir:"Río Túria",p1:"w/c",p2:"w/c",grupo:"hlc"},
-    {n:"Hospital La Fe",dir:"Av. de Fernando Abril Martorell",dir_alt:["av de fernando abril martorell", "avenida de fernando abril martorell"],p1:"central",p2:"norte",grupo:"hlc"},
-    {n:"UPV",p1:"norte",p2:"central",grupo:"hlc"},
-    {n:"UV",p1:"norte",p2:"central",grupo:"hlc"},
-    {n:"Central PL de VLC",dir:"Av. Del Cid, 37",dir_alt:["av del cid 37", "avenida del cid, 37"],p1:"oeste",p2:"campanar",grupo:"hlc"},
-    {n:"Campo de fútbol Beniferri",dir:"C/ Favanella",dir_alt:["calle favanella"],p1:"campanar",p2:"oeste",grupo:"hlc"},
+    {n:"Hospital La Fe",dir:"Av. de Fernando Abril Martorell",p1:"sur",p2:"norte",grupo:"hlc"},
+    {n:"UPV",p1:"norte",p2:"sur",grupo:"hlc"},
+    {n:"UV",p1:"norte",p2:"sur",grupo:"hlc"},
+    {n:"Central PL de VLC",dir:"Av. del Cid",p1:"oeste",p2:"campanar",grupo:"hlc"},
+    {n:"Campo de fútbol Beniferri",dir:"C/ Favanella",p1:"campanar",p2:"oeste",grupo:"hlc"},
     {n:"Piscina de Carpesa",p1:"campanar",p2:"norte",grupo:"hlc"},
-    {n:"Parking Ave Nox",dir:"Casas de Bárcena",p1:"norte",p2:"central",grupo:"hlc"},
-    {n:"Pistas fútbol",dir:"C/ Arquitecto Gilabert",dir_alt:["calle arquitecto gilabert"],p1:"campanar",p2:"oeste",grupo:"hlc"},
-    {n:"Campo C.D. Oller",p1:"central",p2:"oeste",grupo:"hlc"},
-    {n:"Campo U.D. Castellar",p1:"central",p2:"oeste",grupo:"hlc"},
-    {n:"Campo de fútbol Pinedo",p1:"saler",p2:"central",grupo:"hlc"},
-    {n:"Centro de exámenes DGT",p1:"saler",p2:"central",grupo:"hlc"},
-    {n:"Línea 25 BUS",p1:"oeste",p2:"central",grupo:"hlc"},
-    {n:"Pabellon deportes UV",dir:"Av. Menéndez y Pelayo",dir_alt:["av menéndez y pelayo", "avenida menéndez y pelayo"],p1:"norte",p2:"central",grupo:"albergue"},
-    {n:"Pabellón deportes UPV",dir:"C/ Calciners",dir_alt:["calle calciners"],p1:"norte",p2:"central",grupo:"albergue"},
-    {n:"Pabellón Fuente de San Luis",dir:"Av. Hermanos Maristas",dir_alt:["av hermanos maristas", "avenida hermanos maristas"],p1:"central",p2:"norte",grupo:"albergue"},
-    {n:"Pabellón Benicalap",dir:"C/ Castellonet de la Conquesta",dir_alt:["calle castellonet de la conquesta"],p1:"campanar",p2:"norte",grupo:"albergue"},
-    {n:"Pabellón San Isidro",dir:"C/ San Isidro",dir_alt:["calle san isidro"],p1:"oeste",p2:"central",grupo:"albergue"},
-    {n:"Policía Local",dir:"Av. Del Cid, 37",dir_alt:["av del cid 37", "avenida del cid, 37"],p1:"oeste",p2:"campanar",grupo:"ubseg"},
-    {n:"Cuartel/Comisaría de Referencia",dir:"Av. Del Cid, 37",dir_alt:["av del cid 37", "avenida del cid, 37"],p1:"oeste",p2:"campanar",grupo:"ubseg"},
-    {n:"CNP",dir:"GV. Ramón y Cajal",dir_alt:["gran via ramón y cajal", "gv ramón y cajal"],p1:"oeste",p2:"central",grupo:"ubseg"},
-    {n:"Guardia Civil",dir:"C/ de Calamocha, 4",dir_alt:["c/ de calamocha 4", "calle de calamocha, 4"],p1:"oeste",p2:"central",grupo:"ubseg"},
-    {n:"Servicios Urg. Sociales",dir:"Plz. Polo de Bernabé",dir_alt:["plaza polo de bernabé", "plz polo de bernabé"],p1:"norte",p2:"central",grupo:"ubsan"},
-    {n:"Servici Benestar Social i Integració",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici Persones Majors",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici de Sanitat i Consum",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici d'Educació",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici Disciplina Urbanística",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici Mobilitat Sostenible",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici de Coordinació la Vía Pública",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici Gestió de Residus Urbans",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici de Jardinería",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici Cicle Integral de l'Aigua",dir:"C/ Amadeo de Saboia, 11",dir_alt:["c/ amadeo de saboia 11", "calle amadeo de saboia, 11"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici de Joventut",dir:"C/ Campoamor, 91",dir_alt:["c/ campoamor 91", "calle campoamor, 91"],p1:"norte",p2:"central",grupo:"ubaccsocial"},
-    {n:"Servici d'Acció Cultural",dir:"Plz. Ayuntamiento, 1",dir_alt:["plaza ayuntamiento, 1", "plz ayuntamiento 1"],p1:"central",p2:"norte",grupo:"ubaccsocial"},
-    {n:"Servici de Cultura Festiva",dir:"Plz. Ayuntamiento, 1",dir_alt:["plaza ayuntamiento, 1", "plz ayuntamiento 1"],p1:"central",p2:"norte",grupo:"ubaccsocial"},
-    {n:"Serveis Centrals Tècnics",dir:"C/ Convent Sant Francesc, 2",dir_alt:["c/ convent sant francesc 2", "calle convent sant francesc, 2"],p1:"central",p2:"oeste",grupo:"ubaccsocial"},
-    {n:"Empresa Municipal de Transporte",dir:"Plz. Correu Vell, 5",dir_alt:["plaza correu vell, 5", "plz correu vell 5"],p1:"oeste",p2:"norte",grupo:"ubaccsocial"},
-    {n:"Fundació Esportiva Municipal",dir:"Passeig de la Petxina, 42",dir_alt:["paseo de la petxina, 42", "passeig de la petxina 42"],p1:"oeste",p2:"campanar",grupo:"ubaccsocial"},
-    {n:"Estación de servicio E.S. Campo SL Moreras",dir:"Camino de las Moreras, 58",p1:"central",p2:"norte",grupo:"gasolineras"},
-    {n:"Estación de servicio F.R. Avenida Baleares SL",dir:"Baleares, 20",p1:"central",p2:"norte",grupo:"gasolineras"},
-    {n:"Estación de servicio Ecuador",dir:"Avenida el Ecuador (Esquina. General Llorens)",p1:"campanar",p2:"norte",grupo:"gasolineras"},
-    {n:"Estación de servicio Francisco Ripoll S.L.",dir:"Avenida Jaime Roig, esquina Primado Reig",p1:"norte",p2:"central",grupo:"gasolineras"},
-    {n:"Estación de servicio Francisco Ripoll",dir:"Avenida de la Constitución, 137",p1:"norte",p2:"campanar",grupo:"gasolineras"},
-    {n:"Estación de servicio Archiduque Carlos",dir:"Archiduque Carlos, 70",p1:"oeste",p2:"campanar",grupo:"gasolineras"},
-    {n:"Estación de servicio Carburantes la Rotonda, S.L.",dir:"Camino Cabañal, 25",p1:"norte",p2:"central",grupo:"gasolineras"},
-    {n:"Estación de servicio GPV-Maestro Rodrigo, 129",dir:"Maestro Rodrigo, S.N.",p1:"campanar",p2:"oeste",grupo:"gasolineras"},
-    {n:"Estación de servicio Bañon y Valero S.L",dir:"Dolores Marques, 50",p1:"norte",p2:"campanar",grupo:"gasolineras"},
-    {n:"Estación de servicio E.S. Asama Campanar",dir:"Valle de la Ballestera, 44",p1:"campanar",p2:"oeste",grupo:"gasolineras"},
-    {n:"Estación de servicio Castilla",dir:"Avenida del Cid, 5",p1:"oeste",p2:"central",grupo:"gasolineras"},
-    {n:"Estación de servicio El Saler",dir:"V-15 km 1.9",p1:"central",p2:"norte",grupo:"gasolineras"},
-    {n:"Estación de servicio ronda Norte",dir:"Avenida hermanos Machado, 139 (camino viejo Godella)",p1:"campanar",p2:"norte",grupo:"gasolineras"},
-    {n:"Eurotrigo SA",dir:"Gran Vía Fernando el Católico, 54 (C. de Jesús i Maria, 15)",p1:"oeste",p2:"campanar",grupo:"gasolineras"},
-    {n:"Intecas de gas",dir:"Calle Lepanto, 43 (bajo)",p1:"oeste",p2:"campanar",grupo:"gasolineras"}
+    {n:"Parking Ave Nox",dir:"Casas de Bárcena",p1:"norte",p2:"sur",grupo:"hlc"},
+    {n:"Pistas fútbol",dir:"C/ Arquitecto Gilabert",p1:"campanar",p2:"oeste",grupo:"hlc"},
+    {n:"Campo C.D. Oller",p1:"sur",p2:"oeste",grupo:"hlc"},
+    {n:"Campo U.D. Castellar",p1:"sur",p2:"oeste",grupo:"hlc"},
+    {n:"Campo de fútbol Pinedo",p1:"saler",p2:"sur",grupo:"hlc"},
+    {n:"Centro de exámenes DGT",p1:"saler",p2:"sur",grupo:"hlc"},
+    {n:"Línea 25 BUS",p1:"oeste",p2:"sur",grupo:"hlc"},
+    {n:"Pabellon deportes UV",dir:"Av. Menéndez y Pelayo",p1:"norte",p2:"sur",grupo:"albergue"},
+    {n:"Pabellón deportes UPV",dir:"C/ Calciners",p1:"norte",p2:"sur",grupo:"albergue"},
+    {n:"Pabellón Fuente de San Luis",dir:"Av. Hermanos Maristas",p1:"sur",p2:"norte",grupo:"albergue"},
+    {n:"Pabellón Benicalap",dir:"C/ Castellonet",p1:"campanar",p2:"norte",grupo:"albergue"},
+    {n:"Pabellón San Isidro",dir:"C/ San Isidro",p1:"oeste",p2:"sur",grupo:"albergue"},
+    {n:"Policía Local",dir:"Av. del Cid",p1:"oeste",p2:"campanar",grupo:"ubseg"},
+    {n:"Cuartel/Comisaría de Referencia",dir:"Av. del Cid",p1:"oeste",p2:"campanar",grupo:"ubseg"},
+    {n:"CNP",dir:"GV. Ramón y Cajal",p1:"oeste",p2:"sur",grupo:"ubseg"},
+    {n:"Guardia Civil",dir:"C/ de Calamocha",p1:"oeste",p2:"sur",grupo:"ubseg"},
+    {n:"Servicios Urg. Sociales",dir:"Plz. Polo de Bernabé",p1:"norte",p2:"sur",grupo:"ubsan"},
+    {n:"Servici Benestar Social i Integració",dir:"C/ Amadeo de Saboia",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici Persones Majors",dir:"C/ Amadeo de Saboia",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici de Sanitat i Consum",dir:"C/ Amadeo de Saboia",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici d'Educació",dir:"C/ Amadeo de Saboia",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici Disciplina Urbanística",dir:"C/ Amadeo de Saboia",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici Mobilitat Sostenible",dir:"C/ Amadeo de Saboia",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici de Coordinació la Vía Pública",dir:"C/ Amadeo de Saboia",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici Gestió de Residus Urbans",dir:"C/ Amadeo de Saboia",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici de Jardinería",dir:"C/ Amadeo de Saboia",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici Cicle Integral de l'Aigua",dir:"C/ Amadeo de Saboia",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici de Joventut",dir:"C/ Campoamor",p1:"norte",p2:"sur",grupo:"ubaccsocial"},
+    {n:"Servici d'Acció Cultural",dir:"Plz. Ayuntamiento",p1:"sur",p2:"norte",grupo:"ubaccsocial"},
+    {n:"Servici de Cultura Festiva",dir:"Plz. Ayuntamiento",p1:"sur",p2:"norte",grupo:"ubaccsocial"},
+    {n:"Serveis Centrals Tècnics",dir:"C/ Convent Sant Francesc",p1:"sur",p2:"oeste",grupo:"ubaccsocial"},
+    {n:"Empresa Municipal de Transporte",dir:"Plz. Correu Vell",p1:"oeste",p2:"norte",grupo:"ubaccsocial"},
+    {n:"Fundació Esportiva Municipal",dir:"Passeig de la Petxina",p1:"oeste",p2:"campanar",grupo:"ubaccsocial"},
+    {n:"Estación de servicio E.S. Campo SL Moreras",dir:"Camino de las Moreras",p1:"sur",p2:"norte",grupo:"gasolineras"},
+    {n:"Estación de servicio F.R. Avenida Baleares SL",dir:"Baleares",p1:"sur",p2:"norte",grupo:"gasolineras"},
+    {n:"Estación de servicio Ecuador",dir:"Avenida el Ecuador (Esquina General Llorens)",p1:"campanar",p2:"norte",grupo:"gasolineras"},
+    {n:"Estación de servicio Francisco Ripoll S.L.",dir:"Avenida Jaime Roig, esquina Primado Reig",p1:"norte",p2:"sur",grupo:"gasolineras"},
+    {n:"Estación de servicio Francisco Ripoll",dir:"Avenida de la Constitución",p1:"norte",p2:"campanar",grupo:"gasolineras"},
+    {n:"Estación de servicio Archiduque Carlos",dir:"Archiduque Carlos",p1:"oeste",p2:"campanar",grupo:"gasolineras"},
+    {n:"Estación de servicio Carburantes la Rotonda, S.L.",dir:"Camino Cabañal",p1:"norte",p2:"sur",grupo:"gasolineras"},
+    {n:"Estación de servicio GPV-Maestro Rodrigo, 129",dir:"Maestro Rodrigo",p1:"campanar",p2:"oeste",grupo:"gasolineras"},
+    {n:"Estación de servicio Bañon y Valero S.L",dir:"Dolores Marques",p1:"norte",p2:"campanar",grupo:"gasolineras"},
+    {n:"Estación de servicio E.S. Asama Campanar",dir:"Valle de la Ballestera",p1:"campanar",p2:"oeste",grupo:"gasolineras"},
+    {n:"Estación de servicio Castilla",dir:"Avenida del Cid",p1:"oeste",p2:"sur",grupo:"gasolineras"},
+    {n:"Estación de servicio El Saler",dir:"V-15 km 1.9",p1:"sur",p2:"norte",grupo:"gasolineras"},
+    {n:"Estación de servicio ronda Norte",dir:"Avenida Hermanos Machado",p1:"campanar",p2:"norte",grupo:"gasolineras"},
+    {n:"Eurotrigo SA",dir:"Gran Vía Fernando el Católico",p1:"oeste",p2:"campanar",grupo:"gasolineras"},
+    {n:"Intecas de gas",dir:"Calle Lepanto",p1:"oeste",p2:"campanar",grupo:"gasolineras"},
+    {n:"Cuartel de la Guardia Civil Perellonet",dir:"Calle Orilla del Pantano",p1:"saler",p2:"sur",grupo:"otros"},
+    {n:"Centro de Salud del Palmar",dir:"Calle Redolins",p1:"saler",p2:"sur",grupo:"otros"},
+    {n:"V-21",p1:"norte",p2:"sur",grupo:"otros"},
+    {n:"CV-300",p1:"norte",p2:"sur",grupo:"otros"},
+    {n:"CV-30",p1:"campanar",p2:"oeste",grupo:"otros"},
+    {n:"CV-35",p1:"campanar",p2:"oeste",grupo:"otros"},
+    {n:"CV-315",p1:"campanar",p2:"norte",grupo:"otros"},
+    {n:"V-31",p1:"sur",p2:"oeste",grupo:"otros"},
+    {n:"CV-400",p1:"oeste",p2:"sur",grupo:"otros"},
+    {n:"CV-500",p1:"saler",p2:"sur",grupo:"otros"},
+    {n:"CV-36",p1:"oeste",p2:"sur",grupo:"otros"},
+    {n:"AP-7",p1:"campanar",p2:"norte",grupo:"otros"},
+    {n:"CV-310",p1:"campanar",p2:"norte",grupo:"otros"},
+    {n:"CV-304",p1:"norte",p2:"sur",grupo:"otros"},
+    {n:"CV-316",p1:"norte",p2:"sur",grupo:"otros"},
+    {n:"CV-3017",p1:"norte",p2:"sur",grupo:"otros"},
+    {n:"CV-32",p1:"norte",p2:"sur",grupo:"otros"},
+    {n:"CV-404",p1:"oeste",p2:"sur",grupo:"otros"},
+    {n:"CV-407",p1:"sur",p2:"oeste",grupo:"otros"},
+    {n:"CV-4040",p1:"sur",p2:"oeste",parques_alt:[["oeste","sur"]],grupo:"otros"},
+    {n:"CV-5010",p1:"sur",p2:"norte",grupo:"otros"},
+    {n:"Ecoparque Valencia Sur Punto Limpio",dir:"Camino Alquería de la Morera",p1:"oeste",p2:"campanar",grupo:"otros"}
   ],
   pamri:[
-    {n:"Doctor Lluch",dir:"Passeig Marítim de la Patacona, 1",dir_alt:["paseo marítim de la patacona, 1", "passeig marítim de la patacona 1"],p1:"norte",p2:"central",grupo:"bombeo"},
-    {n:"Cantarranas",p1:"central",p2:"norte",grupo:"bombeo"},
-    {n:"Ibiza",p1:"central",p2:"norte",grupo:"bombeo"},
-    {n:"Nazaret",p1:"central",p2:"norte",grupo:"bombeo"},
-    {n:"Marcos Sopena",dir:"C/ Dctr. Marcos Sopena",dir_alt:["c/ dctr marcos sopena", "calle dctr. marcos sopena"],p1:"norte",p2:"central",grupo:"bombeo"},
-    {n:"Malvarrosa",p1:"central",p2:"norte",grupo:"bombeo"},
-    {n:"Gascó Oliag",p1:"norte",p2:"central",grupo:"bombeo"},
-    {n:"Cano de la Molinera",p1:"central",p2:"saler",grupo:"bombeo"},
-    {n:"Vera",p1:"norte",p2:"central",grupo:"bombeo"},
-    {n:"Cabanyal",p1:"norte",p2:"central",grupo:"tormentas"},
-    {n:"La Torre",p1:"central",p2:"oeste",grupo:"tormentas"},
+    {n:"Doctor Lluch",dir:"Passeig Marítim de la Patacona",p1:"norte",p2:"sur",grupo:"bombeo"},
+    {n:"Cantarranas",p1:"sur",p2:"norte",grupo:"bombeo"},
+    {n:"Ibiza",p1:"sur",p2:"norte",grupo:"bombeo"},
+    {n:"Nazaret",p1:"sur",p2:"norte",grupo:"bombeo"},
+    {n:"Marcos Sopena",dir:"C/ Dctr. Marcos Sopena",p1:"norte",p2:"sur",grupo:"bombeo"},
+    {n:"Malvarrosa",p1:"sur",p2:"norte",grupo:"bombeo"},
+    {n:"Gascó Oliag",p1:"norte",p2:"sur",grupo:"bombeo"},
+    {n:"Cano de la Molinera",p1:"sur",p2:"saler",grupo:"bombeo"},
+    {n:"Vera",p1:"norte",p2:"sur",grupo:"bombeo"},
+    {n:"Cabanyal",p1:"norte",p2:"sur",grupo:"tormentas"},
+    {n:"La Torre",p1:"sur",p2:"oeste",grupo:"tormentas"},
     {n:"EDAR 1: Massarrojos",p1:"campanar",p2:"norte",grupo:"edar",peligrosidad:3},
-    {n:"EDAR 2: Norte de la Laguna Albufera",p1:"saler",p2:"central",grupo:"edar",peligrosidad:6},
-    {n:"EDAR 3: Sur de la Laguna Albufera",p1:"saler",p2:"central",grupo:"edar",peligrosidad:3},
-    {n:"EDAR 4: Huerta Perellonet",p1:"saler",p2:"central",grupo:"edar",peligrosidad:4},
-    {n:"Rafalell-Vistabella (CC El Manar)",p1:"norte",p2:"central",grupo:"gasolineras",peligrosidad:3},
-    {n:"Faitanar (V-30)",p1:"oeste",p2:"central",grupo:"gasolineras",peligrosidad:3},
-    {n:"Colegio del Palmar",dir:"C/ Villajoyosa",dir_alt:["calle villajoyosa"],p1:"saler",p2:"central",grupo:"educativos"},
-    {n:"CEIP José Senent",dir:"C/ Senent Ibañez",dir_alt:["calle senent ibañez"],p1:"campanar",p2:"norte",grupo:"educativos"},
-    {n:"Distrito 1",dir:"C/ Alta, 5",dir_alt:["c/ alta 5", "calle alta, 5"],p1:"oeste",p2:"campanar",grupo:"policialocal"},
-    {n:"Distrito 2",dir:"C/ Cremista Jaume d'Escals, 4",dir_alt:["c/ cremista jaume d'escals 4", "calle cremista jaume d'escals, 4"],p1:"central",p2:"oeste",grupo:"policialocal"},
-    {n:"Distrito 3",dir:"C/ Mariano de Cavia",dir_alt:["calle mariano de cavia"],p1:"oeste",p2:"central",grupo:"policialocal"},
-    {n:"Distrito 4",dir:"Av. Cid, 37",dir_alt:["av cid 37", "avenida cid, 37"],p1:"oeste",p2:"campanar",grupo:"policialocal"},
-    {n:"Distrito 5",dir:"C/ Castellonet de la Conquesta, 6",dir_alt:["c/ castellonet de la conquesta 6", "calle castellonet de la conquesta, 6"],p1:"campanar",p2:"norte",grupo:"policialocal"},
-    {n:"Distrito 6",dir:"C/ Emilio Baró",dir_alt:["calle emilio baró"],p1:"norte",p2:"central",grupo:"policialocal"},
-    {n:"Distrito 7",dir:"Plz. Armada Española",dir_alt:["plaza armada española", "plz armada española"],p1:"norte",p2:"central",grupo:"policialocal"}
+    {n:"EDAR 2: Norte de la Laguna Albufera",p1:"saler",p2:"sur",grupo:"edar",peligrosidad:6},
+    {n:"EDAR 3: Sur de la Laguna Albufera",p1:"saler",p2:"sur",grupo:"edar",peligrosidad:3},
+    {n:"EDAR 4: Huerta Perellonet",p1:"saler",p2:"sur",grupo:"edar",peligrosidad:4},
+    {n:"Rafalell-Vistabella (CC El Manar)",p1:"norte",p2:"sur",grupo:"gasolineras",peligrosidad:3},
+    {n:"Faitanar (V-30)",p1:"oeste",p2:"sur",grupo:"gasolineras",peligrosidad:3},
+    {n:"CEIP José Senent",dir:"C/ Senent Ibañez",p1:"campanar",p2:"norte",grupo:"educativos"},
+    {n:"Distrito 1",dir:"C/ Alta",p1:"oeste",p2:"campanar",grupo:"policialocal"},
+    {n:"Distrito 2",dir:"C/ Cremista Jaume d'Escals",p1:"sur",p2:"oeste",grupo:"policialocal"},
+    {n:"Distrito 3",dir:"C/ Mariano de Cavia",p1:"oeste",p2:"sur",grupo:"policialocal"},
+    {n:"Distrito 4",dir:"Av. Cid",p1:"oeste",p2:"campanar",grupo:"policialocal"},
+    {n:"Distrito 5",dir:"C/ Castellonet de la Conquesta",p1:"campanar",p2:"norte",grupo:"policialocal"},
+    {n:"Distrito 6",dir:"C/ Emilio Baró",p1:"norte",p2:"sur",grupo:"policialocal"},
+    {n:"Distrito 7",dir:"Plz. Armada Española",p1:"norte",p2:"sur",grupo:"policialocal"}
   ],
   zonas_saler: ZONAS_SALER,
   paradas:[
@@ -1085,10 +1110,17 @@ function renderItem(){
   document.getElementById('item-name').textContent=current.n;
 
   const isZona = currentCat==='zonas_saler';
+  const isPtePamri = currentCat==='pte'||currentCat==='pamri';
   const itemCat=document.getElementById('item-cat');
   if(isZona){ itemCat.textContent=current.cat; itemCat.style.display=''; }
-  else if(current.tipo && TIPO_LABELS[current.tipo]){ itemCat.textContent=TIPO_LABELS[current.tipo]; itemCat.style.display=''; }
+  else if(!isPtePamri && current.tipo && TIPO_LABELS[current.tipo]){ itemCat.textContent=TIPO_LABELS[current.tipo]; itemCat.style.display=''; }
   else { itemCat.style.display='none'; }
+
+  const itemGroup=document.getElementById('item-group');
+  if(isPtePamri && current.grupo && GROUPS[currentCat]){
+    itemGroup.textContent=GROUPS[currentCat][current.grupo];
+    itemGroup.style.display='';
+  } else { itemGroup.style.display='none'; }
 
   document.getElementById('fields-grid').style.display = isZona ? 'none' : '';
   document.getElementById('zona-buttons').style.display = isZona ? '' : 'none';
@@ -1110,6 +1142,13 @@ function renderItem(){
   var mapsUrl='https://www.google.com/maps/search/'+encodeURIComponent(current.dir+', Valencia, España');
 
   ['p1','p2'].forEach(f=>{ const el=document.getElementById('f-'+f); el.value=''; el.className=''; });
+  document.getElementById('label-p1').textContent=isPtePamri?'Parque principal':'1ª Salida';
+  document.getElementById('label-p2').textContent=isPtePamri?'Parque de apoyo':'2ª Salida';
+  document.querySelector('#field-dir label').textContent=isPtePamri?'Ubicación':'Calle / Dirección';
+  document.getElementById('field-dir').style.order=isPtePamri?'1':'';
+  document.getElementById('field-p1').style.order=isPtePamri?'2':'';
+  document.getElementById('field-p2').style.order=isPtePamri?'3':'';
+  document.getElementById('field-peligrosidad').style.order=isPtePamri?'4':'';
 
   const dirToggleRow=document.getElementById('dir-toggle-row'), dirToggleBtn=document.getElementById('dir-toggle-btn');
   if(DIR_OPTIONAL_CATS.includes(currentCat)){
@@ -1127,7 +1166,7 @@ function renderItem(){
   else { dirField.style.display='none'; dirInput.disabled=true; }
 
   const grupoField=document.getElementById('field-grupo'), grupoSelect=document.getElementById('f-grupo');
-  if(current.grupo && GROUPS[currentCat]){
+  if(!isPtePamri && current.grupo && GROUPS[currentCat]){
     grupoField.style.display='';
     grupoSelect.innerHTML='<option value="">-- selecciona --</option>'+Object.entries(GROUPS[currentCat]).map(([k,label])=>`<option value="${k}">${label}</option>`).join('');
     grupoSelect.value=''; grupoSelect.className='';
@@ -1146,7 +1185,8 @@ function renderItem(){
   const noteKey = currentCat + '::' + current.n;
   document.getElementById('notes-input').value = notes[noteKey] || '';
   document.getElementById('notes-saved').className='notes-saved';
-  document.getElementById('f-p1').focus();
+  if(isPtePamri && current.dir) document.getElementById('f-dir').focus();
+  else document.getElementById('f-p1').focus();
   updateProgress();
 }
 
@@ -1196,8 +1236,13 @@ function checkAnswer(){
   if(checked||currentCat==='zonas_saler') return; checked=true;
   const v1=document.getElementById('f-p1').value;
   const v2=document.getElementById('f-p2').value;
-  const ok1=checkParque(v1,current.p1);
-  const ok2=checkParque(v2,current.p2);
+  let ok1=checkParque(v1,current.p1);
+  let ok2=checkParque(v2,current.p2);
+  if(current.parques_alt){
+    const validPairs=[[current.p1,current.p2],...current.parques_alt];
+    const pairOk=validPairs.some(([p1,p2])=>checkParque(v1,p1)&&checkParque(v2,p2));
+    ok1=pairOk; ok2=pairOk;
+  }
   document.getElementById('f-p1').className=ok1?'correct':'wrong';
   document.getElementById('f-p2').className=ok2?'correct':'wrong';
 
@@ -1209,7 +1254,7 @@ function checkAnswer(){
   }
 
   let okg=true;
-  if(current.grupo){
+  if(current.grupo && currentCat!=='pte' && currentCat!=='pamri'){
     const vg=document.getElementById('f-grupo').value;
     okg=(vg===current.grupo);
     document.getElementById('f-grupo').className=okg?'correct':'wrong';
@@ -1232,9 +1277,16 @@ function checkAnswer(){
     history[currentCat][current.n].fail++; sessionStats[currentCat].fail++;
     const p1c=current.p1.charAt(0).toUpperCase()+current.p1.slice(1);
     const p2c=current.p2.charAt(0).toUpperCase()+current.p2.slice(1);
-    let revHtml=`<strong>Respuesta correcta:</strong><br>1ª salida: <strong>${p1c}</strong> &nbsp;·&nbsp; 2ª salida: <strong>${p2c}</strong>`;
+    const isPtePamri=currentCat==='pte'||currentCat==='pamri';
+    let revHtml=isPtePamri
+      ? `<strong>Respuesta correcta:</strong><br>Parque principal: <strong>${p1c}</strong> &nbsp;·&nbsp; Parque de apoyo: <strong>${p2c}</strong>`
+      : `<strong>Respuesta correcta:</strong><br>1ª salida: <strong>${p1c}</strong> &nbsp;·&nbsp; 2ª salida: <strong>${p2c}</strong>`;
+    if(current.parques_alt){
+      const alternatives=current.parques_alt.map(([p1,p2])=>`${p1.charAt(0).toUpperCase()+p1.slice(1)}–${p2.charAt(0).toUpperCase()+p2.slice(1)}`).join(' / ');
+      revHtml+=` &nbsp;·&nbsp; También válida: <strong>${alternatives}</strong>`;
+    }
     if(current.dir && dirActive(currentCat)) revHtml+=` &nbsp;·&nbsp; Dirección: <strong>${current.dir}</strong>`;
-    if(current.grupo) revHtml+=` &nbsp;·&nbsp; Tipo: <strong>${GROUPS[currentCat][current.grupo]}</strong>`;
+    if(current.grupo && !isPtePamri) revHtml+=` &nbsp;·&nbsp; Tipo: <strong>${GROUPS[currentCat][current.grupo]}</strong>`;
     if(current.peligrosidad!==undefined) revHtml+=` &nbsp;·&nbsp; Nivel Peligrosidad: <strong>${current.peligrosidad}</strong>`;
     const rev=document.getElementById('answer-reveal');
     rev.innerHTML=revHtml;
