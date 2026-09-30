@@ -204,8 +204,61 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
   .daily-quote{max-width:100%;text-align:left}
   .header-right{align-items:flex-start}
 }
+
+/* Mejoras específicas de la hoja Monumentos */
+.overall-progress-count{font-size:11px;color:var(--text-muted);margin-left:10px;letter-spacing:.5px}
+.monumentos-panel{display:none;background:var(--panel-bg);border:.5px solid var(--panel-border);border-radius:10px;padding:14px;margin:-6px 0 16px}
+.monumentos-panel.visible{display:block}
+.subcat-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.subcat-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted)}
+.subcat-grid{display:flex;gap:7px;flex-wrap:wrap}
+.subcat-btn{padding:6px 10px;border-radius:18px;border:.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--text-secondary);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer}
+.subcat-btn:hover,.subcat-btn.active{color:var(--fire-orange);border-color:rgba(230,126,34,.5);background:rgba(230,126,34,.1)}
+.subcat-btn .mini-pct{opacity:.7;margin-left:4px}
+.monument-actions,.answer-mode-row{display:none;gap:8px;align-items:center;flex-wrap:wrap;margin:-8px 0 16px 17px}
+.monument-actions.visible,.answer-mode-row.visible{display:flex}
+.mini-btn{padding:7px 12px;border-radius:6px;border:.5px solid rgba(230,126,34,.35);background:rgba(230,126,34,.08);color:var(--fire-orange);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;cursor:pointer}
+.mini-btn:hover,.mini-btn.active{background:rgba(230,126,34,.2);border-color:var(--fire-orange)}
+.location-hint{display:none;margin:-5px 0 16px 17px;padding:10px 12px;border-left:3px solid var(--fire-amber);background:rgba(243,156,18,.08);color:var(--text-secondary);font-size:14px;border-radius:0 6px 6px 0}
+.location-hint.visible{display:block}
+.location-hint strong{color:var(--fire-amber)}
+.selection-fields{display:none;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.selection-fields.visible{display:grid}
+.selection-group{background:rgba(255,255,255,.025);border:.5px solid rgba(255,255,255,.08);border-radius:8px;padding:10px}
+.selection-label{font-size:10px;color:var(--fire-orange);letter-spacing:2px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:8px}
+.park-choices{display:flex;gap:6px;flex-wrap:wrap}
+.park-choice{padding:7px 10px;border-radius:5px;border:.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--text-secondary);cursor:pointer;font-size:13px}
+.park-choice.selected{border-color:var(--fire-orange);color:#fff;background:rgba(230,126,34,.22)}
+.park-choice.correct{border-color:var(--correct);background:rgba(39,174,96,.18);color:#fff}
+.park-choice.wrong{border-color:var(--wrong);background:rgba(192,57,43,.18);color:#fff}
+.mastered-tick{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;margin-left:9px;border-radius:50%;background:rgba(39,174,96,.18);border:1px solid rgba(39,174,96,.55);color:var(--correct);font-size:15px;vertical-align:middle}
+.streak-chip{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--fire-amber);margin-left:8px}
+.incident-box{margin:0 0 15px 17px;padding:10px 12px;border-radius:7px;border:.5px solid rgba(243,156,18,.4);background:rgba(243,156,18,.08);color:var(--fire-amber);font-size:13px}
+.btn:disabled{opacity:.38;cursor:not-allowed;transform:none!important}
+.modal-backdrop{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.82);padding:24px;align-items:center;justify-content:center}
+.modal-backdrop.open{display:flex}
+.modal-card{width:min(680px,100%);max-height:92vh;overflow:auto;background:#151515;border:1px solid rgba(230,126,34,.38);border-radius:14px;padding:22px;box-shadow:0 18px 70px rgba(0,0,0,.7)}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:var(--text-primary);margin-bottom:16px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-grid .wide{grid-column:1/-1}
+.modal-field label{display:block;font-size:10px;color:var(--fire-orange);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.modal-field input,.modal-field select{width:100%;padding:10px 12px;border-radius:6px;border:.5px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);font:14px 'Barlow',sans-serif}
+.modal-field select option{background:#1a1a1a}
+.modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.danger-btn{border-color:rgba(192,57,43,.55);color:#e74c3c;background:rgba(192,57,43,.08)}
+#monument-map{height:390px;border-radius:9px;background:#222;margin-top:10px}
+.simplemap-tile{position:absolute;width:256px;height:256px;user-select:none;-webkit-user-drag:none}
+.simplemap-marker{position:absolute;z-index:5;font-size:34px;line-height:1;transform:translate(-50%,-100%);cursor:grab;filter:drop-shadow(0 2px 3px rgba(0,0,0,.65));touch-action:none}
+.simplemap-marker:active{cursor:grabbing}
+.simplemap-controls{position:absolute;z-index:8;right:8px;top:8px;display:flex;flex-direction:column;gap:5px}
+.simplemap-controls button{width:34px;height:34px;border:1px solid rgba(0,0,0,.3);border-radius:5px;background:#fff;color:#222;font-size:22px;font-weight:700;cursor:pointer}
+.simplemap-attribution{position:absolute;right:4px;bottom:3px;z-index:7;background:rgba(255,255,255,.82);color:#333;font-size:10px;padding:2px 4px;border-radius:3px}
+.map-status{font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:8px}
+.map-fallback{display:none;padding:30px;text-align:center;color:var(--text-muted)}
+.map-link{color:var(--fire-orange)}
+@media(max-width:600px){.selection-fields,.modal-grid{grid-template-columns:1fr}.modal-grid .wide{grid-column:auto}.monument-actions,.answer-mode-row,.location-hint,.incident-box{margin-left:0}}
+
 </style>
-  <style>  </style>
 </head>
 <body>
 
@@ -256,11 +309,19 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
   <div class="overall-progress" id="overall-progress">
     <div class="overall-progress-top">
       <span class="overall-progress-lbl">Progreso general</span>
-      <span class="overall-progress-pct" id="overall-progress-pct">0%</span>
+      <span><span class="overall-progress-pct" id="overall-progress-pct">0%</span><span class="overall-progress-count" id="overall-progress-count"></span></span>
     </div>
     <div class="overall-progress-track"><div class="overall-progress-fill" id="overall-progress-fill" style="width:0%"></div></div>
   </div>
   <div class="tabs" id="tabs"></div>
+
+  <div class="monumentos-panel" id="monumentos-panel">
+    <div class="subcat-head">
+      <div class="subcat-title">Progreso por categoría</div>
+      <button class="mini-btn" onclick="openMonumentEditor(true)">+ Añadir ubicación</button>
+    </div>
+    <div class="subcat-grid" id="monumentos-subcats"></div>
+  </div>
   <div class="stats-bar" id="stats-bar"></div>
   <div class="progress-info" id="progress-info"></div>
 
@@ -271,6 +332,19 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
         <div class="item-name" id="item-name">Cargando...</div>
         <div class="item-group" id="item-group" style="display:none"></div>
       </div>
+    </div>
+
+    <div class="monument-actions" id="monument-actions">
+      <button class="mini-btn" id="btn-location-hint" onclick="toggleLocationHint()">Ubicación</button>
+      <button class="mini-btn" onclick="openMapModal()">Pin del mapa</button>
+      <button class="mini-btn" onclick="openMonumentEditor(false)">Editar</button>
+    </div>
+    <div class="location-hint" id="location-hint"></div>
+    <div class="incident-box" id="monument-incident" style="display:none"></div>
+    <div class="answer-mode-row" id="answer-mode-row">
+      <span class="subcat-title">Responder:</span>
+      <button class="mini-btn" id="mode-write" onclick="setMonumentAnswerMode('write')">Escribir</button>
+      <button class="mini-btn" id="mode-select" onclick="setMonumentAnswerMode('select')">Casillas</button>
     </div>
     <div class="zona-buttons" id="zona-buttons" style="display:none">
       <button class="zona-btn" data-zona="1" onclick="answerZona(1)">Zona 1</button>
@@ -303,6 +377,17 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
         <input type="text" id="f-peligrosidad" placeholder="nivel" autocomplete="off" autocorrect="off" spellcheck="false"/>
       </div>
     </div>
+
+    <div class="selection-fields" id="selection-fields">
+      <div class="selection-group">
+        <div class="selection-label">1ª salida</div>
+        <div class="park-choices" id="p1-choices"></div>
+      </div>
+      <div class="selection-group">
+        <div class="selection-label">2ª salida</div>
+        <div class="park-choices" id="p2-choices"></div>
+      </div>
+    </div>
     <div class="btn-row">
       <button class="btn nav-btn" id="btn-prev" onclick="goPrev()" title="Pregunta anterior">←</button>
       <button class="btn primary" id="btn-check" onclick="checkAnswer()">Comprobar</button>
@@ -328,6 +413,39 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <svg viewBox="0 0 14 14"><path d="M2 5l5 5 5-5"/></svg>
     </div>
     <div class="history-list" id="history-list"></div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="editor-modal" onclick="closeModalOnBackdrop(event,'editor-modal')">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="editor-title">
+    <div class="modal-title" id="editor-title">Editar ubicación</div>
+    <div class="modal-grid">
+      <div class="modal-field wide"><label>Nombre</label><input id="edit-name" type="text"/></div>
+      <div class="modal-field wide"><label>Calle / dirección</label><input id="edit-address" type="text"/></div>
+      <div class="modal-field"><label>Categoría</label><select id="edit-category"></select></div>
+      <div class="modal-field"><label>1ª salida</label><select id="edit-p1"></select></div>
+      <div class="modal-field"><label>2ª salida</label><select id="edit-p2"></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn primary" onclick="saveMonumentEditor()">Guardar</button>
+      <button class="btn" onclick="closeEditorModal()">Cancelar</button>
+      <button class="btn danger-btn" id="delete-monument-btn" onclick="deleteCurrentMonument()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="map-modal" onclick="closeModalOnBackdrop(event,'map-modal')">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="map-title">
+    <div class="modal-title" id="map-title">Ubicación en el mapa</div>
+    <div class="map-status" id="map-status">Pulsa en el mapa o arrastra el pin para corregirlo.</div>
+    <a class="map-link" id="google-map-link" target="_blank" rel="noopener">Abrir búsqueda en Google Maps</a>
+    <div id="monument-map"></div>
+    <div class="map-fallback" id="map-fallback">No se ha podido cargar el mapa. Puedes abrir la búsqueda en Google Maps o editar la dirección.</div>
+    <div class="modal-actions">
+      <button class="btn primary" onclick="saveMapPin()">Guardar pin</button>
+      <button class="btn" onclick="closeMapModal()">Cerrar</button>
+    </div>
   </div>
 </div>
 
@@ -1387,10 +1505,485 @@ document.addEventListener('keydown', e=>{
 });
 </script>
 
-    <button id="map-close" onclick="closeMap()">✕ Cerrar</button>
-    <div id="map"></div>
-  </div>
-</div>
+
+<script>
+const MONUMENTOS_BASE = [{"id":"mon-002","cat":"Asilos","n":"Asilo de Ancianos Desamparados","dir":"Plaza de Santa Mónica","p1":"norte","p2":"campanar"},{"id":"mon-003","cat":"Asilos","n":"Asilo de Lactancia","dir":"Calle Amadeo de Saboya 14","p1":"norte","p2":"central"},{"id":"mon-004","cat":"Asilos","n":"Asilo de Párvulos","dir":"Calle Corona 34","p1":"oeste","p2":"campanar"},{"id":"mon-005","cat":"Asilos","n":"Asilo de San Juan de Dios","dir":"Calle Río Tajo 1","p1":"norte","p2":"central"},{"id":"mon-006","cat":"Asilos","n":"Asilo del Marqués de Campo","dir":"Calle Corona 34","p1":"oeste","p2":"campanar"},{"id":"mon-007","cat":"Asilos","n":"Asilo e Iglesia de Santa Mónica","dir":"Plaza de Santa Mónica","p1":"norte","p2":"campanar"},{"id":"mon-008","cat":"Asilos","n":"Asilo y Colegio de San Juan Bautista","dir":"Calle de Guillem de Castro 175","p1":"oeste","p2":"campanar"},{"id":"mon-010","cat":"Casas","n":"Baronesa de Alacuás","dir":"C. del Trinquet de Cavallers, 9","p1":"norte","p2":"central"},{"id":"mon-011","cat":"Casas","n":"Casa (Portal de la Valldigna)","dir":"Calle Portal de la Valldigna 12","p1":"oeste","p2":"norte"},{"id":"mon-012","cat":"Casas","n":"Casa Chapa","dir":"Gran Via del Marqués del Túria 69","p1":"central","p2":"norte"},{"id":"mon-013","cat":"Casas","n":"Casa Museo Benlliure","dir":"C. de la Blanqueria 23","p1":"oeste","p2":"norte"},{"id":"mon-014","cat":"Casas","n":"Casa Museo Blasco Ibáñez","dir":"C/ d'Isabel de Villena 159","p1":"norte","p2":"central"},{"id":"mon-015","cat":"Casas","n":"Casa Natalicia de San Luis Bertrán","dir":"Ciutat Vella","p1":"norte","p2":"central"},{"id":"mon-016","cat":"Casas","n":"Casa Natalicia de San Vicente Ferrer - El Pouet","dir":"C. del Mar 51","p1":"norte","p2":"central"},{"id":"mon-017","cat":"Casas","n":"Casa Ordeig","dir":"Calle Ramilletes 1","p1":"oeste","p2":"central"},{"id":"mon-018","cat":"Casas","n":"Casa Ortega","dir":"Gran Via Marqués del Turia 9","p1":"central","p2":"norte"},{"id":"mon-019","cat":"Casas","n":"Casa Palacio de los Condes de Almenara","dir":"C. Trinquete Caballeros 10","p1":"norte","p2":"central"},{"id":"mon-020","cat":"Casas","n":"Casa Señorial en la calle Baja","dir":"Calle Baja","p1":"oeste","p2":"norte"},{"id":"mon-021","cat":"Casas","n":"Casa Señorial en la calle Roteros","dir":"Calle Roteros","p1":"oeste","p2":"norte"},{"id":"mon-022","cat":"Casas","n":"Casa Vestuario","dir":"Plaça de la Mare de Déu 1","p1":"norte","p2":"central"},{"id":"mon-023","cat":"Casas","n":"Casa de Montoliu","dir":"Calle Zapateros","p1":"norte","p2":"central"},{"id":"mon-024","cat":"Casas","n":"Casa de la calle Baja 48","dir":"Calle Baja 48","p1":"oeste","p2":"norte"},{"id":"mon-025","cat":"Casas","n":"Casa de la calle Caballeros 14-16-18","dir":"Calle Caballeros 14","p1":"oeste","p2":"norte"},{"id":"mon-026","cat":"Casas","n":"Casa de la calle Concordia 6","dir":"Calle Concordia 6","p1":"oeste","p2":"norte"},{"id":"mon-027","cat":"Casas","n":"Casa de la calle de Caballeros 8","dir":"Calle Caballeros 8","p1":"oeste","p2":"norte"},{"id":"mon-028","cat":"Casas","n":"Casa de las Siervas de Jesús","dir":"Carrer de Salamanca 56","p1":"central","p2":"norte"},{"id":"mon-029","cat":"Casas","n":"Casa de las Siervas de María","dir":"C/ de St. Donís 6","p1":"oeste","p2":"campanar"},{"id":"mon-030","cat":"Casas","n":"Casa de los Dragones","dir":"Calle Sorní 4","p1":"central","p2":"norte"},{"id":"mon-031","cat":"Casas","n":"Casa de los Marqueses de González de Quirós","dir":"C. Baja 25","p1":"oeste","p2":"norte"},{"id":"mon-032","cat":"Casas","n":"Casa de los Marqueses de Tremolar","dir":"C. Trinquete Caballeros 11","p1":"norte","p2":"central"},{"id":"mon-033","cat":"Casas","n":"Casa del Barón de Campolivar","dir":"C. del Gobernador Viejo 30","p1":"norte","p2":"central"},{"id":"mon-034","cat":"Casas","n":"Casa del Punt de Ganxo","dir":"Pl. de l'Almoina 4","p1":"norte","p2":"central"},{"id":"mon-036","cat":"Colegios","n":"Colegio de las Escuelas Pías","dir":"Calle Carniceros 6","p1":"oeste","p2":"campanar"},{"id":"mon-037","cat":"Colegios","n":"Colegio de los Padres Salesianos","dir":"Calle Sagunto","p1":"norte","p2":"campanar"},{"id":"mon-038","cat":"Colegios","n":"Colegio del Sagrado Corazón de Jesús","dir":"Carrer de Misser Mascó 1","p1":"norte","p2":"central"},{"id":"mon-040","cat":"Conventos","n":"Convento de Corpus Christi","dir":"C/ de Guillem de Castro 169","p1":"oeste","p2":"campanar"},{"id":"mon-041","cat":"Conventos","n":"Convento de San José y Santa Teresa","dir":"Plaza del Portal Nou","p1":"oeste","p2":"norte"},{"id":"mon-042","cat":"Conventos","n":"Convento de Santa Úrsula","dir":"Plaça de Santa Úrsula 2","p1":"oeste","p2":"campanar"},{"id":"mon-043","cat":"Conventos","n":"Convento de la Encarnación","dir":"C/ de Balmes 39","p1":"oeste","p2":"campanar"},{"id":"mon-045","cat":"Cruces","n":"Cruces del Camino de Barcelona","dir":"Carretera de Barcelona","p1":"","p2":""},{"id":"mon-046","cat":"Cruces","n":"Cruz Cubierta de Mislata","dir":"Plaza de la Cruz Cubierta","p1":"oeste","p2":"campanar"},{"id":"mon-047","cat":"Cruces","n":"Cruz de Canyamelar","dir":"Cruz de Canyamelar","p1":"norte","p2":"central"},{"id":"mon-048","cat":"Cruces","n":"Cruz de Término San Vicente (Camino Real de Madrid)","dir":"Calle San Vicente Mártir 301","p1":"central","p2":"oeste"},{"id":"mon-049","cat":"Cruces","n":"Cruz de la Pista de Silla","dir":"Cruz de la Pista de Silla","p1":"central","p2":"oeste"},{"id":"mon-050","cat":"Cruces","n":"Cruz del Grao","dir":"Cruz del Grao","p1":"norte","p2":"central"},{"id":"mon-052","cat":"Edificios","n":"Edificio Alonso","dir":"Calle San Vicente Mártir 71","p1":"central","p2":"oeste"},{"id":"mon-053","cat":"Edificios","n":"Edificio Antiguo Banco de Valencia","dir":"Calle Pintor Sorolla 2","p1":"norte","p2":"central"},{"id":"mon-054","cat":"Edificios","n":"Edificio Viviendas Donoso Cortés nº7 esquina Plaza de Ruzafa","dir":"Calle Donoso Cortés 7","p1":"central","p2":"norte"},{"id":"mon-055","cat":"Edificios","n":"Edificio de Correos y Telégrafos","dir":"Plaza del Ayuntamiento 24","p1":"central","p2":"norte"},{"id":"mon-056","cat":"Edificios","n":"Edificio de Viviendas - Casa Ferrer","dir":"Calle Cirilo Amorós 29","p1":"central","p2":"norte"},{"id":"mon-057","cat":"Edificios","n":"Edificio de la Plaza de la Almoyna nº4","dir":"Plaza de la Almoina 4","p1":"norte","p2":"central"},{"id":"mon-058","cat":"Edificios","n":"Edificio del Colegio de San José (Jesuitas)","dir":"Avinguda de les Corts Valencianes 1","p1":"campanar","p2":"oeste"},{"id":"mon-060","cat":"Fuentes","n":"Fuente de la Plaza de San Luis BertrÃ¡n","dir":"Plaza de San Luis Bertrán","p1":"central","p2":"oeste"},{"id":"mon-061","cat":"Fuentes","n":"Fuente de la Plaza de Vicente Iborra","dir":"Plaza Vicente Iborra","p1":"oeste","p2":"campanar"},{"id":"mon-062","cat":"Fuentes","n":"Fuente de la Sociedad EconÃ³mica","dir":"Plaza de San Vicente Ferrer","p1":"norte","p2":"central"},{"id":"mon-063","cat":"Fuentes","n":"Fuente de las Tres Ninfas o de los Patos","dir":"Plaza de Rodrigo Botet","p1":"norte","p2":"central"},{"id":"mon-064","cat":"Fuentes","n":"Fuente del Negrito","dir":"Plaza del Negrito","p1":"oeste","p2":"central"},{"id":"mon-066","cat":"Monumentos","n":"Monumento Agricultor Agricultura Progreso","dir":"Calle Roig de Corella","p1":"oeste","p2":"central"},{"id":"mon-067","cat":"Monumentos","n":"Monumento a Cervantes","dir":"Calle Guillem de Castro","p1":"oeste","p2":"central"},{"id":"mon-068","cat":"Monumentos","n":"Monumento a Juan Luis Vives","dir":"Plaza de Margarita Valldaura","p1":"norte","p2":"central"},{"id":"mon-069","cat":"Monumentos","n":"Monumento a Juan de Juanes","dir":"Plaza del Carmen","p1":"oeste","p2":"norte"},{"id":"mon-070","cat":"Monumentos","n":"Monumento a Mariano Benlliure","dir":"Calle Padre de Huérfanos","p1":"oeste","p2":"norte"},{"id":"mon-071","cat":"Monumentos","n":"Monumento a Marçal de Sax","dir":"Calle Guillem de Castro (jardín junto a San Agustín)","p1":"oeste","p2":"central"},{"id":"mon-072","cat":"Monumentos","n":"Monumento a San Vicente Ferrer","dir":"Plaza de Tetuán","p1":"norte","p2":"central"},{"id":"mon-073","cat":"Monumentos","n":"Monumento a San Vicente Mártir","dir":"Plaza de España","p1":"central","p2":"oeste"},{"id":"mon-074","cat":"Monumentos","n":"Monumento a Santa Teresa Jornet","dir":"Plaza de Santa Mónica","p1":"norte","p2":"campanar"},{"id":"mon-075","cat":"Monumentos","n":"Monumento a las Víctimas de las Riadas del Turia","dir":"Avenida de Aragón 10","p1":"norte","p2":"central"},{"id":"mon-076","cat":"Monumentos","n":"Monumento al Arzobispo Olaechea","dir":"Plaza del Arzobispo","p1":"norte","p2":"central"},{"id":"mon-077","cat":"Monumentos","n":"Monumento al Cid Campeador","dir":"Plaza de España","p1":"central","p2":"oeste"},{"id":"mon-078","cat":"Monumentos","n":"Monumento al Escultor Capuz","dir":"Calle Escultor José Capuz","p1":"central","p2":"norte"},{"id":"mon-079","cat":"Monumentos","n":"Monumento al Labrador Valenciano","dir":"Gran Vía Marqués del Turia esquina Ruzafa","p1":"central","p2":"norte"},{"id":"mon-080","cat":"Monumentos","n":"Monumento al Maestro Giner","dir":"Gran Vía Fernando el Católico","p1":"oeste","p2":"campanar"},{"id":"mon-081","cat":"Monumentos","n":"Monumento al Maestro José Serrano","dir":"Avenida del Reino de Valencia esquina Burriana","p1":"central","p2":"norte"},{"id":"mon-082","cat":"Monumentos","n":"Monumento al Marqués de Campo","dir":"Plaza de Cánovas del Castillo","p1":"central","p2":"norte"},{"id":"mon-083","cat":"Monumentos","n":"Monumento al Obispo Amigó","dir":"Plaza del Obispo Amigó","p1":"oeste","p2":"central"},{"id":"mon-084","cat":"Monumentos","n":"Monumento al Pintor Ribera","dir":"Plaza del Poeta Llorente","p1":"norte","p2":"central"},{"id":"mon-085","cat":"Monumentos","n":"Monumento al Pintor Sorolla","dir":"Plaza de la Armada Española","p1":"norte","p2":"central"},{"id":"mon-086","cat":"Monumentos","n":"Monumento al Poeta Teodoro Llorente Olivares","dir":"Gran Vía Marqués del Turia esquina Pizarro","p1":"central","p2":"norte"},{"id":"mon-087","cat":"Monumentos","n":"Monumento conmemorativo al Campeonato Mundial de Fútbol de 1982","dir":"Avenida de Aragón","p1":"norte","p2":"central"},{"id":"mon-088","cat":"Monumentos","n":"Monumentos de la Plaza de la Virgen","dir":"Plaza de la Virgen","p1":"norte","p2":"central"},{"id":"mon-089","cat":"Monumentos","n":"Monumentos en la Calle de Lérida","dir":"Calle Lérida","p1":"norte","p2":"campanar"},{"id":"mon-091","cat":"Ermitas","n":"Ermita de San Miguel de Soternes","dir":"Calle Casa de la Misericordia 4","p1":"oeste","p2":"campanar"},{"id":"mon-092","cat":"Ermitas","n":"Ermita de Santa Lucía","dir":"Calle Hospital 15","p1":"oeste","p2":"central"},{"id":"mon-093","cat":"Ermitas","n":"Ermita de Vera","dir":"Camí de l'Església de Vera 16","p1":"norte","p2":"central"},{"id":"mon-094","cat":"Ermitas","n":"Ermita del Fiscal (En Corts)","dir":"Camí de l'Entrada del Fiscal","p1":"central","p2":"norte"},{"id":"mon-096","cat":"Iglesias","n":"Basílica de San Vicente Ferrer (iglesia de los padres dominicos)","dir":"Calle Cirilo Amorós 54","p1":"central","p2":"norte"},{"id":"mon-097","cat":"Iglesias","n":"Capilla de San Valero","dir":"Calle Padre Perera 6","p1":"central","p2":"norte"},{"id":"mon-098","cat":"Iglesias","n":"Capilla del Colegio de Jesús y María (el Socós)","dir":"Gran Vía de Fernando el Católico 37","p1":"oeste","p2":"central"},{"id":"mon-099","cat":"Iglesias","n":"Capilla del Colegio del Niño Jesús","dir":"Carrer de Sant Clement 13","p1":"campanar","p2":"oeste"},{"id":"mon-100","cat":"Iglesias","n":"Capilla-cárcel de San Vicente Mártir","dir":"Calle del Pouet de Sant Vicent 1","p1":"norte","p2":"central"},{"id":"mon-101","cat":"Iglesias","n":"Colegiata de San Bartolomé Apóstol","dir":"Avenida Reino de Valencia 60","p1":"central","p2":"norte"},{"id":"mon-102","cat":"Iglesias","n":"Conjunto Histórico Protegido del Cabañal-Cañamelar","dir":"","p1":"norte","p2":"central"},{"id":"mon-103","cat":"Iglesias","n":"Iglesia Parroquial Santísima Cruz","dir":"Pl. del Carme, 7","p1":"oeste","p2":"norte"},{"id":"mon-104","cat":"Iglesias","n":"Iglesia Parroquial Nuestra Señora de la Misericordia (Campanar)","dir":"Plaza Iglesia 11","p1":"campanar","p2":"oeste"},{"id":"mon-105","cat":"Iglesias","n":"Iglesia Parroquial Nuestra Señora del Rosario (Lepanto-Castellar)","dir":"Calle Virgen de Lepanto 17","p1":"central","p2":"oeste"},{"id":"mon-106","cat":"Iglesias","n":"Iglesia Parroquial de Cristo Redentor (Cabañal)","dir":"Calle Reina 96","p1":"norte","p2":"central"},{"id":"mon-107","cat":"Iglesias","n":"Iglesia Parroquial de Jesús Maestro","dir":"Calle Escultor José Capuz 8","p1":"central","p2":"norte"},{"id":"mon-108","cat":"Iglesias","n":"Iglesia Parroquial de Mahuella","dir":"Plaza San Benito s/n","p1":"norte","p2":"central"},{"id":"mon-109","cat":"Iglesias","n":"Iglesia Parroquial de María Inmaculada","dir":"C/ de Mendizábal 17","p1":"norte","p2":"central"},{"id":"mon-110","cat":"Iglesias","n":"Iglesia Parroquial de María Madre de Cristo (Pinedo)","dir":"Calle Mossén Cuenca 23","p1":"saler","p2":"central"},{"id":"mon-111","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora (Monteolivete)","dir":"Calle Pedro Aleixandre 62-B","p1":"central","p2":"norte"},{"id":"mon-112","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora Desamparados y San Isidro","dir":"Calle San Isidro 2","p1":"oeste","p2":"central"},{"id":"mon-113","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora de Gracia (La Torre)","dir":"Avenida Real de Madrid 16","p1":"central","p2":"oeste"},{"id":"mon-114","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora de la Buena Guía","dir":"Calle Eugenia Viñes 235","p1":"norte","p2":"central"},{"id":"mon-115","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora de los Ángeles (El Cabañal)","dir":"Plaza Iglesia de los Ángeles 2","p1":"norte","p2":"central"},{"id":"mon-116","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora del Pilar y San Lorenzo","dir":"C/ de Guillem de Castro 42","p1":"oeste","p2":"central"},{"id":"mon-117","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora del Puig","dir":"Pl. de Vicent Iborra 1","p1":"oeste","p2":"campanar"},{"id":"mon-118","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora del Remedio","dir":"Carrer del Gravador Esteve 12","p1":"central","p2":"norte"},{"id":"mon-119","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora del Rosario (Cañamelar)","dir":"Plaza del Rosario 4","p1":"norte","p2":"central"},{"id":"mon-120","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora del Sagrado Corazón","dir":"Calle Marqués de Zenete 14","p1":"oeste","p2":"central"},{"id":"mon-121","cat":"Iglesias","n":"Iglesia Parroquial de Nuestra Señora del Socorro","dir":"C. Marqués de Zenete 14","p1":"oeste","p2":"central"},{"id":"mon-122","cat":"Iglesias","n":"Iglesia Parroquial de San Agustín","dir":"Pl. de Sant Agustí 5","p1":"oeste","p2":"central"},{"id":"mon-123","cat":"Iglesias","n":"Iglesia Parroquial de San Andrés Apóstol","dir":"Calle Colón 8","p1":"central","p2":"norte"},{"id":"mon-124","cat":"Iglesias","n":"Iglesia Parroquial de San Antonio Abad","dir":"Calle Sagunto 188","p1":"norte","p2":"campanar"},{"id":"mon-125","cat":"Iglesias","n":"Iglesia Parroquial de San Antonio de Padua","dir":"Calle San Jacinto 20","p1":"oeste","p2":"campanar"},{"id":"mon-126","cat":"Iglesias","n":"Iglesia Parroquial de San Bernardo Mártir (Pueblo Nuevo)","dir":"Calle de Moncada 188","p1":"campanar","p2":"norte"},{"id":"mon-127","cat":"Iglesias","n":"Iglesia Parroquial de San Esteban","dir":"Plaza San Esteban 1","p1":"norte","p2":"central"},{"id":"mon-128","cat":"Iglesias","n":"Iglesia Parroquial de San Isidoro Obispo","dir":"Calle Jaime Roig 23","p1":"norte","p2":"central"},{"id":"mon-129","cat":"Iglesias","n":"Iglesia Parroquial de San Juan Bosco","dir":"Calle Gregorio Gea 21","p1":"campanar","p2":"oeste"},{"id":"mon-130","cat":"Iglesias","n":"Iglesia Parroquial de San Juan de la Ribera","dir":"Avenida del Puerto 69","p1":"norte","p2":"central"},{"id":"mon-131","cat":"Iglesias","n":"Iglesia Parroquial de San Juan y San Vicente","dir":"Calle Isabel la Católica 13","p1":"central","p2":"norte"},{"id":"mon-132","cat":"Iglesias","n":"Iglesia Parroquial de San Luis Bertrán (Fuente de San Luis)","dir":"Plaza Iglesia Fuente de San Luis","p1":"central","p2":"oeste"},{"id":"mon-133","cat":"Iglesias","n":"Iglesia Parroquial de San Lázaro","dir":"Calle Sagunto 130","p1":"norte","p2":"campanar"},{"id":"mon-134","cat":"Iglesias","n":"Iglesia Parroquial de San Martín","dir":"Calle San Vicente Mártir 9","p1":"norte","p2":"central"},{"id":"mon-135","cat":"Iglesias","n":"Iglesia Parroquial de San Mateo","dir":"Avenida Dr. Waksman 22","p1":"central","p2":"oeste"},{"id":"mon-136","cat":"Iglesias","n":"Iglesia Parroquial de San Miguel y San Sebastián","dir":"Calle Quart 97","p1":"oeste","p2":"campanar"},{"id":"mon-137","cat":"Iglesias","n":"Iglesia Parroquial de San Nicolás","dir":"Calle Caballeros 35","p1":"oeste","p2":"norte"},{"id":"mon-138","cat":"Iglesias","n":"Iglesia Parroquial de San Pascual Bailón","dir":"Calle Dr. Moliner 10","p1":"norte","p2":"central"},{"id":"mon-139","cat":"Iglesias","n":"Iglesia Parroquial de San Rafael Arcángel (Cabañal)","dir":"C/ de la Reina 96","p1":"norte","p2":"central"},{"id":"mon-140","cat":"Iglesias","n":"Iglesia Parroquial de San Roque de Benicalap","dir":"Plaza Nueva de la Iglesia 2","p1":"campanar","p2":"norte"},{"id":"mon-141","cat":"Iglesias","n":"Iglesia Parroquial de San Valero Obispo y San Vicente Mártir","dir":"Calle Padre Perera 6","p1":"central","p2":"norte"},{"id":"mon-142","cat":"Iglesias","n":"Iglesia Parroquial de Santa Ana (Borbotó)","dir":"Plaza de la Patrona 1","p1":"campanar","p2":"norte"},{"id":"mon-143","cat":"Iglesias","n":"Iglesia Parroquial de Santa María Magdalena (Benifaraig)","dir":"Plaza Vicent Torregrosa Valls","p1":"campanar","p2":"norte"},{"id":"mon-144","cat":"Iglesias","n":"Iglesia Parroquial de Santo Tomás Apóstol y San Felipe Neri","dir":"Plaza San Vicente Ferrer s/n","p1":"norte","p2":"central"},{"id":"mon-145","cat":"Iglesias","n":"Iglesia Parroquial de la Asunción y Santa Bárbara (Massarrochos)","dir":"Plaza Soñador 9","p1":"campanar","p2":"norte"},{"id":"mon-146","cat":"Iglesias","n":"Iglesia Parroquial de la Pasión del Señor","dir":"Calle Miguel Paredes 1","p1":"oeste","p2":"campanar"},{"id":"mon-147","cat":"Iglesias","n":"Iglesia Parroquial de la Virgen de la Fuensanta","dir":"Plaza Murcia 9","p1":"oeste","p2":"campanar"},{"id":"mon-148","cat":"Iglesias","n":"Iglesia Parroquial de los Santos Abdón y Senén (Carpesa)","dir":"Calle Carmelo Vicent 2","p1":"campanar","p2":"norte"},{"id":"mon-149","cat":"Iglesias","n":"Iglesia Parroquial del Antiguo Convento de Santa María de Jesús","dir":"Plaça de Jesús 9","p1":"oeste","p2":"central"},{"id":"mon-150","cat":"Iglesias","n":"Iglesia Parroquial del Patriarca San José","dir":"Avenida Puerto 153","p1":"norte","p2":"central"},{"id":"mon-151","cat":"Iglesias","n":"Iglesia Parroquial del Ángel Custodio","dir":"Calle Reina Doña Germana 37","p1":"central","p2":"norte"},{"id":"mon-152","cat":"Iglesias","n":"Iglesia de Nuestra Señora de la Asunción (Benimaclet)","dir":"Plaza Benimaclet 2","p1":"norte","p2":"central"},{"id":"mon-153","cat":"Iglesias","n":"Iglesia de Nuestra Señora del Carmen (Padres Carmelitas)","dir":"Calle Alboraya 33","p1":"norte","p2":"central"},{"id":"mon-154","cat":"Iglesias","n":"Iglesia de San Carlos","dir":"Calle Quevedo 2","p1":"oeste","p2":"central"},{"id":"mon-155","cat":"Iglesias","n":"Iglesia de San Cristóbal","dir":"Calle Poeta Bodria 2","p1":"norte","p2":"central"},{"id":"mon-156","cat":"Iglesias","n":"Iglesia de San Juan de la Cruz","dir":"Calle San Andrés 6","p1":"norte","p2":"central"},{"id":"mon-157","cat":"Iglesias","n":"Iglesia de San Juan del Hospital","dir":"Calle Trinquete de Caballeros 5","p1":"norte","p2":"central"},{"id":"mon-158","cat":"Iglesias","n":"Iglesia de San Lorenzo","dir":"Plaza San Lorenzo s/n","p1":"norte","p2":"central"},{"id":"mon-159","cat":"Iglesias","n":"Iglesia de San Pablo (Instituto Luis Vives)","dir":"Calle San Pablo","p1":"central","p2":"oeste"},{"id":"mon-160","cat":"Iglesias","n":"Iglesia de Santa Catalina","dir":"Plaza Santa Catalina 1","p1":"oeste","p2":"central"},{"id":"mon-161","cat":"Iglesias","n":"Iglesia de las Escuelas del Ave María (Benimàmet)","dir":"Calle Campamento 76","p1":"campanar","p2":"oeste"},{"id":"mon-162","cat":"Iglesias","n":"Iglesia de las Madres Reparadoras","dir":"Calle Gobernador Viejo 23","p1":"norte","p2":"central"},{"id":"mon-163","cat":"Iglesias","n":"Iglesia del Cristo de la Agonía de Horno de Alcedo","dir":"Plaza Iglesia Horno de Alcedo s/n","p1":"central","p2":"oeste"},{"id":"mon-164","cat":"Iglesias","n":"Iglesia del Milagro y Hospital de Pobres Sacerdotes","dir":"C. del Trinquet de Cavallers 4","p1":"norte","p2":"central"},{"id":"mon-165","cat":"Iglesias","n":"Iglesia del Sagrado Corazón de Jesús (Compañía)","dir":"Plaza de la Compañía s/n","p1":"oeste","p2":"central"},{"id":"mon-166","cat":"Iglesias","n":"Iglesia del Sagrado Corazón de Jesús (Patraix)","dir":"Plaza Patraix 21","p1":"oeste","p2":"central"},{"id":"mon-167","cat":"Iglesias","n":"Iglesia y Colegio de los Salesianos (Fuente de San Luis)","dir":"Avenida de la Plata 6","p1":"central","p2":"oeste"},{"id":"mon-168","cat":"Iglesias","n":"Monasterio de San Miguel de los Reyes","dir":"Avinguda de la Constitució, 284","p1":"norte","p2":"campanar"},{"id":"mon-169","cat":"Iglesias","n":"Plaza de Benimaclet","dir":"Plaça de Benimaclet, 5","p1":"norte","p2":"central"},{"id":"mon-170","cat":"Iglesias","n":"Real Basílica de Nuestra Señora de los Desamparados","dir":"Plaza de la Virgen 6","p1":"norte","p2":"central"},{"id":"mon-171","cat":"Iglesias","n":"Real Convento de la Puridad y San Jaime","dir":"C/ del Convent de la Puritat, 4","p1":"norte","p2":"central"},{"id":"mon-172","cat":"Iglesias","n":"Real Iglesia del Salvador","dir":"Calle Trinitarios 1","p1":"norte","p2":"central"},{"id":"mon-173","cat":"Iglesias","n":"Real y Parroquial Iglesia de los Santos Juanes (San Juan del Mercado)","dir":"Plaza del Mercado s/n","p1":"oeste","p2":"central"},{"id":"mon-174","cat":"Iglesias","n":"monasterio de san vicente de la roqueta (actual iglesia parroquial de \ncristo rey)","dir":"Carrer de Sant Vicent Màrtir 124","p1":"central","p2":"oeste"},{"id":"mon-175","cat":"Iglesias","n":"monasterio de santa clara - clarisas capuchinas","dir":"Avinguda de Pérez Galdós 119","p1":"oeste","p2":"campanar"},{"id":"mon-177","cat":"Otros","n":"Almudín","dir":"Plaza de San Luis Bertrán 1","p1":"norte","p2":"central"},{"id":"mon-178","cat":"Otros","n":"Antigua Estación del Trenet","dir":"Carrer del Cronista Rivelles","p1":"norte","p2":"campanar"},{"id":"mon-179","cat":"Otros","n":"Antigua Lonja de Pescado","dir":"Plaza Hombres de la Mar 26","p1":"norte","p2":"central"},{"id":"mon-180","cat":"Otros","n":"Antiguo Hospital","dir":"Calle Guillem de Castro 138","p1":"oeste","p2":"campanar"},{"id":"mon-181","cat":"Otros","n":"Antiguo Seminario Conciliar - Facultad de Teología","dir":"C. de Trinitarios 3","p1":"norte","p2":"central"},{"id":"mon-182","cat":"Otros","n":"Arco de la Torreta en la Zaidía","dir":"Calle de la Visitación esquina Llano de la Zaidía","p1":"campanar","p2":"norte"},{"id":"mon-183","cat":"Otros","n":"Atarazanas","dir":"Pl. Juan Antonio Benlliure s/n","p1":"norte","p2":"central"},{"id":"mon-184","cat":"Otros","n":"Bancaja - Caja de Ahorros de Valencia","dir":"Plaza de Tetuán 23","p1":"norte","p2":"central"},{"id":"mon-185","cat":"Otros","n":"Baños del Almirante","dir":"Calle Baños del Almirante 3","p1":"norte","p2":"central"},{"id":"mon-186","cat":"Otros","n":"Biblioteca Municipal","dir":"Calle Guillem de Castro 138","p1":"oeste","p2":"campanar"},{"id":"mon-187","cat":"Otros","n":"Campanas de El Micalet","dir":"Plaza de la Reina s/n","p1":"norte","p2":"central"},{"id":"mon-188","cat":"Otros","n":"Capilla Cárcel de San Vicente Mártir (Presó de Sant Vicent)","dir":"Carrer de la Presó de S.Vicent 2","p1":"norte","p2":"central"},{"id":"mon-189","cat":"Otros","n":"Cementerio General de Valencia","dir":"C. Santo Domingo de Guzmán, 27","p1":"oeste","p2":"central"},{"id":"mon-190","cat":"Otros","n":"Centro Cultural Bancaja","dir":"Plaza de Tetuán 23","p1":"norte","p2":"campanar"},{"id":"mon-191","cat":"Otros","n":"Centro Cultural La Beneficencia","dir":"Calle Corona 36","p1":"oeste","p2":"campanar"},{"id":"mon-192","cat":"Otros","n":"Centro Teatral Escalante","dir":"Plaza Manuel Granero 8","p1":"central","p2":"oeste"},{"id":"mon-193","cat":"Otros","n":"Cripta Arqueológica de la Prisión de San Vicente","dir":"Plaça de l´Arquebisbe 3","p1":"norte","p2":"central"},{"id":"mon-194","cat":"Otros","n":"Delegación Especial de Economía y Hacienda de Valencia","dir":"C/ de Roger de Llòria, 26","p1":"central","p2":"norte"},{"id":"mon-195","cat":"Otros","n":"Estación del Norte","dir":"Calle Xàtiva 24","p1":"central","p2":"norte"},{"id":"mon-196","cat":"Otros","n":"Facultad de Teología San Vicente Ferrer","dir":"C/ dels Trinitaris, 3","p1":"norte","p2":"central"},{"id":"mon-197","cat":"Otros","n":"Finca la Pagoda","dir":"Pl. de la Legió Espanyola 3","p1":"norte","p2":"central"},{"id":"mon-198","cat":"Otros","n":"Fábrica de Tabacos","dir":"C. de Amadeo de Saboya 11","p1":"norte","p2":"central"},{"id":"mon-199","cat":"Otros","n":"Galería del Tossal","dir":"Plaça del Tossal","p1":"oeste","p2":"campanar"},{"id":"mon-200","cat":"Otros","n":"Gran Asociación Nuestra Señora de los Desamparados","dir":"C/ dels Cavallers, 10","p1":"oeste","p2":"norte"},{"id":"mon-201","cat":"Otros","n":"Huerto y Alquería de Juliá","dir":"C/ de la Democràcia 62","p1":"oeste","p2":"campanar"},{"id":"mon-202","cat":"Otros","n":"Instituto Sorolla de Enseñanza Media","dir":"C/ de José María Haro 2","p1":"norte","p2":"central"},{"id":"mon-203","cat":"Otros","n":"L'Almoina - Centro Arqueológico","dir":"Plaza Décimo Junio Bruto 1","p1":"norte","p2":"central"},{"id":"mon-204","cat":"Otros","n":"La Cigüeña","dir":"P.º de la Alameda 16","p1":"norte","p2":"central"},{"id":"mon-205","cat":"Otros","n":"La Finca Roja","dir":"Calle Ricardo Micó","p1":"campanar","p2":"norte"},{"id":"mon-206","cat":"Otros","n":"La Lonja y Consulado del Mar","dir":"Calle Lonja 2","p1":"oeste","p2":"central"},{"id":"mon-207","cat":"Otros","n":"Matadero Municipal","dir":"P.º de la Pechina 42","p1":"oeste","p2":"campanar"},{"id":"mon-208","cat":"Otros","n":"Mesón de Morella","dir":"C. de l'Hostal de Morella 2","p1":"oeste","p2":"norte"},{"id":"mon-209","cat":"Otros","n":"Molí del Tell","dir":"C/ de Tomás de Villarroya 6","p1":"oeste","p2":"central"},{"id":"mon-210","cat":"Otros","n":"Museo del Patriarca","dir":"C/ de la Nau, 2,","p1":"norte","p2":"central"},{"id":"mon-211","cat":"Otros","n":"Port America's Cup","dir":"Marina Real Juan Carlos I","p1":"central","p2":"norte"},{"id":"mon-212","cat":"Otros","n":"Portal de Valldigna","dir":"Calle Portal de Valldigna","p1":"oeste","p2":"norte"},{"id":"mon-213","cat":"Otros","n":"Posada de la Calle Zurradores","dir":"Calle Zurradores","p1":"oeste","p2":"norte"},{"id":"mon-214","cat":"Otros","n":"Puerta de los Judíos","dir":"Carrer de Colón 2","p1":"central","p2":"norte"},{"id":"mon-215","cat":"Otros","n":"Real Parroquia de los Santos Juanes Valencia","dir":"Pl. del Mercat s/n","p1":"oeste","p2":"central"},{"id":"mon-216","cat":"Otros","n":"Real monasterio de la Trinidad de Valencia","dir":"C/ d'Alboraia, 1","p1":"norte","p2":"central"},{"id":"mon-217","cat":"Otros","n":"Sala Hipóstila","dir":"Plaza Décimo Junio Bruto 1","p1":"norte","p2":"central"},{"id":"mon-218","cat":"Otros","n":"Salón de Racionistas","dir":"C. de la Blanqueria, 15","p1":"oeste","p2":"norte"},{"id":"mon-219","cat":"Otros","n":"Teatro Principal","dir":"Calle de las Barcas 15","p1":"norte","p2":"central"},{"id":"mon-220","cat":"Otros","n":"Universidad de Valencia","dir":"Calle de la Nau 2","p1":"norte","p2":"central"},{"id":"mon-221","cat":"Otros","n":"Vía Augusta","dir":"","p1":"norte","p2":"central"},{"id":"mon-222","cat":"Otros","n":"real convento de santo domingo","dir":"Pl. Tetuán, 22","p1":"norte","p2":"central"},{"id":"mon-223","cat":"Otros","n":"Escuela de Bellas Artes","dir":"C/ de Sant Pius V","p1":"norte","p2":"central"},{"id":"mon-225","cat":"Palacios","n":"Palacete de Ayora","dir":"C/ dels Sants Just i Pastor, 98","p1":"norte","p2":"central"},{"id":"mon-226","cat":"Palacios","n":"Palacio Arzobispal","dir":"Calle Palau 2","p1":"norte","p2":"central"},{"id":"mon-227","cat":"Palacios","n":"Palacio Marquesa de Colomina","dir":"C/ de l'Almodí 1","p1":"norte","p2":"central"},{"id":"mon-228","cat":"Palacios","n":"Palacio Marqueses de Santa Bárbara (Casa de los Juliá)","dir":"C/ dels Cadirers 14","p1":"oeste","p2":"central"},{"id":"mon-229","cat":"Palacios","n":"Palacio Municipal de la Exposición","dir":"Calle Galicia 1","p1":"norte","p2":"central"},{"id":"mon-230","cat":"Palacios","n":"Palacio de Ariza","dir":"Plaza Conde de Carlet 3","p1":"norte","p2":"central"},{"id":"mon-231","cat":"Palacios","n":"Palacio de Benicarló","dir":"Plaza de San Lorenzo 4","p1":"norte","p2":"central"},{"id":"mon-232","cat":"Palacios","n":"Palacio de Cerveró","dir":"Plaza de Tetuán","p1":"norte","p2":"central"},{"id":"mon-233","cat":"Palacios","n":"Palacio de Escrivá y Boil","dir":"Plaça de Sant Lluís Bertran 1","p1":"norte","p2":"central"},{"id":"mon-234","cat":"Palacios","n":"Palacio de Justicia","dir":"Calle Palacio de Justicia s/n","p1":"norte","p2":"central"},{"id":"mon-235","cat":"Palacios","n":"Palacio de Montornés","dir":"C. del Conde de Montornes 1","p1":"norte","p2":"central"},{"id":"mon-236","cat":"Palacios","n":"Palacio de Montortal","dir":"Pl. Tetuán 4","p1":"norte","p2":"central"},{"id":"mon-237","cat":"Palacios","n":"Palacio de Peñalba","dir":"C. del Pintor Sorolla 6","p1":"norte","p2":"central"},{"id":"mon-238","cat":"Palacios","n":"Palacio de Pineda","dir":"Pl. del Carme 4","p1":"oeste","p2":"norte"},{"id":"mon-239","cat":"Palacios","n":"Palacio de la Baylía o Palacio de Jaudenes","dir":"Pl. de Manises 4","p1":"norte","p2":"central"},{"id":"mon-240","cat":"Palacios","n":"Palacio de la Generalitat","dir":"Calle Caballeros 2","p1":"norte","p2":"central"},{"id":"mon-241","cat":"Palacios","n":"Palacio de la Real Maestranza","dir":"Pl. de Nules 1","p1":"norte","p2":"central"},{"id":"mon-242","cat":"Palacios","n":"Palacio de los Boïl de Arenós","dir":"C/ dels Llibrers 2","p1":"norte","p2":"central"},{"id":"mon-243","cat":"Palacios","n":"Palacio de los Catalá de Valeriola (o de los Escofet)","dir":"Plaza de Nules 2","p1":"norte","p2":"central"},{"id":"mon-244","cat":"Palacios","n":"Palacio de los Condes de Almansa","dir":"C. Trinquete Caballeros 10","p1":"norte","p2":"central"},{"id":"mon-245","cat":"Palacios","n":"Palacio de los Condes de Alpuente","dir":"C. de Caballeros 28","p1":"oeste","p2":"norte"},{"id":"mon-246","cat":"Palacios","n":"Palacio de los Condes de Oliva (hoy de los de Daya Nueva)","dir":"C. de Caballeros 33","p1":"oeste","p2":"norte"},{"id":"mon-247","cat":"Palacios","n":"Palacio de los En Bou","dir":"C/ d'En Bou 11","p1":"oeste","p2":"norte"},{"id":"mon-248","cat":"Palacios","n":"Palacio de los Exarchs","dir":"C/ d'Eixarchs 3","p1":"oeste","p2":"campanar"},{"id":"mon-249","cat":"Palacios","n":"Palacio de los Fernández de Córdova","dir":"C. de Caballeros 36","p1":"oeste","p2":"norte"},{"id":"mon-250","cat":"Palacios","n":"Palacio de los Lassala","dir":"C/ de Calatrava 13","p1":"oeste","p2":"norte"},{"id":"mon-251","cat":"Palacios","n":"Palacio de los Marqueses de Malferit (o de los Condes de Brizuela)","dir":"C/ dels Cavallers 22","p1":"oeste","p2":"norte"},{"id":"mon-252","cat":"Palacios","n":"Palacio de los Martínez de Raga","dir":"C/ de Baix 25","p1":"oeste","p2":"norte"},{"id":"mon-253","cat":"Palacios","n":"Palacio de los Mercader","dir":"C/ dels Cavallers 26","p1":"oeste","p2":"norte"},{"id":"mon-254","cat":"Palacios","n":"Palacio de los Pescara","dir":"C. del Pintor Sorolla 24","p1":"norte","p2":"central"},{"id":"mon-255","cat":"Palacios","n":"Palacio de los Queixal o de los Trenor","dir":"C/ dels Cavallers 43","p1":"oeste","p2":"norte"},{"id":"mon-256","cat":"Palacios","n":"Palacio de los Valeriola","dir":"C. del Mar 31","p1":"norte","p2":"central"},{"id":"mon-257","cat":"Palacios","n":"Palacio del Almirante","dir":"Carrer del Palau 12","p1":"norte","p2":"central"},{"id":"mon-258","cat":"Palacios","n":"Palacio del Marqués de Campo","dir":"Plaza del Arzobispo 3","p1":"norte","p2":"central"},{"id":"mon-259","cat":"Palacios","n":"Palacio del Marqués de Caro","dir":"C. del Almte. 14","p1":"norte","p2":"central"},{"id":"mon-260","cat":"Palacios","n":"Palacio del Marqués de Castellfort (Fuente Hermosa)","dir":"Calle Caballeros","p1":"oeste","p2":"norte"},{"id":"mon-261","cat":"Palacios","n":"Palacio del Marqués de la Scala","dir":"Pl. de Manises 3","p1":"oeste","p2":"norte"},{"id":"mon-262","cat":"Palacios","n":"Palacio e Iglesia del Temple","dir":"Plaza del Temple 2","p1":"norte","p2":"central"},{"id":"mon-264","cat":"Parroquias","n":"Parroquia Epifanía del Señor y Santo Tomás de Villanueva","dir":"Calle Montichelvo 18","p1":"central","p2":"norte"},{"id":"mon-265","cat":"Parroquias","n":"Parroquia de Nuestra Señora de los Desamparados (Nazaret)","dir":"Calle Fontilles 27","p1":"central","p2":"norte"},{"id":"mon-266","cat":"Parroquias","n":"Parroquia de Nuestra Señora del Carmen (El Perellonet)","dir":"Calle del Babor s/n","p1":"saler","p2":"central"},{"id":"mon-267","cat":"Parroquias","n":"Parroquia de San Francisco Javier","dir":"Plaza Xúquer 1","p1":"norte","p2":"central"},{"id":"mon-268","cat":"Parroquias","n":"Parroquia de San Jaime de Beniferri","dir":"Calle Doctor Seguer 4","p1":"campanar","p2":"oeste"},{"id":"mon-269","cat":"Parroquias","n":"Parroquia de San José (El Saler)","dir":"Calle Anguilera 9","p1":"saler","p2":"central"},{"id":"mon-270","cat":"Parroquias","n":"Parroquia de San Vicente Mártir","dir":"Calle Ermita 1","p1":"central","p2":"oeste"},{"id":"mon-271","cat":"Parroquias","n":"Parroquia de San Vicente Mártir - Benimàmet","dir":"Plaza Dr. Ximeno 3","p1":"campanar","p2":"oeste"},{"id":"mon-272","cat":"Parroquias","n":"Parroquia de Santa Ana","dir":"Calle Eduardo Boscá 4","p1":"central","p2":"norte"},{"id":"mon-273","cat":"Parroquias","n":"Parroquia de Santa Cecilia","dir":"Calle Juan Ramón Jiménez 24","p1":"central","p2":"norte"},{"id":"mon-274","cat":"Parroquias","n":"Parroquia de Santa María del Mar","dir":"Calle Tribunal de les Aigües 1","p1":"norte","p2":"central"},{"id":"mon-275","cat":"Parroquias","n":"Parroquia de la Concepción (La Punta)","dir":"Calle La Punta al Mar 31","p1":"central","p2":"norte"},{"id":"mon-276","cat":"Parroquias","n":"Parroquia del Niño Jesús del Huerto (El Palmar-Albufera)","dir":"Plaza Sequiota 14","p1":"saler","p2":"central"},{"id":"mon-278","cat":"Plazas","n":"La Plaza Redonda","dir":"Plaza Redonda","p1":"oeste","p2":"central"},{"id":"mon-279","cat":"Plazas","n":"Plaza San Jaime","dir":"Plaza San Jaime","p1":"oeste","p2":"norte"},{"id":"mon-280","cat":"Plazas","n":"Plaza de Toros","dir":"Calle Xàtiva 28","p1":"norte","p2":"norte"},{"id":"mon-281","cat":"Plazas","n":"Plaza del Carmen","dir":"Plaza del Carmen","p1":"oeste","p2":"norte"},{"id":"mon-282","cat":"Plazas","n":"Plaza del Correo Viejo","dir":"Plaza del Correo Viejo","p1":"oeste","p2":"norte"},{"id":"mon-283","cat":"Plazas","n":"Plaza del Mercado","dir":"Plaza del Mercado","p1":"oeste","p2":"central"},{"id":"mon-284","cat":"Plazas","n":"Plaza del Portal Nuevo","dir":"Plaza del Portal Nuevo","p1":"oeste","p2":"norte"},{"id":"mon-286","cat":"Torres","n":"Torre de San Bartolomé","dir":"Calle Serranos esquina Calle de la Concordia","p1":"oeste","p2":"norte"},{"id":"mon-287","cat":"Torres","n":"Torre de la Posada del Ángel","dir":"Plaza del Ángel","p1":"oeste","p2":"norte"},{"id":"mon-288","cat":"Torres","n":"Torres de Quart","dir":"Calle Guillem de Castro 89","p1":"oeste","p2":"campanar"},{"id":"mon-289","cat":"Torres","n":"Torres de Serranos","dir":"Plaza de los Fueros s/n","p1":"norte","p2":"central"}];
+const MONUMENTOS_STORAGE_KEY = 'speis_monumentos_custom_v1';
+const EDITABLE_DATA_STORAGE_KEY = 'speis_quiz_editable_data_v1';
+const ALL_PARKS = ['campanar','oeste','norte','central','sur','saler','cpbv','w/c'];
+const MONUMENTOS_CATEGORIES = ["Asilos","Casas","Colegios","Conventos","Cruces","Edificios","Fuentes","Monumentos","Ermitas","Iglesias","Otros","Palacios","Parroquias","Plazas","Torres"];
+
+let monumentosFilter = 'all';
+let monumentAnswerMode = 'write';
+let selectedMonumentP1 = '';
+let selectedMonumentP2 = '';
+let locationHintVisible = false;
+let editorAdding = false;
+let simpleMap = null;
+let pendingPin = null;
+
+function cloneMonumentos(items){ return items.map(item => ({...item})); }
+function loadMonumentosData(){
+  let items = cloneMonumentos(MONUMENTOS_BASE);
+  try{
+    const saved = JSON.parse(localStorage.getItem(MONUMENTOS_STORAGE_KEY));
+    if(Array.isArray(saved) && saved.every(item => item && item.id && item.n)) items = saved;
+  }catch(e){}
+  DATA.monumentos = items;
+}
+function saveMonumentosData(){
+  try{ localStorage.setItem(MONUMENTOS_STORAGE_KEY, JSON.stringify(DATA.monumentos)); }catch(e){}
+}
+loadMonumentosData();
+CATEGORIES.push('monumentos');
+CAT_LABELS.monumentos = 'Monumentos';
+const EDITABLE_CATEGORIES = CATEGORIES.filter(cat=>cat!=='zonas_saler');
+function assignStableIds(){
+  EDITABLE_CATEGORIES.forEach(cat=>DATA[cat].forEach((item,index)=>{ if(!item.id) item.id=cat+'-'+String(index+1).padStart(3,'0'); }));
+}
+function loadEditableData(){
+  assignStableIds();
+  try{
+    const saved=JSON.parse(localStorage.getItem(EDITABLE_DATA_STORAGE_KEY));
+    if(saved && typeof saved==='object') EDITABLE_CATEGORIES.forEach(cat=>{
+      if(cat!=='monumentos' && Array.isArray(saved[cat]) && saved[cat].every(item=>item&&item.id&&item.n)) DATA[cat]=saved[cat];
+    });
+  }catch(e){}
+  assignStableIds();
+}
+function saveEditableData(){
+  const payload={}; EDITABLE_CATEGORIES.forEach(cat=>{ if(cat!=='monumentos') payload[cat]=DATA[cat]; });
+  try{ localStorage.setItem(EDITABLE_DATA_STORAGE_KEY,JSON.stringify(payload)); }catch(e){}
+  saveMonumentosData();
+}
+loadEditableData();
+
+function itemKey(item){ return item.id || item.n; }
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function displayPark(value){ return value ? value.charAt(0).toUpperCase()+value.slice(1) : 'Sin dato'; }
+function isQuizReady(item){ return !!(item && item.p1 && item.p2); }
+function renderInteractiveTitle(rec){
+  document.getElementById('item-name').innerHTML=escapeHtml(current.n)+(rec.streak>=5?'<span class="mastered-tick" title="5 aciertos seguidos">✓</span>':'')+`<span class="streak-chip">Racha ${rec.streak||0}/5</span>`;
+}
+
+initProfileData = function(){
+  CATEGORIES.forEach(c => {
+    history[c] = {};
+    sessionStats[c] = {ok:0, fail:0};
+    DATA[c].forEach(item => { history[c][itemKey(item)] = {ok:0, fail:0, streak:0}; });
+  });
+  notes = {};
+  dirToggle = {};
+  DIR_OPTIONAL_CATS.forEach(c => { dirToggle[c] = false; });
+  try {
+    const rh = localStorage.getItem(storageKey('history_v2'));
+    if(rh){
+      const saved = JSON.parse(rh);
+      CATEGORIES.forEach(c => {
+        if(!saved[c]) return;
+        DATA[c].forEach(item => {
+          const key=itemKey(item);
+          const old=saved[c][key] || saved[c][item.n];
+          if(old){
+            const migratedStreak = Number.isFinite(old.streak) ? old.streak : ((old.fail||0)===0 ? Math.min(old.ok||0,5) : 0);
+            history[c][key]={ok:old.ok||0,fail:old.fail||0,streak:migratedStreak};
+          }
+        });
+      });
+    }
+    const rn = localStorage.getItem(storageKey('notes'));
+    if(rn) notes = JSON.parse(rn);
+    const rd = localStorage.getItem(storageKey('dirtoggle'));
+    if(rd){ const s=JSON.parse(rd); DIR_OPTIONAL_CATS.forEach(c=>{ if(typeof s[c]==='boolean') dirToggle[c]=s[c]; }); }
+    monumentAnswerMode = localStorage.getItem(storageKey('monument_answer_mode')) || 'write';
+  } catch(e){}
+};
+
+const baseBuildQueue = buildQueue;
+buildQueue = function(){
+  if(currentCat!=='monumentos') return baseBuildQueue();
+  let items = monumentosFilter==='all' ? [...DATA.monumentos] : DATA.monumentos.filter(item=>item.cat===monumentosFilter);
+  if(items.length===0){ monumentosFilter='all'; items=[...DATA.monumentos]; }
+  for(let i=items.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [items[i],items[j]]=[items[j],items[i]]; }
+  order=items; pos=0;
+};
+
+function setHistoryStreak(ok){
+  const rec=history[currentCat][itemKey(current)];
+  if(!rec) return;
+  rec.streak = ok ? (rec.streak||0)+1 : 0;
+}
+function registerMonumentResult(ok){
+  const rec=history[currentCat][itemKey(current)];
+  if(ok){ rec.ok++; rec.streak=(rec.streak||0)+1; sessionStats[currentCat].ok++; }
+  else { rec.fail++; rec.streak=0; sessionStats[currentCat].fail++; }
+}
+
+const baseRenderItem = renderItem;
+renderItem = function(){
+  document.getElementById('btn-check').disabled=false;
+  if(currentCat==='zonas_saler'){
+    document.getElementById('monument-actions').className='monument-actions';
+    document.getElementById('answer-mode-row').className='answer-mode-row';
+    document.getElementById('location-hint').className='location-hint';
+    document.getElementById('monument-incident').style.display='none';
+    document.getElementById('selection-fields').className='selection-fields';
+    return baseRenderItem();
+  }
+  if(!current){ buildQueue(); current=order[0]; }
+  baseRenderItem();
+  checked=false; locationHintVisible=false; selectedMonumentP1=''; selectedMonumentP2='';
+  const rec=history[currentCat][itemKey(current)] || {ok:0,fail:0,streak:0};
+  renderInteractiveTitle(rec);
+  if(currentCat==='monumentos'){
+    const itemCat=document.getElementById('item-cat'); itemCat.textContent=current.cat; itemCat.style.display='';
+    document.getElementById('item-group').style.display='none';
+  }
+  document.getElementById('zona-buttons').style.display='none';
+  document.getElementById('dir-toggle-row').style.display='none';
+  document.getElementById('field-dir').style.display='none';
+  document.getElementById('monument-actions').className='monument-actions visible';
+  document.getElementById('answer-mode-row').className='answer-mode-row visible';
+  document.getElementById('location-hint').className='location-hint';
+  document.getElementById('btn-location-hint').className='mini-btn';
+  document.getElementById('feedback').textContent=''; document.getElementById('feedback').className='feedback';
+  document.getElementById('answer-reveal').style.display='none';
+  document.getElementById('btn-next').style.display='none';
+  document.getElementById('btn-check').style.display='';
+  ['p1','p2'].forEach(f=>{ const el=document.getElementById('f-'+f); el.value=''; el.className=''; el.disabled=false; });
+  const isPtePamri=currentCat==='pte'||currentCat==='pamri';
+  document.getElementById('label-p1').textContent=isPtePamri?'Parque principal':'1ª Salida';
+  document.getElementById('label-p2').textContent=isPtePamri?'Parque de apoyo':'2ª Salida';
+  document.querySelector('#p1-choices').previousElementSibling.textContent=isPtePamri?'Parque principal':'1ª salida';
+  document.querySelector('#p2-choices').previousElementSibling.textContent=isPtePamri?'Parque de apoyo':'2ª salida';
+  renderParkChoices();
+  applyAnswerMode();
+  const incident=document.getElementById('monument-incident');
+  if(!isQuizReady(current)){
+    incident.style.display='block';
+    incident.textContent='Incidencia: faltan la primera y/o la segunda salida. Corrige el registro desde Editar para poder puntuarlo.';
+    document.getElementById('btn-check').disabled=true;
+    document.getElementById('btn-next').style.display='';
+  } else incident.style.display='none';
+  const noteKey=currentCat+'::'+itemKey(current);
+  document.getElementById('notes-input').value=notes[noteKey] || notes[currentCat+'::'+current.n] || '';
+  document.getElementById('notes-saved').className='notes-saved';
+  if(monumentAnswerMode==='write') document.getElementById('f-p1').focus();
+  updateProgress();
+};
+
+function setMonumentAnswerMode(mode){
+  monumentAnswerMode=mode==='select'?'select':'write';
+  try{ localStorage.setItem(storageKey('monument_answer_mode'),monumentAnswerMode); }catch(e){}
+  applyAnswerMode();
+}
+function applyAnswerMode(){
+  if(currentCat==='zonas_saler') return;
+  const selectMode=monumentAnswerMode==='select';
+  document.getElementById('field-p1').style.display=selectMode?'none':'';
+  document.getElementById('field-p2').style.display=selectMode?'none':'';
+  document.getElementById('fields-grid').style.display='';
+  document.getElementById('selection-fields').className='selection-fields'+(selectMode?' visible':'');
+  document.getElementById('mode-write').className='mini-btn'+(!selectMode?' active':'');
+  document.getElementById('mode-select').className='mini-btn'+(selectMode?' active':'');
+}
+function renderParkChoices(){
+  ['p1','p2'].forEach(field=>{
+    const selected=field==='p1'?selectedMonumentP1:selectedMonumentP2;
+    document.getElementById(field+'-choices').innerHTML=ALL_PARKS.map(park=>`<button type="button" class="park-choice${selected===park?' selected':''}" data-park="${park}" onclick="choosePark('${field}','${park}')">${displayPark(park)}</button>`).join('');
+  });
+}
+function choosePark(field,park){
+  if(checked) return;
+  if(field==='p1') selectedMonumentP1=park; else selectedMonumentP2=park;
+  renderParkChoices();
+}
+function toggleLocationHint(){
+  if(currentCat==='zonas_saler') return;
+  locationHintVisible=!locationHintVisible;
+  const box=document.getElementById('location-hint');
+  box.className='location-hint'+(locationHintVisible?' visible':'');
+  box.innerHTML=current.dir?`<strong>Ubicación:</strong> ${escapeHtml(current.dir)}`:'<strong>Ubicación:</strong> sin dirección en el archivo';
+  document.getElementById('btn-location-hint').className='mini-btn'+(locationHintVisible?' active':'');
+}
+
+const baseCheckAnswer = checkAnswer;
+checkAnswer = function(){
+  if(currentCat==='zonas_saler') return baseCheckAnswer();
+  if(checked || !isQuizReady(current)) return;
+  checked=true;
+  const v1=monumentAnswerMode==='select'?selectedMonumentP1:document.getElementById('f-p1').value;
+  const v2=monumentAnswerMode==='select'?selectedMonumentP2:document.getElementById('f-p2').value;
+  let ok1=checkParque(v1,current.p1), ok2=checkParque(v2,current.p2);
+  if(current.parques_alt){
+    const validPairs=[[current.p1,current.p2],...current.parques_alt];
+    const pairOk=validPairs.some(([p1,p2])=>checkParque(v1,p1)&&checkParque(v2,p2)); ok1=pairOk; ok2=pairOk;
+  }
+  if(monumentAnswerMode==='write'){
+    document.getElementById('f-p1').className=ok1?'correct':'wrong';
+    document.getElementById('f-p2').className=ok2?'correct':'wrong';
+  } else {
+    ['p1','p2'].forEach(field=>{
+      const correct=current[field], chosen=field==='p1'?selectedMonumentP1:selectedMonumentP2;
+      const fieldOk=field==='p1'?ok1:ok2;
+      document.querySelectorAll('#'+field+'-choices .park-choice').forEach(btn=>{
+        if(btn.dataset.park===chosen) btn.classList.add(fieldOk?'correct':'wrong');
+        else if(!fieldOk && btn.dataset.park===correct) btn.classList.add('correct');
+      });
+    });
+  }
+  let okg=true;
+  if(current.grupo && currentCat!=='pte' && currentCat!=='pamri'){
+    okg=document.getElementById('f-grupo').value===current.grupo;
+    document.getElementById('f-grupo').className=okg?'correct':'wrong';
+  }
+  let okp=true;
+  if(current.peligrosidad!==undefined){
+    okp=document.getElementById('f-peligrosidad').value.trim()===String(current.peligrosidad);
+    document.getElementById('f-peligrosidad').className=okp?'correct':'wrong';
+  }
+  const allOk=ok1&&ok2&&okg&&okp;
+  registerMonumentResult(allOk);
+  const rec=history[currentCat][itemKey(current)];
+  renderInteractiveTitle(rec);
+  const fb=document.getElementById('feedback');
+  if(allOk){
+    fb.textContent=rec.streak>=5?'✓ Correcto · ubicación dominada':'✓ Correcto · racha '+rec.streak+'/5'; fb.className='feedback ok';
+  }else{
+    fb.textContent='✗ Incorrecto · la racha vuelve a 0'; fb.className='feedback fail';
+    const rev=document.getElementById('answer-reveal'), isPtePamri=currentCat==='pte'||currentCat==='pamri';
+    let answer=isPtePamri
+      ? `<strong>Respuesta correcta:</strong><br>Parque principal: <strong>${escapeHtml(displayPark(current.p1))}</strong> &nbsp;·&nbsp; Parque de apoyo: <strong>${escapeHtml(displayPark(current.p2))}</strong>`
+      : `<strong>Respuesta correcta:</strong><br>1ª salida: <strong>${escapeHtml(displayPark(current.p1))}</strong> &nbsp;·&nbsp; 2ª salida: <strong>${escapeHtml(displayPark(current.p2))}</strong>`;
+    if(current.parques_alt){
+      const alternatives=current.parques_alt.map(([p1,p2])=>displayPark(p1)+'–'+displayPark(p2)).join(' / ');
+      answer+=` &nbsp;·&nbsp; También válida: <strong>${escapeHtml(alternatives)}</strong>`;
+    }
+    if(current.grupo && !isPtePamri && GROUPS[currentCat]) answer+=` &nbsp;·&nbsp; Tipo: <strong>${escapeHtml(GROUPS[currentCat][current.grupo])}</strong>`;
+    if(current.peligrosidad!==undefined) answer+=` &nbsp;·&nbsp; Nivel Peligrosidad: <strong>${escapeHtml(current.peligrosidad)}</strong>`;
+    rev.innerHTML=answer;
+    rev.style.display='block';
+  }
+  document.getElementById('btn-check').style.display='none'; document.getElementById('btn-next').style.display='';
+  saveHistory(); updateStats(); renderHistory(); updateProgressBars();
+};
+
+const baseAnswerZona = answerZona;
+answerZona = function(z){
+  const beforeOk=history[currentCat][itemKey(current)]?.ok||0;
+  const beforeFail=history[currentCat][itemKey(current)]?.fail||0;
+  baseAnswerZona(z);
+  const rec=history[currentCat][itemKey(current)];
+  if(rec && (rec.ok!==beforeOk || rec.fail!==beforeFail)){
+    setHistoryStreak(rec.ok>beforeOk); saveHistory(); updateProgressBars();
+  }
+};
+
+calcProgress = function(cat){
+  const items=DATA[cat], total=items.length;
+  let mastered=0;
+  items.forEach(item=>{ if((history[cat]?.[itemKey(item)]?.streak||0)>=5) mastered++; });
+  return {mastered,total,pct:total?Math.round(mastered/total*100):0};
+};
+updateProgressBars = function(){
+  renderTabs();
+  const o=calcOverallProgress();
+  document.getElementById('overall-progress-pct').textContent=o.pct+'%';
+  document.getElementById('overall-progress-fill').style.width=o.pct+'%';
+  document.getElementById('overall-progress-count').textContent=`${o.mastered} de ${o.total} dominados · ${o.total} ítems totales`;
+  renderMonumentSubcategories();
+};
+function subcatProgress(cat){
+  const items=DATA.monumentos.filter(item=>item.cat===cat), total=items.length;
+  const mastered=items.filter(item=>(history.monumentos?.[itemKey(item)]?.streak||0)>=5).length;
+  return {total,mastered,pct:total?Math.round(mastered/total*100):0};
+}
+function renderMonumentSubcategories(){
+  const panel=document.getElementById('monumentos-panel');
+  panel.className='monumentos-panel'+(currentCat==='monumentos'?' visible':'');
+  if(currentCat!=='monumentos') return;
+  const all=calcProgress('monumentos');
+  const buttons=[`<button class="subcat-btn${monumentosFilter==='all'?' active':''}" onclick="setMonumentosFilter('all')">Todas (${all.total}) <span class="mini-pct">${all.pct}%</span></button>`];
+  MONUMENTOS_CATEGORIES.forEach(cat=>{
+    const p=subcatProgress(cat), encoded=encodeURIComponent(cat);
+    buttons.push(`<button class="subcat-btn${monumentosFilter===cat?' active':''}" onclick="setMonumentosFilter(decodeURIComponent('${encoded}'))">${escapeHtml(cat)} (${p.total}) <span class="mini-pct">${p.pct}%</span></button>`);
+  });
+  document.getElementById('monumentos-subcats').innerHTML=buttons.join('');
+}
+function setMonumentosFilter(cat){ monumentosFilter=cat; buildQueue(); getNext(); renderHistory(); updateProgressBars(); }
+
+updateProgress = function(){
+  const total=currentCat==='monumentos'?order.length:DATA[currentCat].length;
+  const suffix=currentCat==='monumentos'&&monumentosFilter!=='all'?' · '+monumentosFilter:'';
+  document.getElementById('progress-info').textContent=`${pos+1} / ${total} — ${CAT_LABELS[currentCat]}${suffix}`;
+};
+renderHistory = function(){
+  const list=document.getElementById('history-list');
+  const itemsByKey=new Map(DATA[currentCat].map(item=>[itemKey(item),item]));
+  const sorted=Object.entries(history[currentCat]||{}).filter(([,v])=>v.fail>0||v.ok>0).sort((a,b)=>b[1].fail-a[1].fail);
+  if(sorted.length===0){ list.innerHTML='<div style="font-size:13px;color:var(--text-muted);padding:8px 0">Sin historial aún</div>'; return; }
+  list.innerHTML=sorted.map(([key,v])=>{
+    const item=itemsByKey.get(key), name=item?item.n:key, mastered=(v.streak||0)>=5;
+    return `<div class="history-item"><span>${escapeHtml(name)}${mastered?'<span class="mastered-tick" title="5 aciertos seguidos">✓</span>':''}</span><div class="err-badges"><span class="badge ok">Racha ${v.streak||0}/5</span><span class="badge ok">✓ ${v.ok}</span><span class="badge fail ${v.fail===0?'zero':''}">✗ ${v.fail}</span></div></div>`;
+  }).join('');
+};
+
+const baseSwitchTab=switchTab;
+switchTab=function(cat){
+  baseSwitchTab(cat);
+  document.getElementById('monumentos-panel').className='monumentos-panel'+(cat==='monumentos'?' visible':'');
+};
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const ni=document.getElementById('notes-input');
+  ni.addEventListener('input',()=>{
+    if(currentCat==='zonas_saler'||!current) return;
+    notes[currentCat+'::'+itemKey(current)]=ni.value;
+  });
+});
+
+function fillEditorSelects(){
+  const cats=[...new Set([...MONUMENTOS_CATEGORIES,...DATA.monumentos.map(item=>item.cat)])].sort((a,b)=>a.localeCompare(b,'es'));
+  document.getElementById('edit-category').innerHTML=cats.map(cat=>`<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');
+  const parkOptions='<option value="">Sin dato</option>'+ALL_PARKS.map(p=>`<option value="${p}">${displayPark(p)}</option>`).join('');
+  document.getElementById('edit-p1').innerHTML=parkOptions; document.getElementById('edit-p2').innerHTML=parkOptions;
+}
+function openMonumentEditor(add){
+  if(currentCat==='zonas_saler') return;
+  editorAdding=!!add; fillEditorSelects();
+  const item=editorAdding?{n:'',dir:'',cat:monumentosFilter==='all'?MONUMENTOS_CATEGORIES[0]:monumentosFilter,p1:'',p2:''}:current;
+  document.getElementById('editor-title').textContent=editorAdding?'Añadir ubicación':'Editar ubicación';
+  document.getElementById('edit-name').value=item.n||''; document.getElementById('edit-address').value=item.dir||'';
+  const catField=document.getElementById('edit-category').closest('.modal-field');
+  catField.style.display=currentCat==='monumentos'?'':'none';
+  document.getElementById('edit-category').value=item.cat||MONUMENTOS_CATEGORIES[0];
+  document.getElementById('edit-p1').value=item.p1||''; document.getElementById('edit-p2').value=item.p2||'';
+  document.getElementById('delete-monument-btn').style.display=editorAdding?'none':'';
+  document.getElementById('editor-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('edit-name').focus(),50);
+}
+function closeEditorModal(){ document.getElementById('editor-modal').classList.remove('open'); }
+function saveMonumentEditor(){
+  const name=document.getElementById('edit-name').value.trim();
+  if(!name){ alert('El nombre es obligatorio.'); return; }
+  const updated={
+    n:name, dir:document.getElementById('edit-address').value.trim(),
+    p1:document.getElementById('edit-p1').value, p2:document.getElementById('edit-p2').value
+  };
+  if(editorAdding){
+    updated.cat=document.getElementById('edit-category').value;
+    updated.id='mon-user-'+Date.now(); DATA.monumentos.push(updated);
+    history.monumentos[updated.id]={ok:0,fail:0,streak:0}; monumentosFilter=updated.cat;
+  }else{
+    if(currentCat==='monumentos') updated.cat=document.getElementById('edit-category').value;
+    const index=DATA[currentCat].findIndex(item=>item.id===current.id);
+    if(index<0) return;
+    const changedAnswer=current.p1!==updated.p1||current.p2!==updated.p2;
+    DATA[currentCat][index]={...current,...updated};
+    current=DATA[currentCat][index];
+    if(changedAnswer && history[currentCat][itemKey(current)]) history[currentCat][itemKey(current)].streak=0;
+  }
+  saveEditableData(); saveHistory(); closeEditorModal(); buildQueue(); getNext(); updateStats(); renderHistory(); updateProgressBars();
+}
+function deleteCurrentMonument(){
+  if(!current || currentCat==='zonas_saler' || !confirm(`¿Eliminar “${current.n}” de ${CAT_LABELS[currentCat]}?`)) return;
+  DATA[currentCat]=DATA[currentCat].filter(item=>item.id!==current.id);
+  saveEditableData(); closeEditorModal(); buildQueue(); getNext(); updateStats(); renderHistory(); updateProgressBars();
+}
+function closeModalOnBackdrop(event,id){ if(event.target.id===id) document.getElementById(id).classList.remove('open'); }
+
+function openMapModal(){
+  if(!current||currentCat==='zonas_saler') return;
+  pendingPin=(Number.isFinite(current.lat)&&Number.isFinite(current.lng))?{lat:current.lat,lng:current.lng}:null;
+  const query=(current.dir?current.dir+', ':'')+'Valencia, España';
+  document.getElementById('google-map-link').href='https://www.google.com/maps/search/'+encodeURIComponent(query);
+  document.getElementById('map-status').textContent=current.dir?'Buscando el pin de «'+current.dir+'»…':'No hay dirección. Pulsa en el mapa para colocar el pin.';
+  document.getElementById('map-modal').classList.add('open');
+  setTimeout(initOrRefreshMap,80);
+}
+class SimplePinMap{
+  constructor(element){
+    this.el=element; this.zoom=13; this.center={lat:39.4699,lng:-0.3763}; this.markerPos=null; this.draggingMarker=false;
+    this.el.style.position='relative'; this.el.style.overflow='hidden'; this.el.style.touchAction='none';
+    this.tiles=document.createElement('div'); this.tiles.style.position='absolute'; this.tiles.style.inset='0'; this.el.appendChild(this.tiles);
+    this.marker=document.createElement('div'); this.marker.className='simplemap-marker'; this.marker.textContent='📍'; this.marker.style.display='none'; this.el.appendChild(this.marker);
+    const controls=document.createElement('div'); controls.className='simplemap-controls';
+    controls.innerHTML='<button type="button" aria-label="Acercar">+</button><button type="button" aria-label="Alejar">−</button>';
+    controls.children[0].onclick=e=>{e.stopPropagation();this.zoom=Math.min(19,this.zoom+1);this.render();};
+    controls.children[1].onclick=e=>{e.stopPropagation();this.zoom=Math.max(4,this.zoom-1);this.render();}; this.el.appendChild(controls);
+    const attribution=document.createElement('div'); attribution.className='simplemap-attribution'; attribution.innerHTML='&copy; OpenStreetMap'; this.el.appendChild(attribution);
+    this.el.addEventListener('click',e=>{ if(this.draggingMarker||e.target.closest('.simplemap-controls')) return; const p=this.eventToLatLng(e); placeMapMarker(p.lat,p.lng); });
+    this.marker.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); this.draggingMarker=true; this.marker.setPointerCapture(e.pointerId); });
+    this.marker.addEventListener('pointermove',e=>{ if(!this.draggingMarker) return; const p=this.eventToLatLng(e); pendingPin=p; this.markerPos=p; this.positionMarker(); });
+    this.marker.addEventListener('pointerup',e=>{ e.preventDefault(); e.stopPropagation(); this.draggingMarker=false; });
+    window.addEventListener('resize',()=>this.render());
+    this.render();
+  }
+  worldSize(){ return 256*Math.pow(2,this.zoom); }
+  project(lat,lng){
+    const size=this.worldSize(), sin=Math.sin(Math.max(-85.0511,Math.min(85.0511,lat))*Math.PI/180);
+    return {x:(lng+180)/360*size,y:(.5-Math.log((1+sin)/(1-sin))/(4*Math.PI))*size};
+  }
+  unproject(x,y){
+    const size=this.worldSize(), lng=x/size*360-180, n=Math.PI-2*Math.PI*y/size;
+    return {lat:180/Math.PI*Math.atan(Math.sinh(n)),lng};
+  }
+  eventToLatLng(e){
+    const rect=this.el.getBoundingClientRect(), center=this.project(this.center.lat,this.center.lng);
+    return this.unproject(center.x-rect.width/2+(e.clientX-rect.left),center.y-rect.height/2+(e.clientY-rect.top));
+  }
+  setView(lat,lng,zoom){ this.center={lat,lng}; if(zoom) this.zoom=zoom; this.render(); }
+  setMarker(lat,lng){ this.markerPos={lat,lng}; this.marker.style.display='block'; this.positionMarker(); }
+  clearMarker(){ this.markerPos=null; this.marker.style.display='none'; }
+  positionMarker(){
+    if(!this.markerPos) return; const rect=this.el.getBoundingClientRect(), c=this.project(this.center.lat,this.center.lng), p=this.project(this.markerPos.lat,this.markerPos.lng);
+    this.marker.style.left=(rect.width/2+p.x-c.x)+'px'; this.marker.style.top=(rect.height/2+p.y-c.y)+'px';
+  }
+  render(){
+    const w=this.el.clientWidth||600,h=this.el.clientHeight||390,c=this.project(this.center.lat,this.center.lng),size=this.worldSize();
+    const left=c.x-w/2,top=c.y-h/2,minX=Math.floor(left/256),maxX=Math.floor((left+w)/256),minY=Math.floor(top/256),maxY=Math.floor((top+h)/256),tileCount=Math.pow(2,this.zoom);
+    this.tiles.innerHTML='';
+    for(let ty=minY;ty<=maxY;ty++) for(let tx=minX;tx<=maxX;tx++){
+      if(ty<0||ty>=tileCount) continue; const wrapped=((tx%tileCount)+tileCount)%tileCount, img=document.createElement('img');
+      img.className='simplemap-tile'; img.alt=''; img.draggable=false; img.src=`https://tile.openstreetmap.org/${this.zoom}/${wrapped}/${ty}.png`;
+      img.style.left=(tx*256-left)+'px'; img.style.top=(ty*256-top)+'px'; this.tiles.appendChild(img);
+    }
+    this.positionMarker();
+  }
+}
+async function initOrRefreshMap(){
+  document.getElementById('monument-map').style.display='block'; document.getElementById('map-fallback').style.display='none';
+  if(!simpleMap) simpleMap=new SimplePinMap(document.getElementById('monument-map'));
+  simpleMap.clearMarker(); simpleMap.setView(39.4699,-0.3763,13);
+  if(pendingPin){ placeMapMarker(pendingPin.lat,pendingPin.lng); simpleMap.setView(pendingPin.lat,pendingPin.lng,17); return; }
+  if(!current.dir){ document.getElementById('map-status').textContent='No hay dirección. Pulsa en el mapa para colocar el pin.'; return; }
+  try{
+    const url='https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=es&q='+encodeURIComponent(current.dir+', Valencia, España');
+    const response=await fetch(url); const results=await response.json();
+    if(results[0]){
+      placeMapMarker(Number(results[0].lat),Number(results[0].lon)); simpleMap.setView(pendingPin.lat,pendingPin.lng,17);
+      document.getElementById('map-status').textContent='Pin aproximado según la dirección. Arrástralo o pulsa en el mapa para corregirlo.';
+    }else document.getElementById('map-status').textContent='No se encontró la dirección. Pulsa en el mapa para colocar el pin manualmente.';
+  }catch(e){ document.getElementById('map-status').textContent='No se pudo buscar la dirección. Puedes colocar el pin manualmente.'; }
+}
+function placeMapMarker(lat,lng){
+  pendingPin={lat,lng};
+  if(simpleMap) simpleMap.setMarker(lat,lng);
+}
+function saveMapPin(){
+  if(!current||!pendingPin){ alert('Coloca primero el pin en el mapa.'); return; }
+  current.lat=pendingPin.lat; current.lng=pendingPin.lng; saveEditableData();
+  document.getElementById('map-status').textContent='Pin guardado para esta ubicación.';
+  setTimeout(closeMapModal,500);
+}
+function closeMapModal(){ document.getElementById('map-modal').classList.remove('open'); }
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ closeEditorModal(); closeMapModal(); }
+});
+</script>
 
 </body>
 </html>
