@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Quiz SPEIS Valencia">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#181818"/>
+      <stop offset="1" stop-color="#090909"/>
+    </linearGradient>
+    <linearGradient id="fire" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd166"/>
+      <stop offset="0.48" stop-color="#f39c12"/>
+      <stop offset="1" stop-color="#c0392b"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff2a8"/>
+      <stop offset="1" stop-color="#ff9f1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="104" fill="url(#bg)"/>
+  <circle cx="256" cy="270" r="176" fill="#c0392b" opacity="0.09"/>
+  <path d="M270 62c21 79 103 119 98 222-4 91-61 156-137 164-79-9-130-69-130-145 0-68 42-112 83-163-4 55 18 91 55 113 35-46 44-116 31-191Z" fill="url(#fire)"/>
+  <path d="M249 247c11 38 54 61 49 112-3 36-25 64-58 71-37-7-59-34-59-68 0-31 19-54 41-80-1 27 9 43 25 53 14-22 17-57 2-88Z" fill="url(#core)"/>
+  <path d="M140 449h232" stroke="#e67e22" stroke-width="10" stroke-linecap="round" opacity="0.65"/>
+</svg>
