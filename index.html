@@ -58,6 +58,10 @@ body::after{
 .profile-title{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text-primary);margin-bottom:4px;position:relative;z-index:1}
 .profile-subtitle{font-size:12px;color:var(--text-muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:48px;position:relative;z-index:1}
 .profile-cards{display:flex;gap:20px;position:relative;z-index:1;flex-wrap:wrap;justify-content:center}
+.profile-sync{position:relative;z-index:1;margin-top:22px}
+.sync-status-btn{padding:9px 14px;border-radius:20px;border:.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--text-secondary);font:600 12px 'Barlow',sans-serif;cursor:pointer}
+.sync-status-btn.online{border-color:rgba(39,174,96,.45);color:#75d89d;background:rgba(39,174,96,.09)}
+.sync-status-btn.error{border-color:rgba(192,57,43,.5);color:#ff8f83;background:rgba(192,57,43,.09)}
 .profile-card{
   background:var(--panel-bg);border:0.5px solid var(--panel-border);border-radius:16px;
   padding:32px 40px;text-align:center;cursor:pointer;
@@ -265,6 +269,10 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .modal-field input,.modal-field select{width:100%;padding:10px 12px;border-radius:6px;border:.5px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);font:14px 'Barlow',sans-serif}
 .modal-field select option{background:#1a1a1a}
 .modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.sync-copy{font-size:13px;color:var(--text-secondary);line-height:1.55;margin:4px 0 14px}
+.sync-email{font-size:12px;color:var(--fire-orange);margin-bottom:12px;overflow-wrap:anywhere}
+.sync-message{min-height:19px;font-size:12px;color:var(--text-secondary);margin-top:10px}
+.sync-message.error{color:#ff8f83}.sync-message.ok{color:#75d89d}
 .danger-btn{border-color:rgba(192,57,43,.55);color:#e74c3c;background:rgba(192,57,43,.08)}
 .inline-map-panel{display:none;margin:0 0 16px 17px;padding:12px;border:.5px solid rgba(230,126,34,.3);border-radius:9px;background:rgba(0,0,0,.2)}
 .inline-map-panel.open{display:block}
@@ -284,6 +292,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
   #profile-screen{padding:max(20px,env(safe-area-inset-top)) 12px max(20px,env(safe-area-inset-bottom));overflow-y:auto}
   .profile-logo{font-size:44px}.profile-title{font-size:28px;text-align:center}.profile-subtitle{margin-bottom:26px}
   .profile-cards{width:100%;gap:10px;flex-wrap:nowrap}.profile-card{flex:1;min-width:0;padding:22px 10px}.profile-avatar{width:54px;height:54px;font-size:24px}.profile-name{font-size:19px}.profile-stats-preview{font-size:11px}
+  .profile-sync{margin-top:16px}
   #main-app{padding:max(14px,env(safe-area-inset-top)) 10px max(60px,env(safe-area-inset-bottom))}.quiz-card{padding:16px 12px}.item-name{font-size:24px;padding-left:10px}
   .fields{grid-template-columns:1fr}.fields .field:last-child{grid-column:auto}.stats-bar{gap:6px}.stat{padding:8px 10px;min-width:68px}
   .btn-row{gap:7px}.btn{padding:10px 14px}.enter-hint{display:none}.park-choice{flex:1 1 42%;min-height:40px}
@@ -311,6 +320,9 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <div class="profile-stats-preview" id="preview-Tudon">Cargando...</div>
     </div>
   </div>
+  <div class="profile-sync">
+    <button type="button" class="sync-status-btn" id="profile-sync-button" onclick="openSyncModal()">☁ Sin conectar</button>
+  </div>
 </div>
 
 <!-- MAIN APP -->
@@ -324,6 +336,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       </div>
     </div>
     <div class="header-right">
+      <button type="button" class="sync-status-btn" id="header-sync-button" onclick="openSyncModal()">☁ Sin conectar</button>
       <button type="button" class="install-app-btn" id="install-app-btn" onclick="installQuizApp()" hidden>Instalar app</button>
       <div class="active-profile" onclick="goToProfiles()">
         <div class="mini-avatar avatar-j" id="header-avatar">J</div>
@@ -486,6 +499,34 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <button class="btn" onclick="closeEditorModal()">Cancelar</button>
       <button class="btn danger-btn" id="delete-monument-btn" onclick="deleteCurrentMonument()">Eliminar</button>
     </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="sync-modal" onclick="closeModalOnBackdrop(event,'sync-modal')">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="sync-title">
+    <div class="modal-title" id="sync-title">Sincronización</div>
+    <div id="sync-signed-out">
+      <p class="sync-copy">Entra con el mismo correo y contraseña en el ordenador y en el móvil. La primera conexión conservará los datos que ya tienes guardados.</p>
+      <div class="modal-grid">
+        <div class="modal-field wide"><label>Correo</label><input id="sync-email" type="email" autocomplete="email"/></div>
+        <div class="modal-field wide"><label>Contraseña</label><input id="sync-password" type="password" autocomplete="current-password"/></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn primary" onclick="syncSignIn()">Entrar</button>
+        <button type="button" class="btn" onclick="syncSignUp()">Crear acceso</button>
+        <button type="button" class="btn" onclick="closeSyncModal()">Cancelar</button>
+      </div>
+    </div>
+    <div id="sync-signed-in" hidden>
+      <p class="sync-copy">Tus perfiles y cambios se guardan en Supabase y se recuperan al abrir la aplicación en otro dispositivo.</p>
+      <div class="sync-email" id="sync-user-email"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn primary" onclick="syncNow()">Sincronizar ahora</button>
+        <button type="button" class="btn" onclick="syncSignOut()">Cerrar sesión</button>
+        <button type="button" class="btn" onclick="closeSyncModal()">Cerrar</button>
+      </div>
+    </div>
+    <div class="sync-message" id="sync-message" aria-live="polite"></div>
   </div>
 </div>
 
@@ -2123,7 +2164,17 @@ window.addEventListener('appinstalled',()=>{
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
+window.openSyncModal=()=>{
+  document.getElementById('sync-modal').classList.add('open');
+  const message=document.getElementById('sync-message');
+  message.textContent=navigator.onLine?'Preparando la conexión segura…':'Sin conexión. El quiz sigue guardando los cambios en este dispositivo.';
+};
+window.closeSyncModal=()=>document.getElementById('sync-modal').classList.remove('open');
+['syncSignIn','syncSignUp','syncSignOut','syncNow'].forEach(name=>{ window[name]=()=>{
+  const message=document.getElementById('sync-message'); message.textContent='La sincronización necesita conexión a Internet.'; message.className='sync-message error';
+}; });
 </script>
+<script type="module" src="./sync.js"></script>
 
 </body>
 </html>
