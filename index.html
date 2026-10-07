@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Quiz SPEIS Valencia</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -172,9 +173,14 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 }
 
 /* ── NOTAS ── */
-.notes-area{border-top:0.5px solid rgba(255,255,255,0.06);padding-top:14px}
-.notes-label{font-size:10px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.notes-area{margin-bottom:16px;border:.5px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.025);overflow:hidden}
+.notes-label{width:100%;padding:10px 12px;font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;display:flex;align-items:center;gap:7px;border:0;background:transparent;cursor:pointer;text-align:left}
+.notes-label::after{content:'⌄';margin-left:auto;font-size:15px;transition:transform .2s}
+.notes-label.open::after{transform:rotate(180deg)}
+.notes-label.has-note{color:#ffe083;background:rgba(243,156,18,.14)}
 .notes-label svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.6}
+.notes-content{display:none;padding:0 12px 10px}
+.notes-content.open{display:block}
 .notes-input{width:100%;padding:9px 12px;font-size:13px;font-family:'Barlow',sans-serif;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;color:var(--text-secondary);outline:none;resize:none;transition:border .15s,background .15s;line-height:1.5}
 .notes-input::placeholder{color:var(--text-muted)}
 .notes-input:focus{border-color:rgba(230,126,34,0.3);background:rgba(255,255,255,0.06);color:var(--text-primary)}
@@ -246,17 +252,18 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .modal-field select option{background:#1a1a1a}
 .modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
 .danger-btn{border-color:rgba(192,57,43,.55);color:#e74c3c;background:rgba(192,57,43,.08)}
-#monument-map{height:390px;border-radius:9px;background:#222;margin-top:10px}
-.simplemap-tile{position:absolute;width:256px;height:256px;user-select:none;-webkit-user-drag:none}
-.simplemap-marker{position:absolute;z-index:5;font-size:34px;line-height:1;transform:translate(-50%,-100%);cursor:grab;filter:drop-shadow(0 2px 3px rgba(0,0,0,.65));touch-action:none}
-.simplemap-marker:active{cursor:grabbing}
-.simplemap-controls{position:absolute;z-index:8;right:8px;top:8px;display:flex;flex-direction:column;gap:5px}
-.simplemap-controls button{width:34px;height:34px;border:1px solid rgba(0,0,0,.3);border-radius:5px;background:#fff;color:#222;font-size:22px;font-weight:700;cursor:pointer}
-.simplemap-attribution{position:absolute;right:4px;bottom:3px;z-index:7;background:rgba(255,255,255,.82);color:#333;font-size:10px;padding:2px 4px;border-radius:3px}
+.inline-map-panel{display:none;margin:0 0 16px 17px;padding:12px;border:.5px solid rgba(230,126,34,.3);border-radius:9px;background:rgba(0,0,0,.2)}
+.inline-map-panel.open{display:block}
+#monument-map{height:360px;border-radius:8px;background:#222;margin-top:10px;z-index:1}
 .map-status{font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:8px}
-.map-fallback{display:none;padding:30px;text-align:center;color:var(--text-muted)}
 .map-link{color:var(--fire-orange)}
-@media(max-width:600px){.selection-fields,.modal-grid{grid-template-columns:1fr}.modal-grid .wide{grid-column:auto}.monument-actions,.answer-mode-row,.location-hint,.incident-box{margin-left:0}}
+@media(max-width:600px){.selection-fields,.modal-grid{grid-template-columns:1fr}.modal-grid .wide{grid-column:auto}.monument-actions,.answer-mode-row,.location-hint,.incident-box,.inline-map-panel{margin-left:0}}
+@media(max-width:400px){
+  #main-app{padding:14px 10px 60px}.quiz-card{padding:16px 12px}.item-name{font-size:24px;padding-left:10px}
+  .fields{grid-template-columns:1fr}.fields .field:last-child{grid-column:auto}.stats-bar{gap:6px}.stat{padding:8px 10px;min-width:68px}
+  .btn-row{gap:7px}.btn{padding:10px 14px}.enter-hint{display:none}.park-choice{flex:1 1 42%;min-height:40px}
+  .monument-actions,.answer-mode-row{gap:6px}.mini-btn{padding:8px 9px}#monument-map{height:290px}
+}
 
 </style>
 </head>
@@ -336,11 +343,30 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 
     <div class="monument-actions" id="monument-actions">
       <button class="mini-btn" id="btn-location-hint" onclick="toggleLocationHint()">Ubicación</button>
-      <button class="mini-btn" onclick="openMapModal()">Pin del mapa</button>
+      <button class="mini-btn" id="btn-map" onclick="toggleInlineMap()" aria-expanded="false">📍 Mapa</button>
       <button class="mini-btn" onclick="openMonumentEditor(false)">Editar</button>
     </div>
     <div class="location-hint" id="location-hint"></div>
+    <div class="inline-map-panel" id="inline-map-panel">
+      <div class="map-status" id="map-status">Pulsa en el mapa o arrastra el pin para corregirlo.</div>
+      <a class="map-link" id="google-map-link" target="_blank" rel="noopener">Abrir en Google Maps</a>
+      <div id="monument-map"></div>
+      <div class="modal-actions">
+        <button class="btn primary" onclick="saveMapPin()">Guardar pin</button>
+        <button class="btn" onclick="closeInlineMap()">Cerrar</button>
+      </div>
+    </div>
     <div class="incident-box" id="monument-incident" style="display:none"></div>
+    <div class="notes-area">
+      <button type="button" class="notes-label" id="notes-toggle" onclick="toggleNotes()" aria-expanded="false">
+        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Mi nota
+      </button>
+      <div class="notes-content" id="notes-content">
+        <textarea class="notes-input" id="notes-input" rows="2" placeholder="Añade aquí cualquier anotación sobre este lugar..."></textarea>
+        <div class="notes-saved" id="notes-saved">✓ Guardado</div>
+      </div>
+    </div>
     <div class="answer-mode-row" id="answer-mode-row">
       <span class="subcat-title">Responder:</span>
       <button class="mini-btn" id="mode-write" onclick="setMonumentAnswerMode('write')">Escribir</button>
@@ -397,14 +423,6 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <span class="enter-hint">↵ Enter</span>
     </div>
     <div class="answer-reveal" id="answer-reveal" style="display:none"></div>
-    <div class="notes-area">
-      <div class="notes-label">
-        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Notas
-      </div>
-      <textarea class="notes-input" id="notes-input" rows="2" placeholder="Añade aquí cualquier anotación sobre este lugar..."></textarea>
-      <div class="notes-saved" id="notes-saved">✓ Guardado</div>
-    </div>
   </div>
 
   <div class="history-section">
@@ -435,20 +453,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
   </div>
 </div>
 
-<div class="modal-backdrop" id="map-modal" onclick="closeModalOnBackdrop(event,'map-modal')">
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="map-title">
-    <div class="modal-title" id="map-title">Ubicación en el mapa</div>
-    <div class="map-status" id="map-status">Pulsa en el mapa o arrastra el pin para corregirlo.</div>
-    <a class="map-link" id="google-map-link" target="_blank" rel="noopener">Abrir búsqueda en Google Maps</a>
-    <div id="monument-map"></div>
-    <div class="map-fallback" id="map-fallback">No se ha podido cargar el mapa. Puedes abrir la búsqueda en Google Maps o editar la dirección.</div>
-    <div class="modal-actions">
-      <button class="btn primary" onclick="saveMapPin()">Guardar pin</button>
-      <button class="btn" onclick="closeMapModal()">Cerrar</button>
-    </div>
-  </div>
-</div>
-
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const MAP_URL = 'https://drive.google.com/open?id=1R88MlU7ELAWVJZfPpJn3WsWmIt0&usp=sharing';
 
@@ -1111,6 +1116,7 @@ function initProfileData(){
     if(rh){ const s=JSON.parse(rh); CATEGORIES.forEach(c=>{ if(s[c]) DATA[c].forEach(item=>{ if(s[c][item.n]) history[c][item.n]=s[c][item.n]; }); }); }
     const rn = localStorage.getItem(storageKey('notes'));
     if(rn) notes = JSON.parse(rn);
+    migrateLegacyNotes();
     const rd = localStorage.getItem(storageKey('dirtoggle'));
     if(rd){ const s=JSON.parse(rd); DIR_OPTIONAL_CATS.forEach(c=>{ if(typeof s[c]==='boolean') dirToggle[c]=s[c]; }); }
   } catch(e){}
@@ -1337,8 +1343,11 @@ function answerZona(z){
 document.addEventListener('DOMContentLoaded', ()=>{
   const ni = document.getElementById('notes-input');
   ni.addEventListener('input', ()=>{
-    const noteKey = currentCat + '::' + current.n;
-    notes[noteKey] = ni.value;
+    if(!current) return;
+    const noteKey=stableNoteKey();
+    notes[noteKey]=ni.value;
+    const legacy=legacyNoteKey(); if(legacy!==noteKey) delete notes[legacy];
+    document.getElementById('notes-toggle').classList.toggle('has-note',!!ni.value.trim());
     clearTimeout(notesTimer);
     notesTimer = setTimeout(()=>{
       saveNotes();
@@ -1511,6 +1520,7 @@ const MONUMENTOS_BASE = [{"id":"mon-002","cat":"Asilos","n":"Asilo de Ancianos D
 const MONUMENTOS_STORAGE_KEY = 'speis_monumentos_custom_v1';
 const EDITABLE_DATA_STORAGE_KEY = 'speis_quiz_editable_data_v1';
 const ALL_PARKS = ['campanar','oeste','norte','central','sur','saler','cpbv','w/c'];
+const QUIZ_PARKS = ['campanar','saler','central','oeste','norte'];
 const MONUMENTOS_CATEGORIES = ["Asilos","Casas","Colegios","Conventos","Cruces","Edificios","Fuentes","Monumentos","Ermitas","Iglesias","Otros","Palacios","Parroquias","Plazas","Torres"];
 
 let monumentosFilter = 'all';
@@ -1519,8 +1529,10 @@ let selectedMonumentP1 = '';
 let selectedMonumentP2 = '';
 let locationHintVisible = false;
 let editorAdding = false;
-let simpleMap = null;
+let leafletMap = null;
+let leafletMarker = null;
 let pendingPin = null;
+let mapRequestId = 0;
 
 function cloneMonumentos(items){ return items.map(item => ({...item})); }
 function loadMonumentosData(){
@@ -1559,6 +1571,40 @@ function saveEditableData(){
 loadEditableData();
 
 function itemKey(item){ return item.id || item.n; }
+function stableNoteKey(item=current,cat=currentCat){ return cat+'::'+itemKey(item); }
+function legacyNoteKey(item=current,cat=currentCat){ return cat+'::'+item.n; }
+function migrateNoteForItem(item=current,cat=currentCat){
+  if(!item) return false;
+  const stable=stableNoteKey(item,cat), legacy=legacyNoteKey(item,cat);
+  if(stable===legacy || Object.prototype.hasOwnProperty.call(notes,stable) || !Object.prototype.hasOwnProperty.call(notes,legacy)) return false;
+  notes[stable]=notes[legacy]; delete notes[legacy]; return true;
+}
+function migrateLegacyNotes(){
+  let changed=false;
+  CATEGORIES.forEach(cat=>DATA[cat].forEach(item=>{ if(migrateNoteForItem(item,cat)) changed=true; }));
+  if(changed) saveNotes();
+}
+function currentNote(){
+  if(!current) return '';
+  migrateNoteForItem();
+  return notes[stableNoteKey()] || '';
+}
+function collapseNotes(){
+  document.getElementById('notes-content').classList.remove('open');
+  const toggle=document.getElementById('notes-toggle'); toggle.classList.remove('open'); toggle.setAttribute('aria-expanded','false');
+}
+function updateNotesUI(){
+  const value=currentNote();
+  document.getElementById('notes-input').value=value;
+  document.getElementById('notes-saved').className='notes-saved';
+  document.getElementById('notes-toggle').classList.toggle('has-note',!!value.trim());
+  collapseNotes();
+}
+function toggleNotes(){
+  const content=document.getElementById('notes-content'), toggle=document.getElementById('notes-toggle');
+  const open=!content.classList.contains('open'); content.classList.toggle('open',open); toggle.classList.toggle('open',open); toggle.setAttribute('aria-expanded',String(open));
+  if(open) document.getElementById('notes-input').focus();
+}
 function escapeHtml(value){
   return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
@@ -1595,6 +1641,7 @@ initProfileData = function(){
     }
     const rn = localStorage.getItem(storageKey('notes'));
     if(rn) notes = JSON.parse(rn);
+    migrateLegacyNotes();
     const rd = localStorage.getItem(storageKey('dirtoggle'));
     if(rd){ const s=JSON.parse(rd); DIR_OPTIONAL_CATS.forEach(c=>{ if(typeof s[c]==='boolean') dirToggle[c]=s[c]; }); }
     monumentAnswerMode = localStorage.getItem(storageKey('monument_answer_mode')) || 'write';
@@ -1623,6 +1670,7 @@ function registerMonumentResult(ok){
 
 const baseRenderItem = renderItem;
 renderItem = function(){
+  closeInlineMap();
   document.getElementById('btn-check').disabled=false;
   if(currentCat==='zonas_saler'){
     document.getElementById('monument-actions').className='monument-actions';
@@ -1630,7 +1678,7 @@ renderItem = function(){
     document.getElementById('location-hint').className='location-hint';
     document.getElementById('monument-incident').style.display='none';
     document.getElementById('selection-fields').className='selection-fields';
-    return baseRenderItem();
+    baseRenderItem(); updateNotesUI(); return;
   }
   if(!current){ buildQueue(); current=order[0]; }
   baseRenderItem();
@@ -1667,9 +1715,7 @@ renderItem = function(){
     document.getElementById('btn-check').disabled=true;
     document.getElementById('btn-next').style.display='';
   } else incident.style.display='none';
-  const noteKey=currentCat+'::'+itemKey(current);
-  document.getElementById('notes-input').value=notes[noteKey] || notes[currentCat+'::'+current.n] || '';
-  document.getElementById('notes-saved').className='notes-saved';
+  updateNotesUI();
   if(monumentAnswerMode==='write') document.getElementById('f-p1').focus();
   updateProgress();
 };
@@ -1690,9 +1736,10 @@ function applyAnswerMode(){
   document.getElementById('mode-select').className='mini-btn'+(selectMode?' active':'');
 }
 function renderParkChoices(){
+  const parks=currentCat==='hospitales'?[...QUIZ_PARKS,'cpbv']:QUIZ_PARKS;
   ['p1','p2'].forEach(field=>{
     const selected=field==='p1'?selectedMonumentP1:selectedMonumentP2;
-    document.getElementById(field+'-choices').innerHTML=ALL_PARKS.map(park=>`<button type="button" class="park-choice${selected===park?' selected':''}" data-park="${park}" onclick="choosePark('${field}','${park}')">${displayPark(park)}</button>`).join('');
+    document.getElementById(field+'-choices').innerHTML=parks.map(park=>`<button type="button" class="park-choice${selected===park?' selected':''}" data-park="${park}" onclick="choosePark('${field}','${park}')">${displayPark(park)}</button>`).join('');
   });
 }
 function choosePark(field,park){
@@ -1836,14 +1883,6 @@ switchTab=function(cat){
   document.getElementById('monumentos-panel').className='monumentos-panel'+(cat==='monumentos'?' visible':'');
 };
 
-document.addEventListener('DOMContentLoaded',()=>{
-  const ni=document.getElementById('notes-input');
-  ni.addEventListener('input',()=>{
-    if(currentCat==='zonas_saler'||!current) return;
-    notes[currentCat+'::'+itemKey(current)]=ni.value;
-  });
-});
-
 function fillEditorSelects(){
   const cats=[...new Set([...MONUMENTOS_CATEGORIES,...DATA.monumentos.map(item=>item.cat)])].sort((a,b)=>a.localeCompare(b,'es'));
   document.getElementById('edit-category').innerHTML=cats.map(cat=>`<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');
@@ -1877,6 +1916,7 @@ function saveMonumentEditor(){
     updated.id='mon-user-'+Date.now(); DATA.monumentos.push(updated);
     history.monumentos[updated.id]={ok:0,fail:0,streak:0}; monumentosFilter=updated.cat;
   }else{
+    const noteMigrated=migrateNoteForItem(current,currentCat);
     if(currentCat==='monumentos') updated.cat=document.getElementById('edit-category').value;
     const index=DATA[currentCat].findIndex(item=>item.id===current.id);
     if(index<0) return;
@@ -1884,6 +1924,7 @@ function saveMonumentEditor(){
     DATA[currentCat][index]={...current,...updated};
     current=DATA[currentCat][index];
     if(changedAnswer && history[currentCat][itemKey(current)]) history[currentCat][itemKey(current)].streak=0;
+    if(noteMigrated) saveNotes();
   }
   saveEditableData(); saveHistory(); closeEditorModal(); buildQueue(); getNext(); updateStats(); renderHistory(); updateProgressBars();
 }
@@ -1894,94 +1935,68 @@ function deleteCurrentMonument(){
 }
 function closeModalOnBackdrop(event,id){ if(event.target.id===id) document.getElementById(id).classList.remove('open'); }
 
-function openMapModal(){
+function toggleInlineMap(){
   if(!current||currentCat==='zonas_saler') return;
-  pendingPin=(Number.isFinite(current.lat)&&Number.isFinite(current.lng))?{lat:current.lat,lng:current.lng}:null;
-  const query=(current.dir?current.dir+', ':'')+'Valencia, España';
-  document.getElementById('google-map-link').href='https://www.google.com/maps/search/'+encodeURIComponent(query);
-  document.getElementById('map-status').textContent=current.dir?'Buscando el pin de «'+current.dir+'»…':'No hay dirección. Pulsa en el mapa para colocar el pin.';
-  document.getElementById('map-modal').classList.add('open');
-  setTimeout(initOrRefreshMap,80);
+  if(document.getElementById('inline-map-panel').classList.contains('open')){ closeInlineMap(); return; }
+  document.getElementById('inline-map-panel').classList.add('open');
+  const button=document.getElementById('btn-map'); button.classList.add('active'); button.setAttribute('aria-expanded','true');
+  const lat=Number(current.lat), lng=Number(current.lng);
+  pendingPin=Number.isFinite(lat)&&Number.isFinite(lng)?{lat,lng}:null;
+  updateGoogleMapLink();
+  document.getElementById('map-status').textContent=pendingPin?'Pin guardado. Arrástralo o pulsa en el mapa para ajustarlo.':(current.dir?'Buscando el pin de «'+current.dir+'»…':'No hay dirección. Pulsa en el mapa para colocar el pin.');
+  setTimeout(initLeafletMap,0);
 }
-class SimplePinMap{
-  constructor(element){
-    this.el=element; this.zoom=13; this.center={lat:39.4699,lng:-0.3763}; this.markerPos=null; this.draggingMarker=false;
-    this.el.style.position='relative'; this.el.style.overflow='hidden'; this.el.style.touchAction='none';
-    this.tiles=document.createElement('div'); this.tiles.style.position='absolute'; this.tiles.style.inset='0'; this.el.appendChild(this.tiles);
-    this.marker=document.createElement('div'); this.marker.className='simplemap-marker'; this.marker.textContent='📍'; this.marker.style.display='none'; this.el.appendChild(this.marker);
-    const controls=document.createElement('div'); controls.className='simplemap-controls';
-    controls.innerHTML='<button type="button" aria-label="Acercar">+</button><button type="button" aria-label="Alejar">−</button>';
-    controls.children[0].onclick=e=>{e.stopPropagation();this.zoom=Math.min(19,this.zoom+1);this.render();};
-    controls.children[1].onclick=e=>{e.stopPropagation();this.zoom=Math.max(4,this.zoom-1);this.render();}; this.el.appendChild(controls);
-    const attribution=document.createElement('div'); attribution.className='simplemap-attribution'; attribution.innerHTML='&copy; OpenStreetMap'; this.el.appendChild(attribution);
-    this.el.addEventListener('click',e=>{ if(this.draggingMarker||e.target.closest('.simplemap-controls')) return; const p=this.eventToLatLng(e); placeMapMarker(p.lat,p.lng); });
-    this.marker.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); this.draggingMarker=true; this.marker.setPointerCapture(e.pointerId); });
-    this.marker.addEventListener('pointermove',e=>{ if(!this.draggingMarker) return; const p=this.eventToLatLng(e); pendingPin=p; this.markerPos=p; this.positionMarker(); });
-    this.marker.addEventListener('pointerup',e=>{ e.preventDefault(); e.stopPropagation(); this.draggingMarker=false; });
-    window.addEventListener('resize',()=>this.render());
-    this.render();
-  }
-  worldSize(){ return 256*Math.pow(2,this.zoom); }
-  project(lat,lng){
-    const size=this.worldSize(), sin=Math.sin(Math.max(-85.0511,Math.min(85.0511,lat))*Math.PI/180);
-    return {x:(lng+180)/360*size,y:(.5-Math.log((1+sin)/(1-sin))/(4*Math.PI))*size};
-  }
-  unproject(x,y){
-    const size=this.worldSize(), lng=x/size*360-180, n=Math.PI-2*Math.PI*y/size;
-    return {lat:180/Math.PI*Math.atan(Math.sinh(n)),lng};
-  }
-  eventToLatLng(e){
-    const rect=this.el.getBoundingClientRect(), center=this.project(this.center.lat,this.center.lng);
-    return this.unproject(center.x-rect.width/2+(e.clientX-rect.left),center.y-rect.height/2+(e.clientY-rect.top));
-  }
-  setView(lat,lng,zoom){ this.center={lat,lng}; if(zoom) this.zoom=zoom; this.render(); }
-  setMarker(lat,lng){ this.markerPos={lat,lng}; this.marker.style.display='block'; this.positionMarker(); }
-  clearMarker(){ this.markerPos=null; this.marker.style.display='none'; }
-  positionMarker(){
-    if(!this.markerPos) return; const rect=this.el.getBoundingClientRect(), c=this.project(this.center.lat,this.center.lng), p=this.project(this.markerPos.lat,this.markerPos.lng);
-    this.marker.style.left=(rect.width/2+p.x-c.x)+'px'; this.marker.style.top=(rect.height/2+p.y-c.y)+'px';
-  }
-  render(){
-    const w=this.el.clientWidth||600,h=this.el.clientHeight||390,c=this.project(this.center.lat,this.center.lng),size=this.worldSize();
-    const left=c.x-w/2,top=c.y-h/2,minX=Math.floor(left/256),maxX=Math.floor((left+w)/256),minY=Math.floor(top/256),maxY=Math.floor((top+h)/256),tileCount=Math.pow(2,this.zoom);
-    this.tiles.innerHTML='';
-    for(let ty=minY;ty<=maxY;ty++) for(let tx=minX;tx<=maxX;tx++){
-      if(ty<0||ty>=tileCount) continue; const wrapped=((tx%tileCount)+tileCount)%tileCount, img=document.createElement('img');
-      img.className='simplemap-tile'; img.alt=''; img.draggable=false; img.src=`https://tile.openstreetmap.org/${this.zoom}/${wrapped}/${ty}.png`;
-      img.style.left=(tx*256-left)+'px'; img.style.top=(ty*256-top)+'px'; this.tiles.appendChild(img);
-    }
-    this.positionMarker();
-  }
+function updateGoogleMapLink(){
+  const query=pendingPin?pendingPin.lat+','+pendingPin.lng:((current?.dir?current.dir+', ':'')+'Valencia, España');
+  document.getElementById('google-map-link').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query);
 }
-async function initOrRefreshMap(){
-  document.getElementById('monument-map').style.display='block'; document.getElementById('map-fallback').style.display='none';
-  if(!simpleMap) simpleMap=new SimplePinMap(document.getElementById('monument-map'));
-  simpleMap.clearMarker(); simpleMap.setView(39.4699,-0.3763,13);
-  if(pendingPin){ placeMapMarker(pendingPin.lat,pendingPin.lng); simpleMap.setView(pendingPin.lat,pendingPin.lng,17); return; }
-  if(!current.dir){ document.getElementById('map-status').textContent='No hay dirección. Pulsa en el mapa para colocar el pin.'; return; }
+function setLeafletMarker(lat,lng){
+  pendingPin={lat:Number(lat),lng:Number(lng)};
+  if(!leafletMap) return;
+  if(!leafletMarker){
+    leafletMarker=L.marker([pendingPin.lat,pendingPin.lng],{draggable:true}).addTo(leafletMap);
+    leafletMarker.on('dragend',()=>{ const point=leafletMarker.getLatLng(); pendingPin={lat:point.lat,lng:point.lng}; updateGoogleMapLink(); });
+  }else leafletMarker.setLatLng([pendingPin.lat,pendingPin.lng]);
+  updateGoogleMapLink();
+}
+async function initLeafletMap(){
+  if(typeof L==='undefined'){
+    document.getElementById('map-status').textContent='No se pudo cargar el mapa. Puedes usar el enlace de Google Maps.'; return;
+  }
+  const requestId=++mapRequestId, itemId=itemKey(current);
+  leafletMap=L.map('monument-map').setView([39.4699,-0.3763],13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(leafletMap);
+  leafletMap.on('click',event=>setLeafletMarker(event.latlng.lat,event.latlng.lng));
+  if(pendingPin){ setLeafletMarker(pendingPin.lat,pendingPin.lng); leafletMap.setView([pendingPin.lat,pendingPin.lng],17); return; }
+  if(!current.dir) return;
   try{
     const url='https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=es&q='+encodeURIComponent(current.dir+', Valencia, España');
-    const response=await fetch(url); const results=await response.json();
+    const response=await fetch(url,{headers:{Accept:'application/json'}}); if(!response.ok) throw new Error('Geocoding failed');
+    const results=await response.json();
+    if(requestId!==mapRequestId || !current || itemKey(current)!==itemId || !document.getElementById('inline-map-panel').classList.contains('open')) return;
     if(results[0]){
-      placeMapMarker(Number(results[0].lat),Number(results[0].lon)); simpleMap.setView(pendingPin.lat,pendingPin.lng,17);
+      setLeafletMarker(Number(results[0].lat),Number(results[0].lon)); leafletMap.setView([pendingPin.lat,pendingPin.lng],17);
       document.getElementById('map-status').textContent='Pin aproximado según la dirección. Arrástralo o pulsa en el mapa para corregirlo.';
     }else document.getElementById('map-status').textContent='No se encontró la dirección. Pulsa en el mapa para colocar el pin manualmente.';
-  }catch(e){ document.getElementById('map-status').textContent='No se pudo buscar la dirección. Puedes colocar el pin manualmente.'; }
-}
-function placeMapMarker(lat,lng){
-  pendingPin={lat,lng};
-  if(simpleMap) simpleMap.setMarker(lat,lng);
+  }catch(e){
+    if(requestId===mapRequestId) document.getElementById('map-status').textContent='No se pudo buscar la dirección. Puedes colocar el pin manualmente.';
+  }
 }
 function saveMapPin(){
   if(!current||!pendingPin){ alert('Coloca primero el pin en el mapa.'); return; }
   current.lat=pendingPin.lat; current.lng=pendingPin.lng; saveEditableData();
   document.getElementById('map-status').textContent='Pin guardado para esta ubicación.';
-  setTimeout(closeMapModal,500);
 }
-function closeMapModal(){ document.getElementById('map-modal').classList.remove('open'); }
+function closeInlineMap(){
+  mapRequestId++;
+  const panel=document.getElementById('inline-map-panel'); if(panel) panel.classList.remove('open');
+  const button=document.getElementById('btn-map'); if(button){ button.classList.remove('active'); button.setAttribute('aria-expanded','false'); }
+  if(leafletMap){ leafletMap.remove(); leafletMap=null; leafletMarker=null; }
+  pendingPin=null;
+}
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeEditorModal(); closeMapModal(); }
+  if(e.key==='Escape'){ closeEditorModal(); closeInlineMap(); }
 });
 </script>
 
