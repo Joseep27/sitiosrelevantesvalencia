@@ -18,6 +18,20 @@ let lastCloudUpdatedAt = '';
 let pushTimer = null;
 let pushInFlight = false;
 let pushAgain = false;
+let initialInFlight = false;
+let initialAgain = false;
+
+// PostgreSQL JSONB may return object keys in another order. Array order matters.
+function sameJSON(a, b){
+  const canonical = value => {
+    if(Array.isArray(value)) return value.map(canonical);
+    if(value && typeof value === 'object') return Object.fromEntries(
+      Object.keys(value).sort().map(key => [key, canonical(value[key])])
+    );
+    return value;
+  };
+  return JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
+}
 
 function readJson(key){
   try{
@@ -140,7 +154,9 @@ function mergeSnapshots(remoteValue, localValue){
 function writeJsonIfPresent(key, value){
   if(value == null) return false;
   const next = JSON.stringify(value);
-  if(localStorage.getItem(key) === next) return false;
+  const old = localStorage.getItem(key);
+  if(old === next) return false;
+  try{ if(old !== null && sameJSON(JSON.parse(old), value)) return false; }catch{}
   localStorage.setItem(key, next);
   return true;
 }
@@ -219,18 +235,24 @@ async function upsertSnapshot(snapshot){
   if(result.error) throw result.error;
   lastCloudUpdatedAt = result.data?.updated_at || lastCloudUpdatedAt;
   localStorage.setItem(SYNC_USER_KEY, currentSession.user.id);
-  localStorage.removeItem(SYNC_DIRTY_KEY);
+  if(sameJSON(captureLocalSnapshot(), snapshot)) localStorage.removeItem(SYNC_DIRTY_KEY);
+  else localStorage.setItem(SYNC_DIRTY_KEY, '1');
 }
 
 async function initialSync(){
   if(!currentSession?.user) return;
+  if(initialInFlight){ initialAgain = true; return; }
+  if(pushInFlight){ pushAgain = true; return; }
+  initialInFlight = true;
   cloudReady = false;
   setStatus('', '☁ Sincronizando…');
   showMessage('Comprobando los datos guardados…');
   try{
-    const local = captureLocalSnapshot();
+    window.prepareCloudSync?.();
     const response = await fetchCloudRow();
     if(response.error) throw response.error;
+    window.prepareCloudSync?.();
+    const local = captureLocalSnapshot();
     const row = response.data;
     const sameUser = localStorage.getItem(SYNC_USER_KEY) === currentSession.user.id;
     const localDirty = localStorage.getItem(SYNC_DIRTY_KEY) === '1';
@@ -241,41 +263,50 @@ async function initialSync(){
       const remote = normalizeSnapshot(row.payload);
       if((!sameUser || localDirty) && hasMeaningfulData(local)){
         chosen = mergeSnapshots(remote, local);
-        mustUpload = JSON.stringify(chosen) !== JSON.stringify(remote);
+        mustUpload = !sameJSON(chosen, remote);
       }else chosen = remote;
     }
     const changed = applySnapshot(chosen);
+    if(changed) window.refreshCloudState?.();
     if(mustUpload) await upsertSnapshot(chosen);
     else{
       localStorage.setItem(SYNC_USER_KEY, currentSession.user.id);
-      localStorage.removeItem(SYNC_DIRTY_KEY);
+      if(sameJSON(captureLocalSnapshot(), chosen)) localStorage.removeItem(SYNC_DIRTY_KEY);
+      else localStorage.setItem(SYNC_DIRTY_KEY, '1');
     }
     cloudReady = true;
     setStatus('online', '☁ Sincronizado');
     showMessage('Datos sincronizados correctamente.', 'ok');
-    if(changed) window.setTimeout(() => window.location.reload(), 250);
+    if(localStorage.getItem(SYNC_DIRTY_KEY) === '1') scheduleCloudPush();
   }catch(error){
     cloudReady = false;
     setStatus('error', '☁ Error de sincronización');
     const missingTable = String(error?.message || '').includes(SYNC_TABLE) || error?.code === '42P01';
     showMessage(missingTable ? 'Falta preparar la tabla de sincronización en Supabase.' : `No se pudo sincronizar: ${error?.message || 'error desconocido'}`, 'error');
+  }finally{
+    initialInFlight = false;
+    if(initialAgain){ initialAgain = false; initialSync(); }
   }
 }
 
 async function pushCloudState(){
   if(!cloudReady || !currentSession?.user) return;
+  if(initialInFlight){ initialAgain = true; return; }
   if(pushInFlight){ pushAgain = true; return; }
   pushInFlight = true;
   setStatus('', '☁ Sincronizando…');
   try{
-    let local = captureLocalSnapshot();
+    window.prepareCloudSync?.();
     const response = await fetchCloudRow();
     if(response.error) throw response.error;
+    window.prepareCloudSync?.();
+    let local = captureLocalSnapshot();
     if(response.data && response.data.updated_at && response.data.updated_at !== lastCloudUpdatedAt){
       local = mergeSnapshots(response.data.payload, local);
-      applySnapshot(local);
+      if(applySnapshot(local)) window.refreshCloudState?.();
     }
     await upsertSnapshot(local);
+    if(localStorage.getItem(SYNC_DIRTY_KEY) === '1') pushAgain = true;
     setStatus('online', '☁ Sincronizado');
     showMessage('Últimos cambios guardados.', 'ok');
   }catch(error){

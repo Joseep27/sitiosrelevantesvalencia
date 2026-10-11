@@ -2144,6 +2144,48 @@ function closeInlineMap(){
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){ closeEditorModal(); closeInlineMap(); }
 });
+
+// Cloud updates must never rebuild the current round or clear unfinished input.
+function prepareCloudSync(){
+  if(!currentProfile) return;
+  try{
+    const saved=JSON.parse(localStorage.getItem(storageKey('notes'))) || {};
+    const sorted=value=>JSON.stringify(Object.keys(value).sort().map(key=>[key,value[key]]));
+    if(sorted(saved)!==sorted(notes)){
+      clearTimeout(notesTimer);
+      saveNotes();
+    }
+  }catch(e){}
+}
+
+function refreshCloudState(){
+  loadMonumentosData(); loadEditableData(); hydrateStoredPins();
+  PROFILES.forEach(profile=>{
+    document.getElementById('preview-'+profile).textContent=getProfilePreview(profile);
+  });
+  if(!currentProfile) return;
+  // Keep current, order, pos, checked, sessionStats, answer fields, editor and map.
+  try{
+    const saved=JSON.parse(localStorage.getItem(storageKey('history_v2'))) || {};
+    CATEGORIES.forEach(cat=>{
+      history[cat]=history[cat] || {};
+      DATA[cat].forEach(item=>{
+        const key=itemKey(item), record=saved[cat]?.[key] || saved[cat]?.[item.n];
+        if(record) history[cat][key]={...record};
+        else if(!history[cat][key]) history[cat][key]={ok:0,fail:0,streak:0};
+      });
+    });
+    notes=JSON.parse(localStorage.getItem(storageKey('notes'))) || {};
+    migrateLegacyNotes();
+    if(current){
+      const input=document.getElementById('notes-input');
+      // Pending notes were flushed before reading the cloud, so they merge too.
+      input.value=currentNote();
+      document.getElementById('notes-toggle').classList.toggle('has-note',!!input.value.trim());
+    }
+  }catch(e){}
+  updateStats(); renderHistory(); updateProgressBars();
+}
 </script>
 
 <script>
