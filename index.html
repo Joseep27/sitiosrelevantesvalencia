@@ -367,10 +367,25 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <button class="mini-btn" onclick="openMonumentEditor(true)">+ Añadir ubicación</button>
     </div>
     <div class="subcat-grid" id="monumentos-subcats"></div>
+    <div class="subcat-head" style="margin:14px 0 0">
+      <label class="subcat-title" for="monumentos-review">Repasar:</label>
+      <select id="monumentos-review" class="mini-btn" style="max-width:100%" onchange="setMonumentosReview(this.value)">
+        <option value="all">Todas</option>
+        <option value="failed">Falladas · racha 0/5</option>
+        <option value="zero">Sin ningún acierto</option>
+        <option value="pending">Por consolidar · menos de 5/5</option>
+      </select>
+      <span id="monumentos-review-count" role="status" aria-live="polite"></span>
+    </div>
   </div>
   <div class="stats-bar" id="stats-bar"></div>
   <div class="progress-info" id="progress-info"></div>
 
+  <div class="quiz-card" id="monumentos-empty" hidden role="status">
+    <div class="item-name" id="monumentos-empty-text"></div>
+    <p style="margin:14px 0;color:var(--text-secondary)">Puedes cambiar el repaso o la categoría para seguir practicando.</p>
+    <button class="mini-btn" onclick="setMonumentosReview('all')">Ver todas</button>
+  </div>
   <div class="quiz-card" id="quiz-card">
     <div class="item-header">
       <div style="flex:1">
@@ -1605,6 +1620,42 @@ const QUIZ_PARKS = ['campanar','saler','central','oeste','norte'];
 const MONUMENTOS_CATEGORIES = ["Asilos","Casas","Colegios","Conventos","Cruces","Edificios","Fuentes","Monumentos","Ermitas","Iglesias","Otros","Palacios","Parroquias","Plazas","Torres"];
 
 let monumentosFilter = 'all';
+let monumentosReview = 'all';
+const MONUMENTOS_REVIEW_LABELS = {
+  all:'Todas',
+  failed:'Falladas · racha 0/5',
+  zero:'Sin ningún acierto',
+  pending:'Por consolidar · menos de 5/5'
+};
+function monumentosReviewItems(){
+  return DATA.monumentos.filter(item=>{
+    if(monumentosFilter!=='all' && item.cat!==monumentosFilter) return false;
+    const rec=history.monumentos?.[itemKey(item)] || {};
+    const streak=rec.streak||0, ok=rec.ok||0;
+    if(monumentosReview==='failed') return (rec.fail||0)>0 && streak===0;
+    if(monumentosReview==='zero') return ok===0;
+    if(monumentosReview==='pending') return streak<5;
+    return true;
+  });
+}
+function setMonumentosReview(mode){
+  if(!Object.prototype.hasOwnProperty.call(MONUMENTOS_REVIEW_LABELS,mode)) return;
+  monumentosReview=mode;
+  buildQueue(); getNext(); renderHistory(); updateProgressBars();
+}
+function renderMonumentosEmpty(){
+  current=null; checked=true;
+  document.getElementById('quiz-card').hidden=true;
+  document.getElementById('monumentos-empty').hidden=false;
+  const messages={
+    all:'No hay entradas en esta categoría.',
+    failed:'No quedan fallos con racha 0/5.',
+    zero:'No quedan entradas sin ningún acierto.',
+    pending:'¡Todas las entradas de esta selección están dominadas!'
+  };
+  document.getElementById('monumentos-empty-text').textContent=messages[monumentosReview];
+  updateProgress();
+}
 let monumentAnswerMode = 'write';
 let selectedMonumentP1 = '';
 let selectedMonumentP2 = '';
@@ -1758,8 +1809,7 @@ initProfileData = function(){
 const baseBuildQueue = buildQueue;
 buildQueue = function(){
   if(currentCat!=='monumentos') return baseBuildQueue();
-  let items = monumentosFilter==='all' ? [...DATA.monumentos] : DATA.monumentos.filter(item=>item.cat===monumentosFilter);
-  if(items.length===0){ monumentosFilter='all'; items=[...DATA.monumentos]; }
+  const items = monumentosReviewItems();
   for(let i=items.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [items[i],items[j]]=[items[j],items[i]]; }
   order=items; pos=0;
 };
@@ -1778,6 +1828,11 @@ function registerMonumentResult(ok){
 const baseRenderItem = renderItem;
 renderItem = function(){
   closeInlineMap();
+  if(currentCat==='monumentos' && !current){
+    renderMonumentosEmpty(); return;
+  }
+  document.getElementById('quiz-card').hidden=false;
+  document.getElementById('monumentos-empty').hidden=true;
   document.getElementById('btn-check').disabled=false;
   if(currentCat==='zonas_saler'){
     document.getElementById('monument-actions').className='monument-actions';
@@ -1965,13 +2020,17 @@ function renderMonumentSubcategories(){
     buttons.push(`<button class="subcat-btn${monumentosFilter===cat?' active':''}" onclick="setMonumentosFilter(decodeURIComponent('${encoded}'))">${escapeHtml(cat)} (${p.total}) <span class="mini-pct">${p.pct}%</span></button>`);
   });
   document.getElementById('monumentos-subcats').innerHTML=buttons.join('');
+  document.getElementById('monumentos-review').value=monumentosReview;
+  const count=monumentosReviewItems().length;
+  document.getElementById('monumentos-review-count').textContent=count+(count===1?' entrada':' entradas');
 }
 function setMonumentosFilter(cat){ monumentosFilter=cat; buildQueue(); getNext(); renderHistory(); updateProgressBars(); }
 
 updateProgress = function(){
   const total=currentCat==='monumentos'?order.length:DATA[currentCat].length;
-  const suffix=currentCat==='monumentos'&&monumentosFilter!=='all'?' · '+monumentosFilter:'';
-  document.getElementById('progress-info').textContent=`${pos+1} / ${total} — ${CAT_LABELS[currentCat]}${suffix}`;
+  let suffix=currentCat==='monumentos'&&monumentosFilter!=='all'?' · '+monumentosFilter:'';
+  if(currentCat==='monumentos' && monumentosReview!=='all') suffix+=' · '+MONUMENTOS_REVIEW_LABELS[monumentosReview];
+  document.getElementById('progress-info').textContent=`${total?pos+1:0} / ${total} — ${CAT_LABELS[currentCat]}${suffix}`;
 };
 renderHistory = function(){
   const list=document.getElementById('history-list');
