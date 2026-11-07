@@ -1,8 +1,9 @@
-const CACHE_NAME = 'quiz-speis-v4';
+const CACHE_NAME = 'quiz-speis-v5';
 const APP_SHELL = [
   './',
   './index.html',
   './sync.js',
+  './plazas.js',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',

@@ -107,24 +107,43 @@ function mergeHistory(remote, local){
         fail: Math.max(Number(previous.fail) || 0, Number(result?.fail) || 0),
         streak: Math.max(Number(previous.streak) || 0, Number(result?.streak) || 0)
       };
+      if(category === 'plazas'){
+        const previousTime = Number(previous.streakUpdatedAt) || 0;
+        const resultTime = Number(result?.streakUpdatedAt) || 0;
+        if(previousTime || resultTime){
+          const latest = previousTime > resultTime ? previous : result;
+          merged[category][item].streak = previousTime === resultTime
+            ? Math.min(Number(previous.streak) || 0, Number(result?.streak) || 0)
+            : Number(latest?.streak) || 0;
+          merged[category][item].streakUpdatedAt = Math.max(previousTime, resultTime);
+        }
+      }
     });
   });
   return merged;
 }
 
-function mergeItemArrays(remote, local){
+function mergeItemArrays(remote, local, versioned=false){
   if(!Array.isArray(remote)) return clone(local);
   if(!Array.isArray(local)) return clone(remote);
   const result = new Map();
   remote.forEach((item, index) => result.set(item?.id || item?.n || `remote-${index}`, clone(item)));
-  local.forEach((item, index) => result.set(item?.id || item?.n || `local-${index}`, clone(item)));
+  local.forEach((item, index) => {
+    const key=item?.id || item?.n || `local-${index}`;
+    const previous=result.get(key);
+    if(versioned && previous){
+      const previousTime=Number(previous.updatedAt)||0, itemTime=Number(item?.updatedAt)||0;
+      if(previousTime>itemTime || previousTime===itemTime && previous.deleted) return;
+    }
+    result.set(key,clone(item));
+  });
   return [...result.values()];
 }
 
 function mergeEditableData(remote, local){
   const merged = clone(remote) || {};
   Object.entries(local || {}).forEach(([category, items]) => {
-    merged[category] = mergeItemArrays(merged[category], items);
+    merged[category] = mergeItemArrays(merged[category], items, category==='plazas');
   });
   return merged;
 }
