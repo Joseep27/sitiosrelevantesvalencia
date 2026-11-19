@@ -1149,8 +1149,38 @@ const DATA = {
   ]
 };
 
-const CATEGORIES = ['hospitales','museos','mercados','pte','pamri','zonas_saler','paradas','centros_comerciales','parques','jardines','centros_salud','egas'];
-const CAT_LABELS = {hospitales:'Hospitales',museos:'Museos',mercados:'Mercados',pte:'PTE',pamri:'PAM RI',zonas_saler:'Zonas del Saler',paradas:'Metro / Tranvía / Bus',centros_comerciales:'Centros Comerciales',parques:'Parques',jardines:'Jardines',centros_salud:'Centros de Salud',egas:'EGAs'};
+// SUR in the source table is Central in the quiz (both answers are accepted).
+DATA.cines = [
+  {id:'cines-001',n:'Off Artes Escénicas',dir:'Turia',p1:'oeste',p2:'campanar'},
+  {id:'cines-002',n:'Sala Girasol',dir:'Turia',p1:'oeste',p2:'campanar'},
+  {id:'cines-003',n:'La Estrella Sala Petxina',dir:'Doctor Sanchis Bergón',p1:'oeste',p2:'campanar'},
+  {id:'cines-004',n:'Antiguo Almacén de Dientes',dir:'Borrull',p1:'oeste',p2:'campanar'},
+  {id:'cines-005',n:'Antiguo Teatro Cine Princesa',dir:'Moro Zeid',p1:'oeste',p2:'campanar'},
+  {id:'cines-006',n:'Radio City',dir:'Santa Teresa',p1:'oeste',p2:'campanar'},
+  {id:'cines-007',n:'Flumen',dir:'Gregorio Gea',p1:'campanar',p2:'oeste'},
+  {id:'cines-008',n:'Buffo',dir:'Marquesa de Paterna',p1:'campanar',p2:'oeste'},
+  {id:'cines-009',n:'Sala Carme Teatre',dir:'Gregori Gea',dir_alt:['Gregorio Gea'],p1:'campanar',p2:'oeste'},
+  {id:'cines-010',n:'Olympia',dir:'San Vicente Mártir',p1:'oeste',p2:'central'},
+  {id:'cines-011',n:'Micalet (CTM)',dir:"Torn de l'Hospital",p1:'oeste',p2:'central'},
+  {id:'cines-012',n:'Talía',dir:'Caballeros',p1:'oeste',p2:'norte'},
+  {id:'cines-013',n:'Rialto',dir:'Plaza del Ayuntamiento',p1:'central',p2:'norte'},
+  {id:'cines-014',n:'Ateneo Mercantil',dir:'Plaza del Ayuntamiento',p1:'central',p2:'norte'},
+  {id:'cines-015',n:'Principal',dir:'De las Barcas',p1:'norte',p2:'central'},
+  {id:'cines-016',n:'Carolina',dir:'De Rugat',p1:'norte',p2:'central'},
+  {id:'cines-017',n:'El Musical',dir:'Plaza del Rosario',p1:'norte',p2:'central'},
+  {id:'cines-018',n:'Escalante Centro Teatral',dir:'Poeta Querol',p1:'norte',p2:'central'},
+  {id:'cines-019',n:'Sala Palmireno',dir:'Avenida Blasco Ibáñez',p1:'norte',p2:'central'},
+  {id:'cines-020',n:'Cines Lys',dir:'Paseo de Ruzafa',dir_alt:['Passeig de Russafa'],p1:'central',p2:'norte'},
+  {id:'cines-021',n:'ABC Park',dir:'Roger de Lloria',p1:'central',p2:'norte'},
+  {id:'cines-022',n:'Cines ABC',dir:'Avenida Profesor López Piñero',p1:'central',p2:'norte'},
+  {id:'cines-023',n:'Ocine Premium Aqua',dir:'Menorca',p1:'central',p2:'norte'},
+  {id:'cines-024',n:"Cinestudio d'Or",dir:'Almirante Cadarso',p1:'central',p2:'norte'},
+  {id:'cines-025',n:'Cines Babel',dir:'Vicente Sancho Tello',p1:'norte',p2:'central'},
+  {id:'cines-026',n:'Cines Yelmo',dir:'Avenida Tirso de Molina',p1:'campanar',p2:'norte'}
+];
+
+const CATEGORIES = ['hospitales','museos','mercados','pte','pamri','zonas_saler','paradas','centros_comerciales','parques','jardines','centros_salud','egas','cines'];
+const CAT_LABELS = {hospitales:'Hospitales',museos:'Museos',mercados:'Mercados',pte:'PTE',pamri:'PAM RI',zonas_saler:'Zonas del Saler',paradas:'Metro / Tranvía / Bus',centros_comerciales:'Centros Comerciales',parques:'Parques',jardines:'Jardines',centros_salud:'Centros de Salud',egas:'EGAs',cines:'Cines y teatros'};
 const TIPO_LABELS = {parada:'Parada',emergencia:'Salida de emergencia',emt:'EMT',cc:'Centro Comercial',industria:'Industria',centro_salud:'Centro de Salud',consultorio:'Consultorio'};
 const DIR_OPTIONAL_CATS = ['centros_salud','egas'];
 const PROFILES = ['Josep','Tudon'];
