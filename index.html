@@ -240,6 +240,21 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .subcat-btn{padding:6px 10px;border-radius:18px;border:.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--text-secondary);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer}
 .subcat-btn:hover,.subcat-btn.active{color:var(--fire-orange);border-color:rgba(230,126,34,.5);background:rgba(230,126,34,.1)}
 .subcat-btn .mini-pct{opacity:.7;margin-left:4px}
+.study-plan-tabs{display:flex;gap:8px;margin-bottom:18px}
+.study-plan-tabs .active{color:var(--fire-orange);border-color:var(--fire-orange);background:rgba(230,126,34,.12)}
+#study-plan-badge{display:inline-flex;align-items:center;justify-content:center;min-width:23px;min-height:23px;margin-left:5px;border-radius:50%;background:rgba(230,126,34,.2);color:var(--fire-amber)}
+.study-plan-panel{padding:22px;border:1px solid var(--panel-border);border-radius:12px;background:var(--panel-bg)}
+.study-plan-panel h2{font-family:'Barlow Condensed',sans-serif;font-size:26px}
+.plan-help{font-size:14px;color:var(--text-secondary);line-height:1.6;margin:10px 0 20px}
+.plan-section-title{font-size:16px;margin:22px 0 8px;color:var(--fire-amber)}
+.plan-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.09);flex-wrap:wrap}
+.plan-row strong{display:block;font-size:16px}
+.plan-row p{font-size:14px;line-height:1.5;margin-top:4px;color:var(--text-secondary)}
+.plan-row .mini-btn{font-size:14px}
+.plan-row.due strong{color:var(--fire-amber)}
+.plan-row-actions{display:flex;gap:8px;flex-wrap:wrap}
+.study-plan-notice{padding:12px 16px;margin-bottom:16px;border:1px solid rgba(39,174,96,.4);border-radius:8px;background:rgba(39,174,96,.1);font-size:14px;line-height:1.5}
+.study-plan-notice button{margin-left:10px}
 .monument-actions,.answer-mode-row{display:none;gap:8px;align-items:center;flex-wrap:wrap;margin:-8px 0 16px 17px}
 .monument-actions.visible,.answer-mode-row.visible{display:flex}
 .mini-btn{padding:7px 12px;border-radius:6px;border:.5px solid rgba(230,126,34,.35);background:rgba(230,126,34,.08);color:var(--fire-orange);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;cursor:pointer}
@@ -361,6 +376,18 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
     <div class="overall-progress-track"><div class="overall-progress-fill" id="overall-progress-fill" style="width:0%"></div></div>
   </div>
   <div class="tabs" id="tabs"></div>
+
+  <div id="study-plan-tabs" class="study-plan-tabs" hidden role="tablist" aria-label="Estudio y plan">
+    <button type="button" class="mini-btn active" id="study-view-tab" role="tab" aria-selected="true" aria-controls="study-content" onclick="setStudyPlanView('study')">Estudiar</button>
+    <button type="button" class="mini-btn" id="plan-view-tab" role="tab" aria-selected="false" aria-controls="study-plan-panel" onclick="setStudyPlanView('plan')">Plan <span id="study-plan-badge">0</span></button>
+  </div>
+  <section id="study-plan-panel" class="study-plan-panel" hidden aria-labelledby="study-plan-heading">
+    <h2 id="study-plan-heading"></h2>
+    <p class="plan-help">Completa una vuelta de una categoría para incorporarla. Repasos en los días 1, 3, 7, 14 y 20; después, cada 20 días. Los repasos atrasados siguen pendientes hasta que los hagas.</p>
+    <div id="study-plan-list"></div>
+  </section>
+  <div id="study-content">
+  <div id="study-plan-notice" class="study-plan-notice" hidden role="status" aria-live="polite"></div>
 
   <div class="monumentos-panel" id="monumentos-panel">
     <div class="subcat-head">
@@ -497,6 +524,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <svg viewBox="0 0 14 14"><path d="M2 5l5 5 5-5"/></svg>
     </div>
     <div class="history-list" id="history-list"></div>
+  </div>
   </div>
 </div>
 
@@ -2322,6 +2350,185 @@ function refreshCloudState(){
   }catch(e){}
   updateStats(); renderHistory(); updateProgressBars();
 }
+</script>
+
+<script>
+// Independent spaced-review plans for each profile and study tab.
+const STUDY_PLAN_CATS = ['monumentos','plazas'];
+const STUDY_PLAN_GAPS = [1,2,4,7,6,20];
+const studyPlanViews = {monumentos:'study',plazas:'study'};
+let studyPlanLastNotice = {};
+
+function studyPlanToday(){
+  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+  const part=type=>parts.find(p=>p.type===type).value;
+  return part('year')+'-'+part('month')+'-'+part('day');
+}
+function studyPlanAddDays(day,days){
+  const date=new Date(day+'T12:00:00Z');
+  date.setUTCDate(date.getUTCDate()+days);
+  return date.toISOString().slice(0,10);
+}
+function studyPlanDate(day){
+  return new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'short',year:'numeric',timeZone:'Europe/Madrid'}).format(new Date(day+'T12:00:00Z'));
+}
+function readStudyPlan(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(storageKey('review_plan_v1')));
+    return saved && typeof saved==='object' && !Array.isArray(saved)?saved:{};
+  }catch(error){ return {}; }
+}
+function saveStudyPlan(plan){
+  localStorage.setItem(storageKey('review_plan_v1'),JSON.stringify(plan));
+}
+function studyPlanGroups(cat=currentCat){
+  return [...new Set((DATA[cat]||[]).map(item=>item.cat).filter(Boolean))];
+}
+function studyPlanItems(group,cat=currentCat){
+  return DATA[cat].filter(item=>item.cat===group && isQuizReady(item));
+}
+function studyPlanRecord(group){ return readStudyPlan()[currentCat]?.[group] || {}; }
+function writeStudyPlanRecord(group,record){
+  const plan=readStudyPlan();
+  plan[currentCat]=plan[currentCat] || {};
+  record.updatedAt=Math.max(Date.now(),Number(plan[currentCat][group]?.updatedAt||0)+1);
+  plan[currentCat][group]=record;
+  saveStudyPlan(plan);
+}
+function studyPlanSeen(record){
+  return record.roundDay===studyPlanToday() && Array.isArray(record.seen)?record.seen:[];
+}
+function completeStudyPlanGroup(group){
+  const today=studyPlanToday(), previous=studyPlanRecord(group);
+  // Practice before the due date never advances the scheduled review.
+  if(previous.dueOn && (previous.completedOn===today || previous.dueOn>today)) return false;
+  const stage=previous.dueOn?Math.min((Number(previous.stage)||0)+1,5):0;
+  writeStudyPlanRecord(group,{
+    ...previous,stage,completedOn:today,dueOn:studyPlanAddDays(today,STUDY_PLAN_GAPS[stage]),
+    roundDay:today,seen:studyPlanItems(group).map(itemKey),postponedOn:null,deferredUntil:null
+  });
+  studyPlanLastNotice[currentCat]=group+' completada. Próximo repaso: '+studyPlanDate(studyPlanAddDays(today,STUDY_PLAN_GAPS[stage]))+'.';
+  return true;
+}
+function enrollStudyPlanGroup(group){
+  if(!STUDY_PLAN_CATS.includes(currentCat) || !studyPlanGroups().includes(group)) return;
+  // This action enrolls an earlier study session; it cannot skip a scheduled step.
+  if(studyPlanRecord(group).dueOn) return;
+  completeStudyPlanGroup(group);
+  renderStudyPlan();
+}
+function postponeStudyPlanGroup(group){
+  if(!STUDY_PLAN_CATS.includes(currentCat) || !studyPlanGroups().includes(group)) return;
+  const record=studyPlanRecord(group);
+  // Postponing is not a completed review and never enrolls an unstudied category.
+  writeStudyPlanRecord(group,{...record,dueOn:record.dueOn?studyPlanAddDays(studyPlanToday(),1):undefined,
+    deferredUntil:record.dueOn?undefined:studyPlanAddDays(studyPlanToday(),1),postponedOn:studyPlanToday()});
+  renderStudyPlan();
+}
+function startStudyPlanGroup(group){
+  if(!STUDY_PLAN_CATS.includes(currentCat) || !studyPlanGroups().includes(group)) return;
+  categoryStudyState().filter=group;
+  categoryStudyState().review='all';
+  const record=studyPlanRecord(group), seen=new Set(studyPlanSeen(record));
+  setStudyPlanView('study');
+  buildQueue();
+  // Resume today's unfinished round rather than asking answered entries again.
+  const pending=order.filter(item=>!seen.has(itemKey(item)));
+  if(pending.length) order=[...pending,...order.filter(item=>seen.has(itemKey(item)))];
+  pos=0;getNext();renderHistory();updateProgressBars();
+  if(monumentAnswerMode==='select') document.querySelector('#p1-choices button')?.focus();
+}
+function recordStudyPlanAnswer(item){
+  if(!STUDY_PLAN_CATS.includes(currentCat) || !item?.cat) return;
+  const record=studyPlanRecord(item.cat), seen=new Set(studyPlanSeen(record));
+  if(seen.has(itemKey(item))) return;
+  seen.add(itemKey(item));
+  writeStudyPlanRecord(item.cat,{...record,roundDay:studyPlanToday(),seen:[...seen]});
+  const items=studyPlanItems(item.cat);
+  if(items.length && items.every(entry=>seen.has(itemKey(entry)))) completeStudyPlanGroup(item.cat);
+  renderStudyPlan();
+}
+function setStudyPlanView(view){
+  if(!STUDY_PLAN_CATS.includes(currentCat)) return;
+  studyPlanViews[currentCat]=view==='plan'?'plan':'study';
+  if(view==='plan') closeInlineMap();
+  renderStudyPlan();
+}
+function renderStudyPlan(){
+  const supported=STUDY_PLAN_CATS.includes(currentCat), inPlan=supported && studyPlanViews[currentCat]==='plan';
+  document.getElementById('study-plan-tabs').hidden=!supported;
+  document.getElementById('study-plan-panel').hidden=!inPlan;
+  document.getElementById('study-content').hidden=inPlan;
+  const notice=document.getElementById('study-plan-notice');
+  if(!supported){ notice.hidden=true;return; }
+  const today=studyPlanToday(), tomorrow=studyPlanAddDays(today,1);
+  const groups=studyPlanGroups(), plan=readStudyPlan()[currentCat] || {};
+  const effectiveDate=group=>plan[group]?.dueOn || plan[group]?.deferredUntil;
+  const due=groups.filter(group=>effectiveDate(group) && effectiveDate(group)<=today);
+  document.getElementById('study-plan-badge').textContent=due.length;
+  document.getElementById('plan-view-tab').setAttribute('aria-label','Plan: '+due.length+' categorías pendientes');
+  ['study','plan'].forEach(view=>{
+    const active=(view==='plan')===inPlan, tab=document.getElementById(view==='plan'?'plan-view-tab':'study-view-tab');
+    tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active));
+  });
+  const filter=categoryStudyState().filter, selected=plan[filter] || {};
+  let message=studyPlanLastNotice[currentCat] || '';
+  if(filter!=='all'){
+    const seen=new Set(studyPlanSeen(selected)), items=studyPlanItems(filter);
+    const count=items.filter(item=>seen.has(itemKey(item))).length;
+    message=selected.completedOn===today
+      ? filter+' completada hoy. Próximo repaso: '+studyPlanDate(selected.dueOn)+'.'
+      : 'Vuelta de '+filter+': '+count+' de '+items.length+' respondidas hoy.'+(selected.dueOn?' Próximo repaso: '+studyPlanDate(selected.dueOn)+'.':' Al completarla, entrará en el plan.');
+  }
+  notice.hidden=!message;
+  notice.innerHTML=escapeHtml(message)+(message?' <button class="mini-btn" onclick="setStudyPlanView(\'plan\')">Ver plan</button>':'');
+  document.getElementById('study-plan-heading').textContent='Plan de '+CAT_LABELS[currentCat].toLowerCase();
+  const next=groups.filter(group=>effectiveDate(group) && effectiveDate(group)>today).sort((a,b)=>effectiveDate(a).localeCompare(effectiveDate(b)));
+  const unstarted=groups.filter(group=>!effectiveDate(group));
+  function row(group){
+    const record=plan[group] || {}, date=record.dueOn, deferred=record.deferredUntil;
+    const items=studyPlanItems(group), seen=new Set(studyPlanSeen(record));
+    let detail=date?(date<today?'Pendiente desde '+studyPlanDate(date):date===today?'Te toca hoy':date===tomorrow?'Mañana · '+studyPlanDate(date):studyPlanDate(date))
+      :deferred?(deferred<today?'Primera vuelta pendiente desde ':deferred===today?'Primera vuelta para hoy · ':'Primera vuelta aplazada a ')+studyPlanDate(deferred):'Sin incorporar · '+items.length+' entradas';
+    if(date) detail+=' · '+(record.stage>=5?'Cada 20 días':'Repaso '+(Number(record.stage||0)+1));
+    const count=items.filter(item=>seen.has(itemKey(item))).length;
+    if(count && record.completedOn!==today) detail+=' · '+count+'/'+items.length+' respondidas hoy';
+    const encoded=encodeURIComponent(group).replace(/'/g,'%27');
+    return '<div class="plan-row'+(effectiveDate(group) && effectiveDate(group)<=today?' due':'')+'"><div><strong>'+escapeHtml(group)+'</strong><p>'+escapeHtml(detail)+'</p></div><div class="plan-row-actions">'
+      +'<button class="mini-btn" onclick="startStudyPlanGroup(decodeURIComponent(\''+encoded+'\'))">Hacerlo ya</button>'
+      +'<button class="mini-btn" onclick="postponeStudyPlanGroup(decodeURIComponent(\''+encoded+'\'))">Pasarlo a mañana</button>'
+      +(!date?'<button class="mini-btn" onclick="enrollStudyPlanGroup(decodeURIComponent(\''+encoded+'\'))">Ya la he hecho hoy</button>':'')+'</div></div>';
+  }
+  const sections=[['Para hoy · '+due.length,due],['Próximos repasos',next],['Sin incorporar',unstarted]];
+  document.getElementById('study-plan-list').innerHTML=sections.map(([title,list])=>'<h3 class="plan-section-title">'+title+'</h3>'+(list.length?list.map(row).join(''):'<p class="plan-help">'+(title.startsWith('Para hoy')?'No tienes repasos pendientes.':'Ninguna categoría.')+'</p>')).join('');
+}
+
+const studyPlanBaseCheck=checkAnswer;
+checkAnswer=function(){
+  if(STUDY_PLAN_CATS.includes(currentCat) && studyPlanViews[currentCat]==='plan') return;
+  const item=current, record=item && history[currentCat]?.[itemKey(item)];
+  const before=Number(record?.ok||0)+Number(record?.fail||0);
+  studyPlanBaseCheck();
+  if(record && Number(record.ok||0)+Number(record.fail||0)>before) recordStudyPlanAnswer(item);
+};
+const studyPlanBaseRender=renderMonumentSubcategories;
+renderMonumentSubcategories=function(){ studyPlanBaseRender();renderStudyPlan(); };
+const studyPlanBaseRefresh=refreshCloudState;
+refreshCloudState=function(){ studyPlanBaseRefresh();if(currentProfile) renderStudyPlan(); };
+const studyPlanBaseSelect=selectProfile;
+selectProfile=function(profile){
+  studyPlanViews.monumentos='study';studyPlanViews.plazas='study';studyPlanLastNotice={};
+  studyPlanBaseSelect(profile);
+};
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && currentProfile) renderStudyPlan(); });
+window.addEventListener('focus',()=>{ if(currentProfile) renderStudyPlan(); });
+document.getElementById('study-plan-tabs').addEventListener('keydown',event=>{
+  if(event.key==='ArrowLeft' || event.key==='ArrowRight'){
+    event.preventDefault();const view=studyPlanViews[currentCat]==='plan'?'study':'plan';
+    setStudyPlanView(view);document.getElementById(view==='plan'?'plan-view-tab':'study-view-tab').focus();
+  }
+});
+
 </script>
 
 <script>

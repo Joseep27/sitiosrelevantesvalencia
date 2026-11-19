@@ -51,6 +51,7 @@ function captureLocalSnapshot(){
       history: readJson(`speis_${profile}_history_v2`),
       notes: readJson(`speis_${profile}_notes`),
       dirToggle: readJson(`speis_${profile}_dirtoggle`),
+      reviewPlan: readJson(`speis_${profile}_review_plan_v1`),
       answerMode: localStorage.getItem(`speis_${profile}_monument_answer_mode`)
     };
   });
@@ -86,7 +87,8 @@ function hasMeaningfulData(snapshot){
     );
     const notes = p.notes && Object.values(p.notes).some(note => String(note || '').trim());
     const preferences = p.answerMode === 'select' || (p.dirToggle && Object.values(p.dirToggle).some(Boolean));
-    return history || notes || preferences;
+    const reviewPlan = p.reviewPlan && Object.values(p.reviewPlan).some(groups => groups && Object.keys(groups).length);
+    return history || notes || preferences || reviewPlan;
   });
   const shared = data.shared;
   return !!(profileHasData ||
@@ -148,6 +150,24 @@ function mergeEditableData(remote, local){
   return merged;
 }
 
+function mergeReviewPlans(remote, local){
+  const merged = clone(remote) || {};
+  Object.entries(local || {}).forEach(([category, groups]) => {
+    if(!groups || typeof groups !== 'object' || Array.isArray(groups)) return;
+    merged[category] = merged[category] || {};
+    Object.entries(groups).forEach(([group, record]) => {
+      if(!record || typeof record !== 'object') return;
+      const previous = merged[category][group];
+      const chosen = !previous || Number(record.updatedAt || 0) >= Number(previous.updatedAt || 0) ? record : previous;
+      merged[category][group] = clone(chosen);
+      if(previous && previous.roundDay === record.roundDay){
+        merged[category][group].seen = [...new Set([...(previous.seen || []), ...(record.seen || [])])];
+      }
+    });
+  });
+  return merged;
+}
+
 function mergeSnapshots(remoteValue, localValue){
   const remote = normalizeSnapshot(remoteValue);
   const local = normalizeSnapshot(localValue);
@@ -159,6 +179,7 @@ function mergeSnapshots(remoteValue, localValue){
       history: mergeHistory(remoteProfile.history, localProfile.history),
       notes: { ...(remoteProfile.notes || {}), ...(localProfile.notes || {}) },
       dirToggle: { ...(remoteProfile.dirToggle || {}), ...(localProfile.dirToggle || {}) },
+      reviewPlan: mergeReviewPlans(remoteProfile.reviewPlan, localProfile.reviewPlan),
       answerMode: localProfile.answerMode || remoteProfile.answerMode || 'write'
     };
   });
@@ -188,6 +209,7 @@ function applySnapshot(value){
     changed = writeJsonIfPresent(`speis_${profile}_history_v2`, data.history) || changed;
     changed = writeJsonIfPresent(`speis_${profile}_notes`, data.notes) || changed;
     changed = writeJsonIfPresent(`speis_${profile}_dirtoggle`, data.dirToggle) || changed;
+    changed = writeJsonIfPresent(`speis_${profile}_review_plan_v1`, data.reviewPlan) || changed;
     if(data.answerMode && localStorage.getItem(`speis_${profile}_monument_answer_mode`) !== data.answerMode){
       localStorage.setItem(`speis_${profile}_monument_answer_mode`, data.answerMode);
       changed = true;
@@ -357,7 +379,7 @@ function wrapSaveFunction(name){
   window[name] = wrapped;
 }
 
-['saveHistory', 'saveNotes', 'saveDirToggle', 'saveEditableData', 'saveMonumentosData', 'savePinStore', 'setMonumentAnswerMode']
+['saveHistory', 'saveNotes', 'saveDirToggle', 'saveEditableData', 'saveMonumentosData', 'savePinStore', 'setMonumentAnswerMode', 'saveStudyPlan']
   .forEach(wrapSaveFunction);
 
 window.openSyncModal = function(){
